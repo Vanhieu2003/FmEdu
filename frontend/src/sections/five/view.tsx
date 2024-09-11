@@ -117,7 +117,6 @@ export default function FiveView() {
     ? criteriaList.filter((criteria) => criteria.id === selectedCriteria.id)
     : criteriaList;
 
-  //   console.log("filteredCriteriaList",filteredCriteriaList)
   const handleAutocompleteChange = (criteriaID: string, newValue: (Tag | null)[]) => {
     const updatedTags = criteriaList.map((criteria) => {
       if (criteria.id === criteriaID) {

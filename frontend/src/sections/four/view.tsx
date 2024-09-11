@@ -119,7 +119,7 @@ type Criteria = {
 };
 
 type Form = {
- id: string,
+ id?: string,
  formName: string,
  campusId: string,
  blockId: string,
@@ -181,7 +181,7 @@ export default function FourView() {
   };
 
   useEffect(() => {
-    const fetchCampus = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
@@ -208,12 +208,12 @@ export default function FourView() {
         setIsLoading(false);
       }
     };
-    fetchCampus();
+    fetchData();
   }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, form: Form) => {
 
-    setCurrentFormID(form.id);
+    setCurrentFormID(form.id || '');
     setAnchorEl(event.currentTarget);
   };
 
@@ -317,14 +317,14 @@ export default function FourView() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h4">Page four</Typography>
         <Button variant='contained' onClick={handleAddClick}>Tạo mới</Button>
-        {/* <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
+        <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
           {isEditing ? (
             <EditForm Form={formList?.find(c => c.id === currentFormID) ?? {} as Form} onSave={handleSave} setOpenPopup={setOpenPopUp} />
           ) : (
-            <AddForm FormList={formList || []} onSave={handleSave} setOpenPopup={setOpenPopUp} />
+            <AddForm onSave={handleSave} setOpenPopup={setOpenPopUp} />
           )
           }
-        </Popup> */}
+        </Popup>
       </Box>
       <Box
         sx={{

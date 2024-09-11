@@ -1,125 +1,165 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography } from '@mui/material';
+import RoomService from 'src/@core/service/room';
+import BlockService from 'src/@core/service/block';
+import CampusService from 'src/@core/service/campus';
+import  CriteriaService  from 'src/@core/service/criteria';
+import FloorService from 'src/@core/service/floor';
+import CleaningFormService from 'src/@core/service/form';
 
-interface Tag {
-  Id: number;
-  name: string;
+interface Campus {
+  id: string;
+  campusCode: string;
+  campusName: string;
+  campusName2: string;
+  campusSymbol: string;
+  sortOrder: number;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
 }
-interface state {
-  selected: null;
-  hasError: false;
+interface Blocks {
+  id: string,
+  blockCode: string,
+  blockName: string,
+  blockName2: string,
+  blockNo: string,
+  dvtcode: string,
+  dvtname: string,
+  assetTypeCode: string,
+  assetTypeName: string,
+  sortOrder: number,
+  useDepartmentCode: string,
+  useDepartmentName: string,
+  manageDepartmentCode: string,
+  manageDepartmentName: string,
+  floorArea: number,
+  contructionArea: number,
+  functionCode: string,
+  functionName: string,
+  valueSettlement: number,
+  originalPrice: number,
+  centralFunding: number,
+  localFunding: number,
+  otherFunding: number,
+  statusCode: string,
+  statusName: string,
+  campusCode: string,
+  campusName: string,
+  campusId: string,
+  createdAt: string,
+  updatedAt: string
 }
-type House = {
-  HouseID: number;
-  Name: string;
-};
+
 
 type Floor = {
-  FloorID: number;
-  Name: string;
-  HouseID: number;
+  id: string,
+  floorCode: string,
+  floorName: string,
+  description: string,
+  floorOrder: number,
+  basementOrder: number,
+  sortOrder: number,
+  notes: string,
+  createdAt: string,
+  updatedAt: string
 };
 
-type Area = {
-  AreaID: number;
-  Name: string;
-  FloorID: number;
+type Room = {
+  id: string,
+  roomCode: string,
+  roomName: string,
+  description: string,
+  roomNo: string,
+  dvtcode: string,
+  dvtname: string,
+  assetTypeCode: string,
+  assetTypeName: string,
+  useDepartmentCode: string,
+  useDepartmentName: string,
+  manageDepartmentCode: string,
+  manageDepartmentName: string,
+  numberOfSeats: number,
+  floorArea: number,
+  contructionArea: number,
+  valueSettlement: number,
+  originalPrice: number,
+  centralFunding: number,
+  localFunding: number,
+  otherFunding: number,
+  statusCode: string,
+  statusName: string,
+  sortOrder: number,
+  blockId: string,
+  roomCategoryId: string,
+  floorId: string,
+  createdAt: string,
+  updatedAt: string,
+  roomCategory: null | any,
+  lessons: any[]
 };
-type Form = {
-  ID: string;
-  Name: string;
-  HouseID: number;
-  FloorID: number;
-  AreaID: number;
-  Criteria: Criteria[];
-}
-const mockHouses: House[] = [
-  { HouseID: 1, Name: 'Cơ sở A' },
-  { HouseID: 2, Name: 'Cơ sở B' }
-];
+type Tag = {
+  Id: string;
+  name: string;
+};
 
-const mockFloors: { [key: number]: Floor[] } = {
-  1: [
-    { FloorID: 1, Name: 'Tầng 1', HouseID: 1 },
-    { FloorID: 2, Name: 'Tầng 2', HouseID: 1 }
-  ],
-  2: [
-    { FloorID: 3, Name: 'Tầng 1', HouseID: 2 },
-    { FloorID: 4, Name: 'Tầng 2', HouseID: 2 }
-  ]
-};
-
-const mockAreas: { [key: number]: Area[] } = {
-  1: [
-    { AreaID: 1, Name: 'Khu vực 1', FloorID: 1 },
-    { AreaID: 2, Name: 'Khu vực 2', FloorID: 1 }
-  ],
-  2: [
-    { AreaID: 3, Name: 'Khu vực 1', FloorID: 2 },
-    { AreaID: 4, Name: 'Khu vực 2', FloorID: 2 }
-  ],
-  3: [
-    { AreaID: 5, Name: 'Khu vực 1', FloorID: 3 },
-    { AreaID: 6, Name: 'Khu vực 2', FloorID: 3 }
-  ],
-  4: [
-    { AreaID: 7, Name: 'Khu vực 1', FloorID: 4 },
-    { AreaID: 8, Name: 'Khu vực 2', FloorID: 4 }
-  ]
-};
-const mockCriteriaList = [
-  { CriteriaID: 1, Name: 'Lau kính và vách buồng xung quanh thang máy' },
-  { CriteriaID: 2, Name: 'Thường xuyên kiểm tra thang máy có vết dơ làm ngay' },
-  { CriteriaID: 3, Name: 'Xịt mùi thơm' },
-  { CriteriaID: 4, Name: 'Lau quét bụi trần, quạt gió' },
-  { CriteriaID: 5, Name: 'Đánh bóng vách bên trong' },
-  { CriteriaID: 6, Name: "Hút bụi và lau sàn thang máy" },
-  { CriteriaID: 7, Name: "Kiểm tra và làm sạch nút bấm trong thang máy" },
-  { CriteriaID: 8, Name: "Làm sạch gương và tay vịn trong thang máy" },
-  { CriteriaID: 9, Name: "Lau chùi cửa thang máy cả bên trong và bên ngoài" },
-  { CriteriaID: 10, Name: "Kiểm tra và làm sạch các khe cửa thang máy" },
-  { CriteriaID: 11, Name: "Đảm bảo thùng rác (nếu có) trong thang máy luôn sạch sẽ" },
-  { CriteriaID: 12, Name: "Kiểm tra và thay đèn chiếu sáng nếu cần" },
-  { CriteriaID: 13, Name: "Đảm bảo không có mùi khó chịu trong thang máy" },
-  { CriteriaID: 14, Name: "Làm sạch và kiểm tra hệ thống thông gió của thang máy" },
-  { CriteriaID: 15, Name: "Kiểm tra và vệ sinh các biển chỉ dẫn và bảng thông báo" }
-];
 
 type Criteria = {
-  CriteriaID: number;
-  Name: string;
-  ratingType?: string;
-  tags?: Tag[];
+  id: string,
+  criteriaName: string,
+  roomCategoryId: string,
+  criteriaType: string,
+  tags?: Tag[]
 };
 
+type Form = {
+  id?: string,
+  formName: string,
+  campusId: string,
+  blockId: string,
+  floorId: string,
+  roomId: string,
+  campusName?: string,
+  blockName?: string,
+  floorName?: string,
+  roomName?: string
+};
+
+
+
 type AddFormProps = {
-  FormList: Form[];
   onSave: (newForm: Form) => void;
   setOpenPopup: (open: boolean) => void;
 }
-const AddForm = ({ FormList, onSave, setOpenPopup }: AddFormProps) => {
-  const [selectedHouse, setSelectedHouse] = useState<number | null>(null);
-  const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
-  const [selectedArea, setSelectedArea] = useState<number | null>(null);
+const AddForm = ({ onSave, setOpenPopup }: AddFormProps) => {
+  const [campus, setCampus] = useState<Campus[]>([]);
+  const [blocks, setBlocks] = useState<Blocks[]>([]);
   const [floors, setFloors] = useState<Floor[]>([]);
-  const [areas, setAreas] = useState<Area[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
+  const [selectedBlocks, setSelectedBlocks] = useState<string | null>(null);
+  const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[]>([]);
 
-  const handleSave = () => {
-
-    const idForm = String(FormList.length > 0 ? FormList[FormList.length - 1].ID + 1 : 1);
-
-    //check if the user has selected House, Floor, Area
-    if (selectedHouse === null) {
+  const handleSave = async() => {
+    if (selectedCampus === null) {
       alert('Vui lòng chọn cơ sở');
+      return;
+    }
+    if (selectedBlocks === null) {
+      alert('Vui lòng chọn tòa nhà');
       return;
     }
     if (selectedFloor === null) {
       alert('Vui lòng chọn tầng');
       return;
     }
-    if (selectedArea === null) {
-      alert('Vui lòng chọn khu vực');
+    if (selectedRoom === null) {
+      alert('Vui lòng chọn phòng');
       return;
     }
 
@@ -128,103 +168,250 @@ const AddForm = ({ FormList, onSave, setOpenPopup }: AddFormProps) => {
       alert('Vui lòng chọn ít nhất 1 tiêu chí');
       return;
     }
-    const newForm: Form = {
-      ID: idForm, // Dummy ID for the new Form
-      Name: 'Form1',
-      HouseID: selectedHouse || 1,
-      FloorID: selectedFloor || 1,
-      AreaID: selectedArea || 1,
-      Criteria: Criterialist
+    const newForm = {
+      formName: 'Form2',
+      campusId: selectedCampus,
+      blockId: selectedBlocks,
+      floorId: selectedFloor,
+      roomId: selectedRoom,
+      createAt: new Date().toISOString(),
+      updateAt: new Date().toISOString()
     };
+    const criteriaList = selectedCriteriaList;
+    const formResponse = await CleaningFormService.postCleaningForm(newForm);
+    console.log(newForm)
+    const newCriteriaPerForm = {
+        formId: formResponse.data.id,
+        criteriaList: criteriaList.map((criteria) => ({id:criteria.id})),
+    }
+    console.log(newCriteriaPerForm)
+    await CleaningFormService.postCriteriaPerForm(newCriteriaPerForm);
     onSave(newForm);
     setOpenPopup(false);
   }
 
-  useEffect(() => {
-    if (selectedHouse !== null) {
-      setFloors(mockFloors[selectedHouse] || []);
-      setSelectedFloor(null);
-      setSelectedArea(null);
-      setAreas([]);
-    }
-
-  }, [selectedHouse]);
-
-  useEffect(() => {
-    if (selectedFloor !== null) {
-      setAreas(mockAreas[selectedFloor] || []);
-      setSelectedArea(null);
-    }
-
-  }, [selectedFloor]);
-
-  useEffect(() => {
-  }, [selectedArea]);
 
   const handleCriteriaChange = (criteria: Criteria) => {
     setSelectedCriteriaList((prevSelectedCriteriaList) => {
       let newSelectedCriteriaList;
-      if (prevSelectedCriteriaList.some((c) => c.CriteriaID === criteria.CriteriaID)) {
-        newSelectedCriteriaList = prevSelectedCriteriaList.filter((c) => c.CriteriaID !== criteria.CriteriaID);
+      if (prevSelectedCriteriaList.some((c) => c.id === criteria.id)) {
+        newSelectedCriteriaList = prevSelectedCriteriaList.filter((c) => c.id !== criteria.id);
       } else {
         newSelectedCriteriaList = [...prevSelectedCriteriaList, criteria];
       }
       return newSelectedCriteriaList;
     });
+    
   };
+  useEffect(() => {
+    const fetchCampus = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response1 = await CampusService.getAllCampus();
+        setCampus(response1.data);
+      }
+      catch (error) {
+        setError(error.message);
+        console.error('Chi tiết lỗi:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCampus();
+  }, []);
+
+  useEffect(()=>{
+    setSelectedBlocks(null);
+    setSelectedFloor(null);
+    setSelectedRoom(null);
+  },[selectedCampus]);
+  const handleCampusSelect = async (CampusId: string) => {
+    var campusId = CampusId;
+    try {
+      const response = await BlockService.getBlockByCampusId(campusId);
+      setBlocks(response.data);
+      setFloors([]);
+      setRooms([]);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+  const handleBlockSelect = async (blockId: string) => {
+    var blockId = blockId;
+    try {
+      const response = await FloorService.getFloorByBlockId(blockId);
+      if (response.data.length > 0) {
+        setFloors(response.data);
+        console.log(response.data);
+        setRooms([]);
+      }
+      else {
+        setFloors([]);
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+
+  const handleFloorSelect = async (floorId: string) => {
+    var floorId = floorId;
+
+    try {
+      const response = await RoomService.getRoomsByFloorId(floorId);
+      if (response.data.length > 0) {
+        setRooms(response.data);
+      }
+      else {
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+
+  const handleRoomSelect = async (roomId:string)=>{
+    var roomCategoryId = rooms.find(room=>room.id === roomId)?.roomCategoryId;
+    console.log("room",roomCategoryId);
+    const response = await CriteriaService.getCriteriaByRoomCategoryId(roomCategoryId||'');
+    setCriteriaList(response.data);
+    console.log("Data",response.data);
+  }
+
+  useEffect(()=>{
+    console.log("Criteria",selectedCriteriaList);
+  },[selectedCriteriaList]);
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ position: 'relative' }}>
-        <InputLabel id="demo-simple-select-floor-label">Chọn cơ sở</InputLabel>
-        <Select
-          labelId="demo-simple-select-floor-label"
-          id="demo-simple-select-floor"
-          value={selectedHouse}
-          label="Chọn tầng"
-          onChange={(e) => setSelectedHouse(parseInt(e.target.value as string))}
-          sx={{ width: "100%" }}
+        <Autocomplete
+          fullWidth
+          sx={{marginY:2}}
+          options={campus}
+          getOptionLabel={(option: any) => option.campusName || ''}
+          value={campus.find((c: any) => c.id === selectedCampus) || null}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              setSelectedCampus(newValue ? newValue.id : null);
+              handleCampusSelect(newValue ? newValue.id : '');
+            }
+            else {
+              setSelectedCampus(null);
+              setBlocks([]);
+              setSelectedBlocks(null);
+              setFloors([]);
+              setSelectedFloor(null);
+              setRooms([]);
+              setSelectedRoom(null);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Chọn cơ sở"
+              variant="outlined"
+            />
+          )}
+          noOptionsText="Không có dữ liệu cơ sở"
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+        />
 
-        >
-          {mockHouses.map(house => (
-            <MenuItem key={house.HouseID} value={house.HouseID}>{house.Name}</MenuItem>
-          ))}
-        </Select>
+        <Autocomplete
+          fullWidth
+          sx={{marginY:2}}
+          options={blocks}
+          getOptionLabel={(option: any) => option.blockName || ''}
+          value={blocks.find((b: any) => b.id === selectedBlocks) || null}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              setSelectedBlocks(newValue ? newValue.id : null);
+              handleBlockSelect(newValue ? newValue.id : '');
+            }
+            else {
+              setSelectedBlocks(null);
+              setFloors([]);
+              setSelectedFloor(null);
+              setRooms([]);
+              setSelectedRoom(null);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Chọn tòa nhà"
+              variant="outlined"
+            />
+          )}
+          noOptionsText="Không có dữ liệu tòa nhà"
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+        />
+        <Autocomplete
+          fullWidth
+          sx={{marginY:2}}
 
-        <InputLabel id="demo-simple-select-floor-label">Chọn tầng</InputLabel>
-        <Select
-          labelId="demo-simple-select-floor-label"
-          id="demo-simple-select-floor"
-          value={selectedFloor}
-          label="Chọn tầng"
-          onChange={(e) => setSelectedFloor(parseInt(e.target.value as string))}
-          sx={{ width: "100%" }}
-          disabled={!selectedHouse}
-        >
-          {floors.map(floor => (
-            <MenuItem key={floor.FloorID} value={floor.FloorID}>{floor.Name}</MenuItem>
-          ))}
-        </Select>
-        <InputLabel id="demo-simple-select-floor-label">Chọn khu vực</InputLabel>
-        <Select
-          labelId="demo-simple-select-floor-label"
-          id="demo-simple-select-floor"
-          value={selectedArea}
-          label="Chọn tầng"
-          onChange={(e) => setSelectedArea(parseInt(e.target.value as string))}
-          sx={{ width: "100%" }}
-          disabled={!selectedFloor}
-        >
-          {areas.map(area => (
-            <MenuItem key={area.AreaID} value={area.AreaID}>{area.Name}</MenuItem>
-          ))}
-        </Select>
+          options={floors}
+          getOptionLabel={(option: Floor) => option.floorName || ''}
+          value={floors.find(floor => floor.id === selectedFloor) || null}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              setSelectedFloor(newValue ? newValue.id : null);
+              handleFloorSelect(newValue ? newValue.id : '');
+            }
+            else {
+              setSelectedFloor(null);
+              setRooms([]);
+              setSelectedRoom(null);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Chọn tầng"
+              variant="outlined"
+            />
+          )}
+          noOptionsText="Không có dữ liệu tầng"
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+        />
+        <Autocomplete
+          fullWidth
+          sx={{marginY:2}}
+          options={rooms}
+          getOptionLabel={(option: any) => option.roomName || ''}
+          value={rooms.find(room => room.id === selectedRoom) || null}
+          onChange={(event, newValue) => {
+            if (newValue) {
+              setSelectedRoom(newValue ? newValue.id : null);
+              handleRoomSelect(newValue ? newValue.id : '');
+            }
+            else {
+              setSelectedRoom(null);
+              setCriteriaList([]);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Chọn phòng"
+              variant="outlined"
+            />
+          )}
+          noOptionsText="Không có dữ liệu phòng"
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          renderOption={(props, option) => (
+            <li {...props} key={option.id}>
+              {option.roomName}
+            </li>
+          )}
+        />
         <Typography variant="h6">Chọn tiêu chí</Typography>
         <FormGroup>
-          {mockCriteriaList.map((criteria) => (
+          {criteriaList.map((criteria) => (
             <FormControlLabel
-              key={criteria.CriteriaID}
+              key={criteria.id}
               control={<Checkbox checked={selectedCriteriaList.includes(criteria)} onChange={() => handleCriteriaChange(criteria)} />}
-              label={criteria.Name}
+              label={criteria.criteriaName}
             />
           ))}
         </FormGroup>
