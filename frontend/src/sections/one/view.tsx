@@ -18,11 +18,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import EditIcon from '@mui/icons-material/Edit';
 import RenderRatingInput from 'src/sections/components/rating/renderRatingInput';
 import { DateTime } from 'luxon';
-import { API_ENDPOINT } from 'src/config-global';
-import axios from 'axios';
 import BlockService from 'src/@core/service/block';
 import FloorService from 'src/@core/service/floor';
 import CampusService from 'src/@core/service/campus';
@@ -347,40 +344,37 @@ export default function OneView() {
             gap: 2,
             marginBottom: 2,
           }}>
-
-
-            <FormControl fullWidth sx={{ flex: 1 }}>
-              <InputLabel id="demo-simple-select-label">Chọn cơ sở</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedCampus !== undefined ? selectedCampus?.toString() : ''}
-                label="Chọn cơ sở"
-                onChange={(e) => handleCampusSelect(e.target.value)}
-              >
-                {campus.map((c: any) => (
-                  <MenuItem key={c.id} value={c.id}>{c.campusName}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* <FormControl fullWidth sx={{ flex: 1 }}>
-              <InputLabel id="demo-simple-select-label">Chọn tòa nhà</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedBlocks !== undefined ? selectedBlocks?.toString() : ''}
-                label="Chọn tòa nhà"
-                onChange={(e) => handleBlockSelect(e.target.value)}
-              >
-                {blocks.length === 0 ? (
-                  <MenuItem value="no_data" disabled>Không có dữ liệu tòa nhà</MenuItem>
-                ) : (
-                  blocks.map((block:any) => (
-                    <MenuItem key={block.id} value={block.id}>{block.blockName}</MenuItem>
-                  ))
-                )}
-              </Select>
-            </FormControl> */}
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
+              options={campus}
+              getOptionLabel={(option: any) => option.campusName || ''}
+              value={campus.find((c: any) => c.id === selectedCampus) || null}
+              onChange={(event, newValue) => {
+                if(newValue){
+                  setSelectedCampus(newValue ? newValue.id : null);
+                  handleCampusSelect(newValue ? newValue.id : '');
+                }
+                else{
+                  setSelectedCampus(null);
+                  setBlocks([]);
+                  setSelectedBlocks(null);
+                  setFloors([]);
+                  setSelectedFloor(null);
+                  setRooms([]);
+                  setSelectedRoom(null);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn cơ sở"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu cơ sở"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
             <Autocomplete
               fullWidth
               sx={{ flex: 1 }}
@@ -388,8 +382,15 @@ export default function OneView() {
               getOptionLabel={(option: any) => option.blockName || ''}
               value={selectedBlocks}
               onChange={(event, newValue) => {
-                setSelectedBlocks(newValue);
-                handleBlockSelect(newValue ? newValue.id : '');
+                if(newValue){
+                  setSelectedBlocks(newValue);
+                  handleBlockSelect(newValue ? newValue.id : '');
+                }
+                else{
+                  setSelectedBlocks(null);
+                  setFloors([]);
+                  setRooms([]);
+                }
               }}
               renderInput={(params) => (
                 <TextField
@@ -401,33 +402,46 @@ export default function OneView() {
               noOptionsText="Không có dữ liệu tòa nhà"
               isOptionEqualToValue={(option, value) => option.id === value.id}
             />
-            <FormControl fullWidth sx={{ flex: 1 }}>
-              <InputLabel id="demo-simple-select-floor-label">Chọn tầng</InputLabel>
-              <Select
-                labelId="demo-simple-select-floor-label"
-                id="demo-simple-select-floor"
-                value={selectedFloor !== undefined ? selectedFloor?.toString() : ''}
-                label="Chọn tầng"
-                onChange={(e) => handleFloorSelect(e.target.value)}
-              >
-                {floors.length === 0 ? (
-                  <MenuItem value="no_data" disabled>Không có dữ liệu tầng</MenuItem>
-                ) : (
-                  floors.map(floor => (
-                    <MenuItem key={floor.id} value={floor.id}>{floor.floorName}</MenuItem>
-                  ))
-                )}
-              </Select>
-            </FormControl>
             <Autocomplete
               fullWidth
-              sx={{flex:1}}
+              sx={{ flex: 1 }}
+              options={floors}
+              getOptionLabel={(option: Floor) => option.floorName || ''}
+              value={floors.find(floor => floor.id === selectedFloor) || null}
+              onChange={(event, newValue) => {
+                if(newValue){
+                  setSelectedFloor(newValue ? newValue.id : null);
+                  handleFloorSelect(newValue ? newValue.id : '');
+                }
+                else{
+                  setSelectedFloor(null);
+                  setRooms([]);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn tầng"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu tầng"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
               options={rooms}
               getOptionLabel={(option: any) => option.roomName || ''}
               value={rooms.find(room => room.id === selectedRoom) || null}
               onChange={(event, newValue) => {
-                setSelectedRoom(newValue ? newValue.id : null);
-                handleRoomSelect(newValue ? newValue.id : '');
+                if(newValue){ 
+                  setSelectedRoom(newValue ? newValue.id : null);
+                  handleRoomSelect(newValue ? newValue.id : '');
+                }
+                else{
+                  setSelectedRoom(null);
+                }
               }}
               renderInput={(params) => (
                 <TextField
@@ -439,21 +453,26 @@ export default function OneView() {
               noOptionsText="Không có dữ liệu phòng"
               isOptionEqualToValue={(option, value) => option.id === value.id}
             />
-            <FormControl fullWidth sx={{ flex: 1 }}>
-              <InputLabel id="demo-simple-select-label">Chọn ca</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedShift || ''}
-                label="Chọn ca"
-                onChange={(e) => handleShiftSelect(e.target.value as string)}
-              >
-                {shifts.map((s: any) => (
-                  <MenuItem key={s.id} value={s.id}>{s.shiftName} ({s.startTime.substring(0, 5)} - {s.endTime.substring(0, 5)})</MenuItem>
-                ))}
-
-              </Select>
-            </FormControl>
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
+              options={shifts}
+              getOptionLabel={(option: any) => `${option.shiftName} (${option.startTime.substring(0, 5)} - ${option.endTime.substring(0, 5)})`}
+              value={shifts.find(shift => shift.id === selectedShift) || null}
+              onChange={(event, newValue) => {
+                setSelectedShift(newValue ? newValue.id : null);
+                handleShiftSelect(newValue ? newValue.id : '');
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn ca"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu ca"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
           </Box>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">

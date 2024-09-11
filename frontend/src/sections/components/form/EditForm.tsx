@@ -2,79 +2,128 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import { floor } from 'lodash';
+import  RoomService  from '@mui/icons-material';
+import  BlockService from 'src/@core/service/block';
+import  FloorService  from 'src/@core/service/floor';
 
-interface Tag {
-  Id: number;
-  name: string;
+interface Campus {
+  id: string;
+  campusCode: string;
+  campusName: string;
+  campusName2: string;
+  campusSymbol: string;
+  sortOrder: number;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+interface Blocks {
+  id: string,
+  blockCode: string,
+  blockName: string,
+  blockName2: string,
+  blockNo: string,
+  dvtcode: string,
+  dvtname: string,
+  assetTypeCode: string,
+  assetTypeName: string,
+  sortOrder: number,
+  useDepartmentCode: string,
+  useDepartmentName: string,
+  manageDepartmentCode: string,
+  manageDepartmentName: string,
+  floorArea: number,
+  contructionArea: number,
+  functionCode: string,
+  functionName: string,
+  valueSettlement: number,
+  originalPrice: number,
+  centralFunding: number,
+  localFunding: number,
+  otherFunding: number,
+  statusCode: string,
+  statusName: string,
+  campusCode: string,
+  campusName: string,
+  campusId: string,
+  createdAt: string,
+  updatedAt: string
 }
 
-type House = {
-  HouseID: number;
-  Name: string;
-};
 
 type Floor = {
-  FloorID: number;
-  Name: string;
-  HouseID: number;
+  id: string,
+  floorCode: string,
+  floorName: string,
+  description: string,
+  floorOrder: number,
+  basementOrder: number,
+  sortOrder: number,
+  notes: string,
+  createdAt: string,
+  updatedAt: string
 };
 
-type Area = {
-  AreaID: number;
-  Name: string;
-  FloorID: number;
+type Room = {
+  id: string,
+  roomCode: string,
+  roomName: string,
+  description: string,
+  roomNo: string,
+  dvtcode: string,
+  dvtname: string,
+  assetTypeCode: string,
+  assetTypeName: string,
+  useDepartmentCode: string,
+  useDepartmentName: string,
+  manageDepartmentCode: string,
+  manageDepartmentName: string,
+  numberOfSeats: number,
+  floorArea: number,
+  contructionArea: number,
+  valueSettlement: number,
+  originalPrice: number,
+  centralFunding: number,
+  localFunding: number,
+  otherFunding: number,
+  statusCode: string,
+  statusName: string,
+  sortOrder: number,
+  blockId: string,
+  roomCategoryId: string,
+  floorId: string,
+  createdAt: string,
+  updatedAt: string,
+  roomCategory: null | any,
+  lessons: any[]
 };
+type Tag = {
+  Id: string;
+  name: string;
+};
+
 
 type Criteria = {
   CriteriaID: number;
   Name: string;
-  ratingType?: string;
+  ratingtype?: string;
   tags?: Tag[];
 };
 
 type Form = {
-  ID: string;
-  Name: string;
-  HouseID: number;
-  FloorID: number;
-  AreaID: number;
-  Criteria: Criteria[];
+  id: string,
+  formName: string,
+  campusId: string,
+  blockId: string,
+  floorId: string,
+  roomId: string,
+  campusName?: string,
+  blockName?: string,
+  floorName?: string,
+  roomName?: string
 };
 
-const mockHouses: House[] = [
-  { HouseID: 1, Name: 'Cơ sở A' },
-  { HouseID: 2, Name: 'Cơ sở B' }
-];
 
-const mockFloors: { [key: number]: Floor[] } = {
-  1: [
-    { FloorID: 1, Name: 'Tầng 1', HouseID: 1 },
-    { FloorID: 2, Name: 'Tầng 2', HouseID: 1 }
-  ],
-  2: [
-    { FloorID: 3, Name: 'Tầng 1', HouseID: 2 },
-    { FloorID: 4, Name: 'Tầng 2', HouseID: 2 }
-  ]
-};
-
-const mockAreas: { [key: number]: Area[] } = {
-  1: [
-    { AreaID: 1, Name: 'Khu vực 1', FloorID: 1 },
-    { AreaID: 2, Name: 'Khu vực 2', FloorID: 1 }
-  ],
-  2: [
-    { AreaID: 3, Name: 'Khu vực 1', FloorID: 2 },
-    { AreaID: 4, Name: 'Khu vực 2', FloorID: 2 }
-  ],
-  3: [
-    { AreaID: 5, Name: 'Khu vực 1', FloorID: 3 },
-    { AreaID: 6, Name: 'Khu vực 2', FloorID: 3 }
-  ],
-  4: [
-    { AreaID: 7, Name: 'Khu vực 1', FloorID: 4 },
-    { AreaID: 8, Name: 'Khu vực 2', FloorID: 4 }
-  ]
-};
 
 const mockCriteriaList = [
   { CriteriaID: 1, Name: 'Lau kính và vách buồng xung quanh thang máy' },
@@ -101,6 +150,11 @@ type EditFormProps = {
 };
 
 const EditForm = ({ Form, onSave, setOpenPopup }: EditFormProps) => {
+  const [Campus, setCampus] = useState<Campus[]>([]);
+  const [Blocks, setBlocks] = useState<Blocks[]>([]);
+  const [Floors, setFloors] = useState<Floor[]>([]);
+  const [Rooms, setRooms] = useState<Room[]>([]);
+  const [Criteria, setCriteria] = useState<Criteria[]>([]);
   const [selectedHouse, setSelectedHouse] = useState<number | null>(Form.HouseID);
   const [selectedFloor, setSelectedFloor] = useState<number | null>(Form.FloorID);
   const [selectedArea, setSelectedArea] = useState<number | null>(Form.AreaID);
@@ -108,7 +162,7 @@ const EditForm = ({ Form, onSave, setOpenPopup }: EditFormProps) => {
   const [areas, setAreas] = useState<Area[]>([]);
   const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[]>(Form.Criteria);
 
-  console.log("floor: ",selectedFloor)
+  console.log("floor: ", selectedFloor)
   useEffect(() => {
     setSelectedHouse(Form.HouseID);
     setSelectedFloor(Form.FloorID);
@@ -174,6 +228,53 @@ const EditForm = ({ Form, onSave, setOpenPopup }: EditFormProps) => {
     onSave(newForm);
     setOpenPopup(false);
   };
+
+  const handleCampusSelect = async (CampusId: string) => {
+    var campusId = CampusId;
+    try {
+      const response = await BlockService.getBlockByCampusId(campusId);
+      setBlocks(response.data);
+      setFloors([]);
+      setRooms([]);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+  const handleBlockSelect = async (blockId: string) => {
+    var blockId = blockId;
+
+    try {
+      const response = await FloorService.getFloorByBlockId(blockId);
+      if (response.data.length > 0) {
+        setFloors(response.data);
+        console.log(response.data);
+        setRooms([]);
+      }
+      else {
+        setFloors([]);
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+
+  const handleFloorSelect = async (floorId: string) => {
+    var floorId = floorId;
+
+    try {
+      const response = await RoomService.getRoomsByFloorId(floorId);
+      if (response.data.length > 0) {
+        setRooms(response.data);
+      }
+      else {
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>

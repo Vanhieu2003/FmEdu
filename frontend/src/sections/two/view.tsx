@@ -115,57 +115,6 @@ type Room = {
   lessons: any[]
 };
 
-
-
-
-
-
-type Criteria = {
-  CriteriaID: number;
-  Name: string;
-  AreaID: number;
-};
-
-
-
-const mockCleaningCriteria: { [key: string]: Criteria[] } = {
-  1: [
-    { CriteriaID: 1, Name: 'Tiêu chí 1', AreaID: 1 },
-    { CriteriaID: 2, Name: 'Tiêu chí 2', AreaID: 1 },
-    { CriteriaID: 22, Name: 'Tiêu chí 3', AreaID: 1 },
-    { CriteriaID: 23, Name: 'Tiêu chí 4', AreaID: 1 },
-    { CriteriaID: 24, Name: 'Tiêu chí 5', AreaID: 1 }
-  ],
-  2: [
-    { CriteriaID: 3, Name: 'Tiêu chí 1', AreaID: 2 },
-    { CriteriaID: 4, Name: 'Tiêu chí 2', AreaID: 2 }
-  ],
-  3: [
-    { CriteriaID: 5, Name: 'Tiêu chí 1', AreaID: 3 },
-    { CriteriaID: 6, Name: 'Tiêu chí 2', AreaID: 3 }
-  ],
-  4: [
-    { CriteriaID: 7, Name: 'Tiêu chí 1', AreaID: 4 },
-    { CriteriaID: 8, Name: 'Tiêu chí 2', AreaID: 4 }
-  ],
-  5: [
-    { CriteriaID: 9, Name: 'Tiêu chí 1', AreaID: 5 },
-    { CriteriaID: 10, Name: 'Tiêu chí 2', AreaID: 5 }
-  ],
-  6: [
-    { CriteriaID: 11, Name: 'Tiêu chí 1', AreaID: 6 },
-    { CriteriaID: 12, Name: 'Tiêu chí 2', AreaID: 6 }
-  ],
-  7: [
-    { CriteriaID: 13, Name: 'Tiêu chí 1', AreaID: 7 },
-    { CriteriaID: 14, Name: 'Tiêu chí 2', AreaID: 7 }
-  ],
-  8: [
-    { CriteriaID: 15, Name: 'Tiêu chí 1', AreaID: 8 },
-    { CriteriaID: 16, Name: 'Tiêu chí 2', AreaID: 8 }
-  ]
-};
-
 const mockReports = [
   { ReportID: 1, Date: '2024-05-01', CampusName: "Cơ sở A1 Nơ Trang Long", BlockName: "Tòa nhà 1", FloorName: 'Tầng 1', RoomName: 'Phòng học 1' },
   { ReportID: 2, Date: '2024-05-02', CampusName: "Cơ sở 351 Lạc Long Quân", BlockName: "Tòa nhà 1", FloorName: 'Tầng 2', RoomName: 'Phòng học 1' },
@@ -202,8 +151,7 @@ export default function TwoView() {
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
   const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<moment.Moment | null>(null);
-  const [selectedDateFormatted, setSelectedDateFormat] = useState<string|null>(null);
+  const [selectedDate, setSelectedDate] = useState<Dayjs| null>(null);
   const [reports, setReports] = useState<any[]>(mockReports);
 
   const filterReports = () => {
@@ -220,15 +168,10 @@ export default function TwoView() {
     if (selectedRoom !== null) {
       filteredReports = filteredReports.filter(report => report.RoomName === rooms.find(room => room.id === selectedRoom)?.roomName);
     }
-    if (selectedDate !== null && moment(selectedDate).isValid()) {
-      const selectedDateISO = selectedDate.toDate().toISOString();
-      console.log('Selected Date ISO:', selectedDateISO);
-      
-      const dateFormatted = moment(selectedDateISO).format('YYYY-MM-DD');
+    if (selectedDate !== null && moment(selectedDate.format('DD/MM/YYYY')).isValid()) {
+     
+      const dateFormatted = moment(selectedDate.format('DD/MM/YYYY')).format('YYYY-DD-MM');
       console.log('Date Formatted:', dateFormatted);
-      
-      setSelectedDateFormat(dateFormatted);
-      
       // Sử dụng dateFormatted trực tiếp thay vì selectedDateFormatted
       filteredReports = filteredReports.filter(report => report.Date === dateFormatted);
       console.log('Filtered Reports:', filteredReports);
@@ -246,6 +189,10 @@ export default function TwoView() {
       return newReports;
     });
   };
+
+  useEffect(() => {
+    console.log('Selected Date:', selectedDate);
+  }, [selectedDate]);
   useEffect(() => {
     const fetchCampus = async () => {
       setIsLoading(true);
@@ -266,7 +213,6 @@ export default function TwoView() {
 
   useEffect(() => {
     filterReports();
-
   }, [selectedCampus, selectedBlock, selectedFloor, selectedRoom,selectedDate]);
 
   useEffect(() => {
@@ -325,18 +271,21 @@ export default function TwoView() {
           <DatePicker
             label="Chọn thời gian"
             value={selectedDate}
-            onChange={(newDate: any) => {
-              if (newDate && moment(newDate).isValid()) {
-                setSelectedDate(newDate);
-              }
+            onChange={(newDate: Dayjs | null) => {
+              console.log('Ngày được chọn:', newDate?.format('DD/MM/YYYY'));
+            setSelectedDate(newDate);
             }}
-            onAccept={(newDate) => {
-              if (newDate && moment(newDate).isValid()) {
+            onAccept={(newDate: Dayjs | null) => {
+              if (newDate && moment(newDate.format('DD/MM/YYYY'), 'DD/MM/YYYY', true).isValid()) {
                 setSelectedDate(newDate);
               }
             }}
             format="DD/MM/YYYY"
-            
+            slotProps={{
+              textField: {
+                helperText: 'DD/MM/YYYY',
+              },
+            }}
           />
         </LocalizationProvider>
         <FormControl fullWidth sx={{ flex: 1 }}>
