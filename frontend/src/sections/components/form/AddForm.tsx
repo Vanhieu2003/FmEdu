@@ -128,10 +128,9 @@ type Form = {
 
 
 type AddFormProps = {
-  onSave: (newForm: Form) => void;
   setOpenPopup: (open: boolean) => void;
 }
-const AddForm = ({ onSave, setOpenPopup }: AddFormProps) => {
+const AddForm = ({ setOpenPopup }: AddFormProps) => {
   const [campus, setCampus] = useState<Campus[]>([]);
   const [blocks, setBlocks] = useState<Blocks[]>([]);
   const [floors, setFloors] = useState<Floor[]>([]);
@@ -179,14 +178,14 @@ const AddForm = ({ onSave, setOpenPopup }: AddFormProps) => {
     };
     const criteriaList = selectedCriteriaList;
     const formResponse = await CleaningFormService.postCleaningForm(newForm);
-    console.log(newForm)
+    
     const newCriteriaPerForm = {
         formId: formResponse.data.id,
         criteriaList: criteriaList.map((criteria) => ({id:criteria.id})),
     }
-    console.log(newCriteriaPerForm)
+    
     await CleaningFormService.postCriteriaPerForm(newCriteriaPerForm);
-    onSave(newForm);
+    window.location.reload();
     setOpenPopup(false);
   }
 

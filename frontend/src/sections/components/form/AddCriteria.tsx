@@ -131,6 +131,7 @@ const AddCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
         }
         console.log(newTagsPerCriteria)
         await TagService.postTagsPerCriteria(newTagsPerCriteria);
+        window.location.reload();
         setOpenPopup(false);
     };
 

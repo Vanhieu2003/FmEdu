@@ -212,7 +212,6 @@ export default function FourView() {
   }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, form: Form) => {
-
     setCurrentFormID(form.id || '');
     setAnchorEl(event.currentTarget);
   };
@@ -238,30 +237,30 @@ export default function FourView() {
 
   }, [selectedCampus, selectedBlocks, selectedFloor, selectedRoom]);
 
-  const handleSave = (newForm: Form) => {
-    console.log(newForm);
-    if (formList && formList.length !== 0) {
-      formList.map((form) => {
-        if (form.id === newForm.id) {
-          form.formName = newForm.formName;
-          form.campusId = newForm.campusId;
-          form.blockId = newForm.blockId;
-          form.floorId = newForm.floorId;
-          form.roomId = newForm.roomId;
-          console.log("OK")
-        }
-        else {
-          const updatedFormList = [...formList, newForm];
-          setFormList(updatedFormList);
-          console.log("else")
-        }
-      })
-    }
-    else {
-      const updatedFormList = [...(formList || []), newForm];
-      setFormList(updatedFormList);
-    }
-  };
+  // const handleSave = (newForm: Form) => {
+  //   console.log(newForm);
+  //   if (formList && formList.length !== 0) {
+  //     formList.map((form) => {
+  //       if (form.id === newForm.id) {
+  //         form.formName = newForm.formName;
+  //         form.campusId = newForm.campusId;
+  //         form.blockId = newForm.blockId;
+  //         form.floorId = newForm.floorId;
+  //         form.roomId = newForm.roomId;
+  //         console.log("OK")
+  //       }
+  //       else {
+  //         const updatedFormList = [...formList, newForm];
+  //         setFormList(updatedFormList);
+  //         console.log("else")
+  //       }
+  //     })
+  //   }
+  //   else {
+  //     const updatedFormList = [...(formList || []), newForm];
+  //     setFormList(updatedFormList);
+  //   }
+  // };
 
   useEffect(() => {
     setFilterFormList(formList);
@@ -317,11 +316,11 @@ export default function FourView() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h4">Page four</Typography>
         <Button variant='contained' onClick={handleAddClick}>Tạo mới</Button>
-        <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
+        <Popup title={isEditing ? 'Chỉnh sửa Form' : 'Tạo mới Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
           {isEditing ? (
-            <EditForm Form={formList?.find(c => c.id === currentFormID) ?? {} as Form} onSave={handleSave} setOpenPopup={setOpenPopUp} />
+            <EditForm formId= {currentFormID} setOpenPopup={setOpenPopUp} />
           ) : (
-            <AddForm onSave={handleSave} setOpenPopup={setOpenPopUp} />
+            <AddForm  setOpenPopup={setOpenPopUp} />
           )
           }
         </Popup>
@@ -511,14 +510,9 @@ export default function FourView() {
                           <MenuItem onClick={() => { handleClose(); handleEditClick() }}>
                             <Link sx={{ display: 'flex' }} underline='none' onClick={() => setOpenPopUp(true)}   >
                               <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }}>
-                                {/* <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} formId={currentFormID} >
-                                  {isEditing ? (
-                                    <EditForm Form={formList?.find(c => c.ID === currentFormID) ?? {} as Form} onSave={handleSave} setOpenPopup={setOpenPopUp} />
-                                  ) : (
-                                    <AddForm FormList={formList} onSave={handleSave} setOpenPopup={setOpenPopUp} />
-                                  )
-                                  }
-                                </Popup> */}
+                                <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} formId={currentFormID} >
+                                  <EditForm formId = {currentFormID} setOpenPopup={setOpenPopUp} />
+                                </Popup>
                               </EditOutlinedIcon>
                               Edit
                             </Link>

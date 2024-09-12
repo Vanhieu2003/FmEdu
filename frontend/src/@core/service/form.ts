@@ -24,5 +24,11 @@ export class CleaningFormService{
  postCriteriaPerForm = async(data:any) => {
     return axios.post(`${API_ENDPOINT}/api/CriteriasPerForms/newForm`,data);
  }
+ getFormById = async(formId:string) => {
+    return axios.get(`${API_ENDPOINT}/api/CleaningForms/${formId}`);
+ }
+ EditCleaningForm = async(data:any) => {
+    return axios.put(`${API_ENDPOINT}/api/CriteriasPerForms/edit`,data);
+ }
 }
 export default new CleaningFormService();
