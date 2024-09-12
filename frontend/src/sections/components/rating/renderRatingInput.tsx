@@ -1,40 +1,41 @@
 "use client"
 
 import { FormControlLabel, Radio, RadioGroup, Rating } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface Props {
     criteriaID?: string;
     inputRatingType: string;
     disabled?:boolean;
+    value:any;
+    onValueChange?: (criteriaId: string, value: any) => void;
 }
 
-const RenderRatingInput = ({ criteriaID,inputRatingType,disabled=false }: Props) => {
-    const [ratingValues, setRatingValues] = useState<Record<string,any>>({});
-
-    const handleValueChange = (criteriaID: string, value: any) => {
-      setRatingValues(prevValues => ({
-        ...prevValues,
-        [criteriaID]: value,
-      }));
+const RenderRatingInput = ({ criteriaID,inputRatingType,disabled=false,value,onValueChange }: Props) => {
+    const [ratingValues, setRatingValues] = useState<{[key:string]:any}>({});
+    const handleChange = (value: any) => {
+      onValueChange?.(criteriaID?criteriaID:'', value);
     };
+    useEffect(() => {
+        console.log("ratingvalue:", ratingValues);
+    }, [ratingValues]);
     switch (inputRatingType) {
         case "BINARY":
           return (
             <RadioGroup
               row
-              value={ratingValues[criteriaID?criteriaID:0] || ''}
-              onChange={(e) => handleValueChange(criteriaID?criteriaID:'', e.target.value)}
+              value={value.toString()}
+              onChange={(e) => handleChange(Number(e.target.value))}
             >
-              <FormControlLabel value="Đạt" control={<Radio />} label="Đạt" sx={{margin:0}} disabled={disabled} />
-              <FormControlLabel value="Không đạt" control={<Radio />} label="Không đạt" sx={{margin:0}} disabled={disabled} />
+              <FormControlLabel value="2" control={<Radio />} label="Đạt" sx={{margin:0}} disabled={disabled} />
+              <FormControlLabel value="1" control={<Radio />} label="Không đạt" sx={{margin:0}} disabled={disabled} />
             </RadioGroup>
           );
         case "RATING":
           return (
             <Rating
-              value={ratingValues[criteriaID?criteriaID:0] || 0}
-              onChange={(event, newValue) => handleValueChange(criteriaID?criteriaID:'', newValue)}
+              value={value || 0}
+              onChange={(event, newValue) => handleChange(newValue)}
               disabled={disabled}
             />
           );

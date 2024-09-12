@@ -150,6 +150,8 @@ export default function OneView() {
   const [selectedFloor, setSelectedFloor] = useState<any>(null);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [selectedShift, setSelectedShift] = useState<any>(null);
+  const [criteriaEvaluations, setCriteriaEvaluations] = useState<Array<{ criteriaId: string, value: any, note:string }>>([]);
+  const [ratingValues, setRatingValues] = useState<{ [key: string]: any }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [campus, setCampus] = useState([]);
@@ -160,8 +162,6 @@ export default function OneView() {
   const [criteria, setCriteria] = useState<Criteria[]>([]);
 
   const [ratingTypesSelected, setRatingTypesSelected] = useState<{ [key: string]: string }>({});
-  const [ratingValues, setRatingValues] = useState<{ [key: number]: any }>({});
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentCriteriaID, setCurrentCriteriaID] = useState<string | null>(null);
 
@@ -184,12 +184,22 @@ export default function OneView() {
     handleClose(); // Close the popover after changing the type
   };
 
-  const handleValueChange = (criteriaID: string, value: any) => {
-    setRatingValues(prevValues => ({
-      ...prevValues,
-      [criteriaID]: value,
-    }));
+  const updateCriteriaEvaluation = (criteriaId: string, value: any, note: string) => {
+    setCriteriaEvaluations(prevEvaluations => {
+      const numericValue = Number(value);
+      const existingIndex = prevEvaluations.findIndex(evaluation => evaluation.criteriaId === criteriaId);
+      if (existingIndex !== -1) {
+        // Nếu đã tồn tại, cập nhật giá trị
+        const newEvaluations = [...prevEvaluations];
+        newEvaluations[existingIndex] = { criteriaId, value: numericValue, note };
+        return newEvaluations;
+      } else {
+        // Nếu chưa tồn tại, thêm mới
+        return [...prevEvaluations, { criteriaId, value: numericValue, note }];
+      }
+    });
   };
+
   const handleClick = (event: React.MouseEvent<HTMLElement>, criteriaID: string) => {
     setAnchorEl(event.currentTarget);
     setCurrentCriteriaID(criteriaID);
@@ -274,6 +284,8 @@ export default function OneView() {
       try {
         const response = await ShiftService.getShiftsByRoomCategoricalId(selectedRoom.roomCategoryId);
         setShifts(response.data);
+        
+        setCriteriaEvaluations([]);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách ca:', error);
       }
@@ -283,7 +295,10 @@ export default function OneView() {
     }
   };
 
-
+  useEffect(()=>{
+    setSelectedShift(null);
+    setCriteria([]);
+  },[selectedRoom]);
   const handleShiftSelect = async (ShiftId: string) => {
     const selectedRoomCriteria = shifts.find(shifts => shifts.id === ShiftId);
     setSelectedShift(ShiftId);
@@ -312,6 +327,19 @@ export default function OneView() {
     console.log(response.data);
   };
 
+  const handleValueChange = (criteriaId: string, value: any) => {
+    const existingEvaluation = criteriaEvaluations.find(evaluation => evaluation.criteriaId === criteriaId);
+    updateCriteriaEvaluation(criteriaId, value, existingEvaluation?.note || '');
+  };
+
+  const handleNoteChange = (criteriaId: string, note: string) => {
+    const existingEvaluation = criteriaEvaluations.find(evaluation => evaluation.criteriaId === criteriaId);
+    updateCriteriaEvaluation(criteriaId, existingEvaluation?.value || '', note);
+  };
+
+  useEffect(() => {
+    console.log("criteriaEvaluations:", criteriaEvaluations);
+  }, [criteriaEvaluations]);  
   //UI of the website
   return (
     <Container maxWidth={false ? false : 'xl'}>
@@ -380,10 +408,10 @@ export default function OneView() {
               sx={{ flex: 1 }}
               options={blocks}
               getOptionLabel={(option: any) => option.blockName || ''}
-              value={selectedBlocks}
+              value={blocks.find((b: any) => b.id === selectedBlocks) || null}
               onChange={(event, newValue) => {
                 if(newValue){
-                  setSelectedBlocks(newValue);
+                  setSelectedBlocks(newValue ? newValue.id : null);
                   handleBlockSelect(newValue ? newValue.id : '');
                 }
                 else{
@@ -452,6 +480,11 @@ export default function OneView() {
               )}
               noOptionsText="Không có dữ liệu phòng"
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                  {option.roomName}
+                </li>
+              )}
             />
             <Autocomplete
               fullWidth
@@ -472,6 +505,7 @@ export default function OneView() {
               )}
               noOptionsText="Không có dữ liệu ca"
               isOptionEqualToValue={(option, value) => option.id === value.id}
+              
             />
           </Box>
           <TableContainer component={Paper}>
@@ -494,7 +528,11 @@ export default function OneView() {
                     </TableCell>
                     <TableCell align="center">
                       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <RenderRatingInput criteriaID={criterion.id} inputRatingType={criterion.criteriaType} />
+                        <RenderRatingInput 
+                        criteriaID={criterion.id} 
+                        inputRatingType={criterion.criteriaType}
+                        value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.value || ''}
+                        onValueChange={handleValueChange} />
                       </Box>
                     </TableCell>
                     <TableCell>
@@ -504,6 +542,7 @@ export default function OneView() {
                           },
                         },
                       }} placeholder=''
+                      onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
                       />
                     </TableCell>
                   </TableRow>

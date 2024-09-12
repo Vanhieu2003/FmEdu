@@ -385,7 +385,7 @@ export default function FourView() {
               value={selectedBlocks}
               onChange={(event, newValue) => {
                 if(newValue){
-                  setSelectedBlocks(newValue);
+                  setSelectedBlocks(newValue ? newValue.id : null);
                   handleBlockSelect(newValue ? newValue.id : '');
                 }
                 else{
