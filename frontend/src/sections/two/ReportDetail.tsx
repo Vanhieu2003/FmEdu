@@ -1,123 +1,18 @@
 "use client"
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Rating } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import dayjs from 'dayjs';
+import  CleaningReportService  from 'src/@core/service/cleaningReport';
+import RenderRatingInput from '../components/rating/renderRatingInput';
 
-
-const reportData = [
-  {
-    "reportID": 1,
-    "date": "2024-06-08",
-    "house": "Cơ sở A",
-    "floor": "Tầng 1",
-    "area": "Khu vực 1",
-    "user": "Nguyễn Văn A",
-    "criteria": [
-      {
-        "criteriaID": 1,
-        "name": "Tiêu chí 1",
-        "ratingType": "BINARY",
-        "ratingValue": "Đạt",
-        "notes": "Sạch sẽ và gọn gàng",
-      },
-      {
-        "criteriaID": 2,
-        "name": "Tiêu chí 2",
-        "ratingType": "RATING",
-        "ratingValue": 4,
-        "notes": "Cần cải thiện thêm",
-      },
-      {
-        "criteriaID": 3,
-        "name": "Tiêu chí 3",
-        "ratingType": "RATING",
-        "ratingValue": 2,
-        "notes": "Chưa lau sạch",
-      },
-      {
-        "criteriaID": 4,
-        "name": "Tiêu chí 4",
-        "ratingType": "BINARY",
-        "ratingValue": "Đạt",
-        "notes": "",
-      },
-      {
-        "criteriaID": 5,
-        "name": "Tiêu chí 5",
-        "ratingType": "BINARY",
-        "ratingValue": "Không đạt",
-        "notes": "Vết bẩn ở toilet",
-      },
-      {
-        "criteriaID": 6,
-        "name": "Tiêu chí 6",
-        "ratingType": "RATING",
-        "ratingValue": 4,
-        "notes": "Cần cải thiện thêm",
-      }
-    ]
-  },
-  {
-    "reportID": 2,
-    "date": "2024-05-02",
-    "house": "Cơ sở B",
-    "floor": "Tầng 2",
-    "area": "Khu vực 1",
-    "user": "Đinh Thị B",
-    "criteria": [
-      {
-        "criteriaID": 1,
-        "name": "Tiêu chí 1",
-        "ratingType": "BINARY",
-        "ratingValue": "Đạt",
-        "notes": "Sạch sẽ và gọn gàng",
-      },
-      {
-        "criteriaID": 2,
-        "name": "Tiêu chí 2",
-        "ratingType": "RATING",
-        "ratingValue": 4,
-        "notes": "Cần cải thiện thêm",
-      },
-      {
-        "criteriaID": 3,
-        "name": "Tiêu chí 3",
-        "ratingType": "RATING",
-        "ratingValue": 2,
-        "notes": "Chưa lau sạch",
-      },
-      {
-        "criteriaID": 4,
-        "name": "Tiêu chí 4",
-        "ratingType": "BINARY",
-        "ratingValue": "Đạt",
-        "notes": "",
-      },
-      {
-        "criteriaID": 5,
-        "name": "Tiêu chí 5",
-        "ratingType": "BINARY",
-        "ratingValue": "Không đạt",
-        "notes": "Vết bẩn ở toilet",
-      },
-      {
-        "criteriaID": 6,
-        "name": "Tiêu chí 6",
-        "ratingType": "RATING",
-        "ratingValue": 4,
-        "notes": "Cần cải thiện thêm",
-      }
-    ]
-  },
-];
 
 const renderRatingInput = (RatingType: string, RatingValue: any) => {
   switch (RatingType) {
     case "BINARY":
       return (
         <Box>
-          <Typography>{RatingValue}</Typography>
+          <Typography>{RatingValue === 2 ? "Đạt" : RatingValue === 1 ? "Không Đạt" : "Chưa đánh giá"}</Typography>
         </Box>
       );
     case "RATING":
@@ -132,10 +27,16 @@ const renderRatingInput = (RatingType: string, RatingValue: any) => {
       return null;
   }
 };
-
-const ReportDetailView = ({ id }: { id: number }) => {
+const ReportDetailView = ({ id }: { id: string }) => {
   
-  const report = reportData.find(report => report.reportID === Number(id));
+  const [report, setReport] = useState<any>(null);
+  useEffect(()=>{
+    const fetchData = async()=>{
+      const response = await CleaningReportService.getCleaningReportById(id);
+      setReport(response.data);
+    }
+    fetchData();
+  },[id]);
   if (!report) {
     return
   }
@@ -150,29 +51,32 @@ const ReportDetailView = ({ id }: { id: number }) => {
           Báo cáo chi tiết vệ sinh
         </Typography>
         <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Typography variant="h6">Ngày: {dayjs(report.date).format('DD/MM/YYYY')}</Typography>
-          <Typography variant="h6">Cơ sở: {report.house}</Typography>
-          <Typography variant="h6">Tầng: {report.floor}</Typography>
-          <Typography variant="h6">Khu vực: {report.area}</Typography>
-          <Typography variant="h6">Người đánh giá: {report.user}</Typography>
+          <Typography variant="h6">Ngày: {dayjs(report.createAt).format('DD/MM/YYYY')}</Typography>
+          <Typography variant="h6">Ca: {report.startTime.substring(0, 5)} - {report.endTime.substring(0, 5)}</Typography>
+          <Typography variant="h6">Cơ sở: {report.campusName}</Typography>
+          <Typography variant="h6">Cơ sở: {report.blockName}</Typography>
+          <Typography variant="h6">Tầng: {report.floorName}</Typography>
+          <Typography variant="h6">Khu vực: {report.roomName}</Typography>
+          <Typography variant="h6">Người đánh giá: Nhân viên A</Typography>
         </Box>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="center">Tiêu chí</TableCell>
-                <TableCell align="center">Đánh giá</TableCell>
-                <TableCell align="center">Ghi chú</TableCell>
+                <TableCell align='center' sx={{ width: '16.67%' }}>Tiêu chí</TableCell>
+                <TableCell align='center' sx={{ width: '33.33%' }}>Đánh giá</TableCell>
+                <TableCell align='center' sx={{ width: '33.33%' }}>Ghi chú</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {report.criteria.map((criterion) => (
-                <TableRow key={criterion.criteriaID}>
-                  <TableCell align="center">{criterion.name}</TableCell>
-                  <TableCell align="center">
-                    {renderRatingInput(criterion.ratingType, criterion.ratingValue)}
+              {report.criteriaList.map((criterion: any,index:any) => (
+                <TableRow key={criterion.id}>
+                  <TableCell align='center' sx={{ width: '16.67%' }}>{criterion.name}</TableCell>
+                  <TableCell align='center' sx={{ width: '33.33%' }}>
+                    {/* <RenderRatingInput inputRatingType={criterion.criteriaType} value={criterion.value} disabled={true}/> */}
+                    {renderRatingInput(criterion.criteriaType, criterion.value)}
                   </TableCell>
-                  <TableCell align="center">{criterion.notes === "" ? "Không có ghi chú" : criterion.notes}</TableCell>
+                  <TableCell align='center' sx={{ width: '33.33%' }}>{criterion.note}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

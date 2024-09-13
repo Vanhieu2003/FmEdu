@@ -7,7 +7,7 @@ interface Props {
     criteriaID?: string;
     inputRatingType: string;
     disabled?:boolean;
-    value:any;
+    value?:any;
     onValueChange?: (criteriaId: string, value: any) => void;
 }
 
@@ -24,7 +24,7 @@ const RenderRatingInput = ({ criteriaID,inputRatingType,disabled=false,value,onV
           return (
             <RadioGroup
               row
-              value={value.toString()}
+              value={value?.toString() ?? ''}
               onChange={(e) => handleChange(Number(e.target.value))}
             >
               <FormControlLabel value="2" control={<Radio />} label="Đạt" sx={{margin:0}} disabled={disabled} />

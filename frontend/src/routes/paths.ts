@@ -21,6 +21,7 @@ export const paths = {
     root: ROOTS.DASHBOARD,
     one: `${ROOTS.DASHBOARD}/one`,
     two: `${ROOTS.DASHBOARD}/two`,
+    detail: (id: string) => `${ROOTS.DASHBOARD}/two/detail/${id}`,
     three: `${ROOTS.DASHBOARD}/three`,
     group: {
       root: `${ROOTS.DASHBOARD}/group`,

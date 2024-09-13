@@ -22,6 +22,10 @@ export class CriteriaService {
   getAllCriteria = async () => {
     return axios.get(`${API_ENDPOINT}/api/Criteria`);
   }
+
+  getCriteriaByRoomIdMapByForm = async(roomId:string)=>{
+    return axios.get(`${API_ENDPOINT}/api/Criteria/getCriteriaByRoom/${roomId}`)
+  }
   
   getCriteriaByFormId = async (formId: string) => {
     return axios.get(`${API_ENDPOINT}/api/CriteriasPerForms/ByFormId/${formId}`);

@@ -27,6 +27,7 @@ import ShiftService from 'src/@core/service/shift';
 import CriteriaService from 'src/@core/service/criteria';
 import RoomService from 'src/@core/service/room';
 import CleaningReportService from 'src/@core/service/cleaningReport';
+import  CleaningFormService  from 'src/@core/service/form';
 
 dayjs.locale('vi');
 interface Campus {
@@ -151,6 +152,7 @@ export default function OneView() {
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [selectedShift, setSelectedShift] = useState<any>(null);
   const [criteriaEvaluations, setCriteriaEvaluations] = useState<Array<{ criteriaId: string, value: any, note:string }>>([]);
+  const [form, setForm] = useState<any>(null);
   const [ratingValues, setRatingValues] = useState<{ [key: string]: any }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -233,9 +235,9 @@ export default function OneView() {
 
 
   const handleCampusSelect = async (CampusId: string) => {
-    var campusId = CampusId;
+    console.log(CampusId)
     try {
-      const response = await BlockService.getBlockByCampusId(campusId);
+      const response = await BlockService.getBlockByCampusId(CampusId);
       setBlocks(response.data);
       setFloors([]);
       setRooms([]);
@@ -280,14 +282,22 @@ export default function OneView() {
 
   const handleRoomSelect = async (roomId: string) => {
     const selectedRoom = rooms.find(room => room.id === roomId);
+    console.log(roomId);
     if (selectedRoom && selectedRoom.roomCategoryId) {
       try {
         const response = await ShiftService.getShiftsByRoomCategoricalId(selectedRoom.roomCategoryId);
         setShifts(response.data);
-        
         setCriteriaEvaluations([]);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách ca:', error);
+      }
+      try{
+        const responseForm = await CleaningFormService.getFormByRoomId(roomId);
+        setForm(responseForm.data);
+      }
+      catch(error){
+        alert("Chưa có Form báo cáo cho khu vực này");
+        setSelectedRoom(null);
       }
     } else {
       console.error('Không tìm thấy phòng hoặc phòng không có roomCategoryId');
@@ -300,31 +310,35 @@ export default function OneView() {
     setCriteria([]);
   },[selectedRoom]);
   const handleShiftSelect = async (ShiftId: string) => {
-    const selectedRoomCriteria = shifts.find(shifts => shifts.id === ShiftId);
     setSelectedShift(ShiftId);
-    if (selectedRoomCriteria && selectedRoomCriteria.roomCategoryId) {
       try {
-        const response = await CriteriaService.getCriteriaByRoomCategoryId(selectedRoomCriteria.roomCategoryId);
+        const response = await CriteriaService.getCriteriaByRoomIdMapByForm(selectedRoom);
         setCriteria(response.data);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách tiêu chí:', error);
       }
-    } else {
-      console.error('Không tìm thấy phòng hoặc phòng không có roomCategoryId');
-      setCriteria([]);
-    }
   };
 
   const handleSubmit = async () => {
-    const data = {
-      "formId": "1",
+    const reportData = {
+      "formId": form.id,
       "shiftId": selectedShift,
-      "value": 88,
-      "createAt": DateTime.now().toISO(),
-      "updateAt": DateTime.now().toISO()
+      "value": 0,
+      "userId": "abc",
+      "criteriaList":criteriaEvaluations.map((criteria)=>{
+        return {
+          "criteriaId":criteria.criteriaId,
+          "value":criteria.value,
+          "note":criteria.note,
+        }
+      }),
     }
-    const response = await CleaningReportService.PostReport(data);
-    console.log(response.data);
+    const response = await CleaningReportService.PostReport(reportData);
+    if(response.status === 200){
+      alert("Gửi thành công");
+      window.location.reload();
+    }
+
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {

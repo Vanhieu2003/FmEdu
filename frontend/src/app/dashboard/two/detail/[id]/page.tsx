@@ -3,7 +3,7 @@ import ReportDetailView from 'src/sections/two/ReportDetail'
 
 type Props = {
   params: {
-    id: number;
+    id: string;
   };
 };
 const page = ({params}:Props) => {

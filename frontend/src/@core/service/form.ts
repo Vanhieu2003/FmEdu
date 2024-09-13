@@ -27,8 +27,14 @@ export class CleaningFormService{
  getFormById = async(formId:string) => {
     return axios.get(`${API_ENDPOINT}/api/CleaningForms/${formId}`);
  }
+ getFormInfoById = async(formId:string)=>{
+   return axios.get(`${API_ENDPOINT}/api/CleaningForms/GetFullInfo/${formId}`);
+ }
  EditCleaningForm = async(data:any) => {
     return axios.put(`${API_ENDPOINT}/api/CriteriasPerForms/edit`,data);
+ }
+ getFormByRoomId = async(roomId:string) => {
+    return axios.get(`${API_ENDPOINT}/api/CleaningForms/ByRoomId/${roomId}`);
  }
 }
 export default new CleaningFormService();

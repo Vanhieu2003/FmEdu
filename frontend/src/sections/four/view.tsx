@@ -216,6 +216,9 @@ export default function FourView() {
     setAnchorEl(event.currentTarget);
   };
 
+  useEffect(()=>{
+    console.log(currentFormID);
+  },[currentFormID])
 
   const handleAddClick = () => {
     setIsEditing(false);
@@ -503,7 +506,7 @@ export default function FourView() {
                           onClose={handleClose}
                         >
                           <MenuItem onClick={handleClose}>
-                            <Link href={`/dashboard/group/details/${currentFormID}`} sx={{ display: 'flex' }} underline='none'>
+                            <Link href={`/dashboard/group/detail/${currentFormID}`} sx={{ display: 'flex' }} underline='none'>
                               <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> View
                             </Link>
                           </MenuItem>

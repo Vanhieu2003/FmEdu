@@ -129,7 +129,7 @@ export default function TwoView() {
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, report: any) => {
     setAnchorEl(event.currentTarget);
-    setCurrentReportID(report.ReportID);
+    setCurrentReportID(report.id);
   };
 
   const handleClose = () => {
@@ -418,7 +418,7 @@ export default function TwoView() {
           <TableBody>
             {reports?.map(report => (
               <TableRow key={report.ReportID}>
-                <TableCell align="center">{dayjs(report.createAt).format('DD/MM/YYYY')}</TableCell>
+                <TableCell align="center">{dayjs(report.createAt).format('DD/MM/YYYY')} ({report.startTime.substring(0, 5)} - {report.endTime.substring(0, 5)})</TableCell>
                 <TableCell align="center">{report.campusName}</TableCell>
                 <TableCell align="center">{report.blockName}</TableCell>
                 <TableCell align="center">{report.floorName}</TableCell>
@@ -446,7 +446,7 @@ export default function TwoView() {
                       onClose={handleClose}
                     >
                       <MenuItem onClick={handleClose}>
-                        <Link href={`/dashboard/two/details/${currentReportID}`} sx={{ display: 'flex' }} underline='none'>
+                        <Link href={`/dashboard/two/detail/${currentReportID}`} sx={{ display: 'flex' }} underline='none'>
                           <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> View
                         </Link>
                       </MenuItem>
