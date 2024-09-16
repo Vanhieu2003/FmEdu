@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import "src/global.css";
-import { Autocomplete, Button, Chip, FormControl, IconButton, InputLabel, Link, MenuItem, Popover, Popper, Select, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, Chip, Stack, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
@@ -15,12 +15,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import RenderRatingInput from 'src/sections/components/rating/renderRatingInput';
-
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import Popup from 'src/sections/components/form/Popup';
 import AddCriteria from 'src/sections/components/form/AddCriteria';
-import  CriteriaService  from 'src/@core/service/criteria';
-import  TagService  from 'src/@core/service/tag';
-import  RoomCategoryService  from 'src/@core/service/RoomCategory';
+import CriteriaService from 'src/@core/service/criteria';
+import TagService from 'src/@core/service/tag';
+import RoomCategoryService from 'src/@core/service/RoomCategory';
+import EditCriteria from 'src/sections/components/form/EditCriteria';
 dayjs.locale('vi');
 
 type Criteria = {
@@ -31,7 +32,7 @@ type Criteria = {
   createAt: string,
   updateAt: string,
   tags: Tag[],
-  roomName:string
+  roomName: string
 };
 type Tag = {
   id: number;
@@ -48,17 +49,12 @@ export default function FiveView() {
   // const [allOptions, setAllOptions] = useState<Tag[]>(() => criteriaList.flatMap(criteria => criteria.tags || []));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isModified, setIsModified] = useState(false);
-
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
   const [openAutocomplete, setOpenAutocomplete] = useState<{ [key: string]: boolean }>({});
   const [openPopUp, setOpenPopUp] = useState(false);
-
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setSelectedCriteria(null);
-  };
 
   useEffect(() => {
     const fetchCriteriaAndTags = async () => {
@@ -67,20 +63,22 @@ export default function FiveView() {
       try {
         // Fetch Criteria
         const criteriaResponse = await CriteriaService.getAllCriteria();
+        const tagsResponse = await TagService.getAllTags();
         console.log('Dữ liệu Criteria:', criteriaResponse.data);
-        
+
         // Fetch tags for each criteria
         const criteriaWithTags = await Promise.all(criteriaResponse.data.map(async (criteria: Criteria) => {
           try {
             const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
             const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
-            return { ...criteria, tags: tagsResponse.data,roomName: roomCategoryResponse.data.categoryName };
+            return { ...criteria, tags: tagsResponse.data, roomName: roomCategoryResponse.data.categoryName };
           } catch (tagError) {
             console.error(`Lỗi khi lấy tags cho criteria ${criteria.id}:`, tagError);
             return { ...criteria, tags: [] };
           }
         }));
         setCriteriaList(criteriaWithTags);
+        setAllTags(tagsResponse.data);
       } catch (error) {
         setError(error.message);
         console.error('Chi tiết lỗi khi lấy Criteria:', error);
@@ -88,34 +86,18 @@ export default function FiveView() {
         setIsLoading(false);
       }
     };
-  
+
     fetchCriteriaAndTags();
   }, []);
 
-  useEffect(() => {
-    console.log("criteriaWithTags", criteriaList);
-  }, [criteriaList]);
-  
+  const filteredCriteriaList = criteriaList.filter((criteria) => {
+    const matchesCriteria = !selectedCriteria || criteria.id === selectedCriteria.id;
+    const matchesTags = selectedTags.length === 0 || selectedTags.every(selectedTag =>
+      criteria.tags.some(tag => tag.tagName === selectedTag.tagName)
+    );
 
-  // const handleTypeChange = (criteriaID: number, event: React.ChangeEvent<{ value: string }>) => {
-  //   setRatingTypesSelected((prevTypes) => {
-  //     const newTypes = {
-  //       ...prevTypes,
-  //       [criteriaID]: event.target.value as string,
-  //     };
-  //     // Check if any value is different from the default
-  //     const isModified = Object.keys(newTypes).some(
-  //       (id) => newTypes[parseInt(id)] !== mockCriteriaList.find((criteria) => criteria.criteriaID === parseInt(id))?.ratingType
-  //     );
-  //     setIsModified(isModified);
-  //     return newTypes;
-  //   });
-  //   handleClose(); // Close the popover after changing the type
-  // };
-
-  const filteredCriteriaList = selectedCriteria
-    ? criteriaList.filter((criteria) => criteria.id === selectedCriteria.id)
-    : criteriaList;
+    return matchesCriteria && matchesTags;
+  });
 
   const handleAutocompleteChange = (criteriaID: string, newValue: (Tag | null)[]) => {
     const updatedTags = criteriaList.map((criteria) => {
@@ -132,20 +114,56 @@ export default function FiveView() {
     );
   };
 
+  const handleTagChange = (event: any, newValue: Tag[]) => {
+    const updatedTagsSelected: Tag[] = newValue.map((tag) => {
+      return tag;
+    });
+    setSelectedTags(updatedTagsSelected);
+  };
 
-
+  useEffect(() => {
+    console.log(selectedTags);
+    console.log(criteriaList);
+  }, [selectedTags])
   return (
     <Container>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={criteriaList}
-          getOptionLabel={(option) => option.criteriaName}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label="Tìm kiếm tiêu chí" />}
-          onChange={(event, newValue: Criteria | null) => setSelectedCriteria(newValue)}
-        />
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={criteriaList}
+            getOptionLabel={(option) => option.criteriaName}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Tìm kiếm tiêu chí" />}
+            onChange={(event, newValue: Criteria | null) => setSelectedCriteria(newValue)}
+          />
+          <Autocomplete
+            multiple
+            options={allTags}
+            getOptionLabel={(option) => option.tagName}
+            value={selectedTags}
+            sx={{ width: 300 }}
+            onChange={(e, value) => handleTagChange(e, value)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Lọc theo tag"
+                placeholder="Chọn tag"
+              />
+            )}
+            renderTags={(tagValue, getTagProps) =>
+              tagValue.map((option, index) => (
+                <Chip
+                  label={option.tagName}
+                  {...getTagProps({ index })}
+                  key={option.id}
+                />
+              ))
+            }
+          />
+        </Box>
+
         <Button variant='contained' onClick={() => setOpenPopUp(true)}>Tạo mới</Button>
         <Popup title='Form đánh giá' openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
           <AddCriteria setOpenPopup={setOpenPopUp} />
@@ -159,6 +177,7 @@ export default function FiveView() {
               <TableCell align="center">Đánh giá</TableCell>
               <TableCell align="center">Khu vực</TableCell>
               <TableCell align="center">Phân loại</TableCell>
+              <TableCell align="center"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -195,6 +214,13 @@ export default function FiveView() {
                       )}
                     />
                   )}
+                </TableCell>
+                <TableCell align="center">
+                  <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }}>
+                  <Popup title="Chỉnh sửa tiêu chí" openPopup={openPopUp} setOpenPopup={setOpenPopUp}>
+                    <EditCriteria setOpenPopup={setOpenPopUp} />
+                  </Popup>
+                </EditOutlinedIcon>
                 </TableCell>
               </TableRow>
             ))}

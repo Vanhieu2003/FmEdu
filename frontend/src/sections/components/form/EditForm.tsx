@@ -166,6 +166,10 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
   }, [formId]);
 
   useEffect(() => {
+    console.log("criteriaList",selectedCriteriaList);
+  }, [selectedCriteriaList]);
+
+  useEffect(() => {
     setSelectedCampus(form?.campusId || '');
     setSelectedBlock(form?.blockId || '');
     setSelectedFloor(form?.floorId || '');
@@ -309,7 +313,6 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
   const handleRoomSelect = async (roomId:string)=>{
     const response = await CriteriaService.getCriteriaByRoomId(roomId);
     setCriteriaList(response.data);
-    setSelectedCriteriaList(null);
   }
 
   useEffect(() => {
@@ -323,6 +326,7 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
         <Autocomplete
           fullWidth
           sx={{ marginY: 2 }}
+          disabled={true}
           options={campus}
           getOptionLabel={(option: any) => option.campusName || ''}
           value={campus.find((c: any) => c.id === selectedCampus) || null}
@@ -355,6 +359,7 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
         <Autocomplete
           fullWidth
           sx={{ marginY: 2 }}
+          disabled={true}
           options={blocks}
           getOptionLabel={(option: any) => option.blockName || ''}
           value={blocks.find((b: any) => b.id === selectedBlock) || null}
@@ -384,7 +389,7 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
         <Autocomplete
           sx={{ marginY: 2 }}
           fullWidth
-
+          disabled={true}
           options={floors}
           getOptionLabel={(option: Floor) => option.floorName || ''}
           value={floors.find(floor => floor.id === selectedFloor) || null}
@@ -412,7 +417,7 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
         <Autocomplete
           sx={{ marginY: 2 }}
           fullWidth
-
+          disabled={true}
           options={rooms}
           getOptionLabel={(option: any) => option.roomName || ''}
           value={rooms.find(room => room.id === selectedRoom) || null}
