@@ -11,6 +11,9 @@ export class CleaningReportService {
   getCleaningReportById = async (id: string) => {
     return axios.get(`${API_ENDPOINT}/api/CleaningReports/GetFullInfo/${id}`);
   }
+  updateCleaningReport = async (data: object) => {
+    return axios.put(`${API_ENDPOINT}/api/CleaningReports/update`, data);
+  }
 }
 
 export default new CleaningReportService();

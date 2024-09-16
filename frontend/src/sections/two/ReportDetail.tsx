@@ -44,14 +44,15 @@ const ReportDetailView = ({ id }: { id: string }) => {
     <Container maxWidth="lg" >
       <Button
         startIcon={<ArrowBackIcon fontSize='large' />}
-        onClick={() => window.history.back()}
+        onClick={() => window.location.href = `/dashboard/two`}
       />
       <Box sx={{ mt: 5 }}>
         <Typography variant="h2" gutterBottom sx={{ textAlign: 'center' }}>
           Báo cáo chi tiết vệ sinh
         </Typography>
         <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Typography variant="h6">Ngày: {dayjs(report.createAt).format('DD/MM/YYYY')}</Typography>
+          <Typography variant="h6">Ngày đánh giá: {dayjs(report.createAt).format('DD/MM/YYYY')}</Typography>
+          <Typography variant="h6">Ngày cập nhật: {dayjs(report.updateAt).format('DD/MM/YYYY')}</Typography>
           <Typography variant="h6">Ca: {report.startTime.substring(0, 5)} - {report.endTime.substring(0, 5)}</Typography>
           <Typography variant="h6">Cơ sở: {report.campusName}</Typography>
           <Typography variant="h6">Cơ sở: {report.blockName}</Typography>
