@@ -8,7 +8,7 @@ import CriteriaService from 'src/@core/service/criteria';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
 
 interface Tag {
-    id: string;
+    id?: string;
     tagName: string;
 }
 
@@ -17,9 +17,7 @@ type Criteria = {
     criteriaName: string,
     roomCategoryId: string,
     criteriaType: string,
-    createAt: string,
-    updateAt: string,
-    tags?: Tag[]
+    tags?: Tag[]|string[]
 };
 
 type RoomCategorical = {
@@ -84,16 +82,17 @@ const AddCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
         fetchRoomCategorical();
     }, []);
 
-    const handleTagChange = (event: any, newValue: string[]) => {
-        const unsavetagsSelected: Tag[] = []
-        newValue.map((tag) => {
-            tags.map((tagItem) => {
-                if (tag === tagItem.tagName) {
-                    unsavetagsSelected.push(tagItem)
-                }
-            })
-        })
-        setTagsSelected(unsavetagsSelected)
+    const handleTagChange = (event: any, newValue: (Tag | string)[]) => {
+        const updatedTagsSelected: Tag[] = newValue.map((tag) => {
+            if (typeof tag === 'string') {
+                // Tạo Tag mới nếu tag là chuỗi
+                const newTag: Tag = { tagName: tag };
+                return newTag;
+            } else {
+                return tag;
+            }
+        });
+        setTagsSelected(updatedTagsSelected);
     };
 
     useEffect(() => {
@@ -115,22 +114,15 @@ const AddCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
         setSelectedRoom(roomCategoricalId);
         console.log(roomCategoricalId)
     }
-    const handleSave = async() => {
+    const handleSave = async () => {
         const newCriteria: Criteria = {
             criteriaName: criteriaName,
             criteriaType: ratingTypesSelected ? ratingTypesSelected : 'BINARY',
             roomCategoryId: selectedRoom,
-            createAt: new Date().toISOString(),
-            updateAt: new Date().toISOString(),
+            tags: tagsSelected.map(tag => tag.tagName)
         };
-        const criteriaResponse = await CriteriaService.postCriteria(newCriteria) as Criteria;
-        console.log(criteriaResponse)
-        const newTagsPerCriteria = {
-            criteriaId: criteriaResponse.id,
-            Tag: tagsSelected.map((tag) => ({id:tag.id})),
-        }
-        console.log(newTagsPerCriteria)
-        await TagService.postTagsPerCriteria(newTagsPerCriteria);
+        console.log(newCriteria)
+        await CriteriaService.postCriteria(newCriteria);
         window.location.reload();
         setOpenPopup(false);
     };
@@ -207,14 +199,12 @@ const AddCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
                 />
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography>
-                    Phân loại
-                </Typography>
                 <Autocomplete
                     style={{ margin: "10px 0" }}
                     multiple
                     id="tags-outlined"
-                    options={allOptions.map((option) => option.tagName)}
+                    options={allOptions}
+                    getOptionLabel={(option) => typeof option === 'string' ? option : option.tagName}
                     defaultValue={[]}
                     freeSolo
                     autoSelect

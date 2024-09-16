@@ -31,14 +31,8 @@ export class CriteriaService {
     return axios.get(`${API_ENDPOINT}/api/CriteriasPerForms/ByFormId/${formId}`);
   }
 
-  postCriteria = async (criteria: Criteria): Promise<Criteria> => {
-    try {
-      const response = await axios.post<Criteria>(`${API_ENDPOINT}/api/Criteria`, criteria);
-      return response.data;
-    } catch (error) {
-      console.error('Lỗi khi tạo tiêu chí:', error);
-      throw error;
-    }
+  postCriteria = async (data:object)=>{
+    return axios.post(`${API_ENDPOINT}/api/Criteria/CreateCriteria`,data)
   }
 
 }
