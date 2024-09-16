@@ -268,7 +268,7 @@ export default function OneView() {
     var floorId = floorId;
 
     try {
-      const response = await RoomService.getRoomsByFloorId(floorId);
+      const response = await RoomService.getRoomsByFloorIdIfExistForm(floorId);
       if (response.data.length > 0) {
         setRooms(response.data);
       }

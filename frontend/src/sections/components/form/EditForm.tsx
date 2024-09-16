@@ -144,7 +144,7 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
   const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
-  const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[]>();
+  const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[] | null>(null);
 
 
   useEffect(() => {
@@ -189,7 +189,6 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
           floorName: FloorName.data.floorName,
           roomName: RoomName.data.roomName
         };
-
         setFormWithInfo(formWithFullInfo);
       } catch (error) {
         console.error('Lỗi khi lấy thông tin chi tiết:', error);
@@ -259,7 +258,9 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
       roomId: selectedRoom,
       criteriaList: newCriteria?.map((criteria) => ({ id: criteria.id }))
     };
+    console.log("newForm",newForm);
     await CleaningFormService.EditCleaningForm(newForm);
+    window.location.reload();
     setOpenPopup(false);
   };
 
@@ -308,6 +309,7 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
   const handleRoomSelect = async (roomId:string)=>{
     const response = await CriteriaService.getCriteriaByRoomId(roomId);
     setCriteriaList(response.data);
+    setSelectedCriteriaList(null);
   }
 
   useEffect(() => {
