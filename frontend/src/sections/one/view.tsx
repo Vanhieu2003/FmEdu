@@ -27,7 +27,8 @@ import ShiftService from 'src/@core/service/shift';
 import CriteriaService from 'src/@core/service/criteria';
 import RoomService from 'src/@core/service/room';
 import CleaningReportService from 'src/@core/service/cleaningReport';
-import  CleaningFormService  from 'src/@core/service/form';
+import CleaningFormService from 'src/@core/service/form';
+import Contact from 'src/sections/components/form/RichTextEditor';
 
 dayjs.locale('vi');
 interface Campus {
@@ -151,9 +152,8 @@ export default function OneView() {
   const [selectedFloor, setSelectedFloor] = useState<any>(null);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [selectedShift, setSelectedShift] = useState<any>(null);
-  const [criteriaEvaluations, setCriteriaEvaluations] = useState<Array<{ criteriaId: string, value: any, note:string }>>([]);
+  const [criteriaEvaluations, setCriteriaEvaluations] = useState<Array<{ criteriaId: string, value: any, note: string }>>([]);
   const [form, setForm] = useState<any>(null);
-  const [ratingValues, setRatingValues] = useState<{ [key: string]: any }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [campus, setCampus] = useState([]);
@@ -162,8 +162,6 @@ export default function OneView() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [criteria, setCriteria] = useState<Criteria[]>([]);
-
-  const [ratingTypesSelected, setRatingTypesSelected] = useState<{ [key: string]: string }>({});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentCriteriaID, setCurrentCriteriaID] = useState<string | null>(null);
 
@@ -173,18 +171,7 @@ export default function OneView() {
 
 
 
-  //Function for the website
-  const handleTypeChange = (criteriaID: string, event: React.ChangeEvent<{ value: string }>) => {
-    setRatingTypesSelected(prevTypes => ({
-      ...prevTypes,
-      [criteriaID]: event.target.value as string,
-    }));
-    setRatingValues(prevValues => ({
-      ...prevValues,
-      [criteriaID]: null, // Reset the rating value when type changes
-    }));
-    handleClose(); // Close the popover after changing the type
-  };
+  
 
   const updateCriteriaEvaluation = (criteriaId: string, value: any, note: string) => {
     setCriteriaEvaluations(prevEvaluations => {
@@ -291,11 +278,11 @@ export default function OneView() {
       } catch (error) {
         console.error('Lỗi khi lấy danh sách ca:', error);
       }
-      try{
+      try {
         const responseForm = await CleaningFormService.getFormByRoomId(roomId);
         setForm(responseForm.data);
       }
-      catch(error){
+      catch (error) {
         alert("Chưa có Form báo cáo cho khu vực này");
         setSelectedRoom(null);
       }
@@ -305,18 +292,18 @@ export default function OneView() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setSelectedShift(null);
     setCriteria([]);
-  },[selectedRoom]);
+  }, [selectedRoom]);
   const handleShiftSelect = async (ShiftId: string) => {
     setSelectedShift(ShiftId);
-      try {
-        const response = await CriteriaService.getCriteriaByRoomIdMapByForm(selectedRoom);
-        setCriteria(response.data);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách tiêu chí:', error);
-      }
+    try {
+      const response = await CriteriaService.getCriteriaByRoomIdMapByForm(selectedRoom);
+      setCriteria(response.data);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tiêu chí:', error);
+    }
   };
 
   const handleSubmit = async () => {
@@ -325,20 +312,20 @@ export default function OneView() {
       "shiftId": selectedShift,
       "value": 0,
       "userId": "abc",
-      "criteriaList":criteriaEvaluations.map((criteria)=>{
+      "criteriaList": criteriaEvaluations.map((criteria) => {
         return {
-          "criteriaId":criteria.criteriaId,
-          "value":criteria.value,
-          "note":criteria.note,
+          "criteriaId": criteria.criteriaId,
+          "value": criteria.value,
+          "note": criteria.note,
         }
       }),
     }
-    const response = await CleaningReportService.PostReport(reportData);
-    if(response.status === 200){
-      alert("Gửi thành công");
-      window.location.reload();
-    }
-
+    console.log(reportData);
+    // const response = await CleaningReportService.PostReport(reportData);
+    // if (response.status === 200) {
+    //   alert("Gửi thành công");
+    //   window.location.reload();
+    // }
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {
@@ -353,7 +340,7 @@ export default function OneView() {
 
   useEffect(() => {
     console.log("criteriaEvaluations:", criteriaEvaluations);
-  }, [criteriaEvaluations]);  
+  }, [criteriaEvaluations]);
   //UI of the website
   return (
     <Container maxWidth={false ? false : 'xl'}>
@@ -393,11 +380,11 @@ export default function OneView() {
               getOptionLabel={(option: any) => option.campusName || ''}
               value={campus.find((c: any) => c.id === selectedCampus) || null}
               onChange={(event, newValue) => {
-                if(newValue){
+                if (newValue) {
                   setSelectedCampus(newValue ? newValue.id : null);
                   handleCampusSelect(newValue ? newValue.id : '');
                 }
-                else{
+                else {
                   setSelectedCampus(null);
                   setBlocks([]);
                   setSelectedBlocks(null);
@@ -424,11 +411,11 @@ export default function OneView() {
               getOptionLabel={(option: any) => option.blockName || ''}
               value={blocks.find((b: any) => b.id === selectedBlocks) || null}
               onChange={(event, newValue) => {
-                if(newValue){
+                if (newValue) {
                   setSelectedBlocks(newValue ? newValue.id : null);
                   handleBlockSelect(newValue ? newValue.id : '');
                 }
-                else{
+                else {
                   setSelectedBlocks(null);
                   setFloors([]);
                   setRooms([]);
@@ -451,11 +438,11 @@ export default function OneView() {
               getOptionLabel={(option: Floor) => option.floorName || ''}
               value={floors.find(floor => floor.id === selectedFloor) || null}
               onChange={(event, newValue) => {
-                if(newValue){
+                if (newValue) {
                   setSelectedFloor(newValue ? newValue.id : null);
                   handleFloorSelect(newValue ? newValue.id : '');
                 }
-                else{
+                else {
                   setSelectedFloor(null);
                   setRooms([]);
                 }
@@ -477,11 +464,11 @@ export default function OneView() {
               getOptionLabel={(option: any) => option.roomName || ''}
               value={rooms.find(room => room.id === selectedRoom) || null}
               onChange={(event, newValue) => {
-                if(newValue){ 
+                if (newValue) {
                   setSelectedRoom(newValue ? newValue.id : null);
                   handleRoomSelect(newValue ? newValue.id : '');
                 }
-                else{
+                else {
                   setSelectedRoom(null);
                 }
               }}
@@ -519,16 +506,16 @@ export default function OneView() {
               )}
               noOptionsText="Không có dữ liệu ca"
               isOptionEqualToValue={(option, value) => option.id === value.id}
-              
+
             />
           </Box>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
               <TableHead sx={{ width: 1 }}>
                 <TableRow>
-                  <TableCell align='center'>Tiêu chí</TableCell>
-                  <TableCell align="center">Đánh giá</TableCell>
-                  <TableCell align="center">Ghi chú</TableCell>
+                  <TableCell align='center' sx={{ width: '25%' }}>Tiêu chí</TableCell>
+                  <TableCell align="center" sx={{ width: '25%' }}>Đánh giá</TableCell>
+                  <TableCell align="center" sx={{ width: '50%' }}>Ghi chú</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -537,27 +524,34 @@ export default function OneView() {
                     key={criterion.id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, margin: '10px 0' }}
                   >
-                    <TableCell component="th" scope="row" align='center'>
+                    <TableCell component="th" scope="row" align='center' sx={{ width: '25%' }}>
                       {criterion.criteriaName}
                     </TableCell>
-                    <TableCell align="center">
+                    <TableCell align="center" sx={{ width: '25%' }}>
                       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <RenderRatingInput 
-                        criteriaID={criterion.id} 
-                        inputRatingType={criterion.criteriaType}
-                        value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.value || ''}
-                        onValueChange={handleValueChange} />
+                        <RenderRatingInput
+                          criteriaID={criterion.id}
+                          inputRatingType={criterion.criteriaType}
+                          value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.value || ''}
+                          onValueChange={handleValueChange} />
                       </Box>
                     </TableCell>
-                    <TableCell>
-                      <TextField fullWidth sx={{
+                    <TableCell sx={{ width: '50%' }}>
+                      {/* <TextField fullWidth sx={{
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
                           },
                         },
                       }} placeholder=''
                       onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
-                      />
+                      /> */}
+                      <Box sx={{ width: '100%'}}>
+                        <Contact 
+                        criteriaId={criterion.id}
+                        value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.note || ''}
+                        onNoteChange={handleNoteChange}
+                         />
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ))}

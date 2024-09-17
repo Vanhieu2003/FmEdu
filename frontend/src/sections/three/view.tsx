@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Contact from 'src/sections/components/form/RichTextEditor';
 
 import { useSettingsContext } from 'src/components/settings';
 
@@ -26,6 +27,7 @@ export default function ThreeView() {
           border: (theme) => `dashed 1px ${theme.palette.divider}`,
         }}
       />
+      <Contact />
     </Container>
   );
 }

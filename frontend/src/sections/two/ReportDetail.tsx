@@ -4,7 +4,7 @@ import { Container, Box, Typography, Paper, Table, TableBody, TableCell, TableCo
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import dayjs from 'dayjs';
 import  CleaningReportService  from 'src/@core/service/cleaningReport';
-import RenderRatingInput from '../components/rating/renderRatingInput';
+import parse from 'html-react-parser';
 
 
 const renderRatingInput = (RatingType: string, RatingValue: any) => {
@@ -28,7 +28,7 @@ const renderRatingInput = (RatingType: string, RatingValue: any) => {
   }
 };
 const ReportDetailView = ({ id }: { id: string }) => {
-  
+  const parse = require('html-react-parser').default;
   const [report, setReport] = useState<any>(null);
   useEffect(()=>{
     const fetchData = async()=>{
@@ -77,7 +77,10 @@ const ReportDetailView = ({ id }: { id: string }) => {
                     {/* <RenderRatingInput inputRatingType={criterion.criteriaType} value={criterion.value} disabled={true}/> */}
                     {renderRatingInput(criterion.criteriaType, criterion.value)}
                   </TableCell>
-                  <TableCell align='center' sx={{ width: '33.33%' }}>{criterion.note}</TableCell>
+                  <TableCell align='center' sx={{ width: '33.33%' }}>
+                    {/* {criterion.note} */}
+                    {parse(criterion.note)}
+                    </TableCell>
                 </TableRow>
               ))}
             </TableBody>

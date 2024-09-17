@@ -213,7 +213,7 @@ export default function OneView({ reportId }: { reportId: string }) {
               value={
                 typeof report.shiftName === 'string'
                   ? report.shiftName
-                  : `${report.shiftName.shiftName} (${report.shiftName.startTime.substring(0, 5)} - ${report.shiftName.endTime.substring(0, 5)})`
+                  : `${report.shiftName} (${report.startTime.substring(0, 5)} - ${report.endTime.substring(0, 5)})`
               }
               renderInput={(params) => (
                 <TextField

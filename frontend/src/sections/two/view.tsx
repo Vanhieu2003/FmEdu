@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import {
   Container, Typography, Box, TextField, Paper, TableContainer, Table, TableHead, TableRow,
   TableCell, TableBody, MenuItem, FormControl, InputLabel, Select,
-  Autocomplete
+  Autocomplete,
+  Button,
+  Collapse
 } from '@mui/material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -24,7 +26,7 @@ import BlockService from 'src/@core/service/block';
 import FloorService from 'src/@core/service/floor';
 import axios from 'axios';
 import CleaningReportService from 'src/@core/service/cleaningReport';
-import RoomService from 'src/@core/service/room';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 interface Campus {
   id: string;
@@ -117,7 +119,12 @@ type Room = {
   roomCategory: null | any,
   lessons: any[]
 };
-
+interface Shift {
+  id: string;
+  shiftName: string;
+  startTime: string;
+  endTime: string;
+}
 
 
 // ----------------------------------------------------------------------
@@ -144,13 +151,17 @@ export default function TwoView() {
   const [blocks, setBlocks] = useState<Blocks[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [floors, setFloors] = useState<Floor[]>([]);
+  const [start, setStart] = useState<number | null>(null);
+  const [end, setEnd] = useState<number | null>(null);
   const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
   const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const [showProgressFilter, setShowProgressFilter] = useState(false);
+
   const [reports, setReports] = useState<any[]>();
-  const [mockReports,setMockReports] = useState<any[]>();
+  const [mockReports, setMockReports] = useState<any[]>();
   const filterReports = () => {
     let filteredReports = mockReports;
     if (selectedCampus !== null) {
@@ -165,18 +176,22 @@ export default function TwoView() {
     if (selectedRoom !== null) {
       filteredReports = filteredReports?.filter(report => report.roomName === rooms.find(room => room.id === selectedRoom)?.roomName);
     }
+
+    if (start !== null && end !== null) {
+      filteredReports = filteredReports?.filter(report =>
+        report.value >= start && report.value <= end
+      );
+    }
     if (selectedDate !== null && selectedDate.isValid()) {
       const startOfDay = selectedDate.startOf('day');
       const endOfDay = selectedDate.endOf('day');
-      
-      console.log('Ngày được chọn:', startOfDay.format('DD/MM/YYYY HH:mm:ss'), 'đến', endOfDay.format('DD/MM/YYYY HH:mm:ss'));
-      
-      filteredReports = filteredReports?.filter(report => {
-        const reportDate = dayjs(report.createAt);
+
+        console.log('Ngày được chọn:', startOfDay.format('DD/MM/YYYY HH:mm:ss'), 'đến', endOfDay.format('DD/MM/YYYY HH:mm:ss'));
+
+        filteredReports = filteredReports?.filter(report => {
+          const reportDate = dayjs(report.createAt);
         return reportDate.isAfter(startOfDay) && reportDate.isBefore(endOfDay);
       });
-      
-      console.log('Báo cáo đã lọc:', filteredReports);
     }
 
     if (filteredReports && filteredReports?.length > 0) {
@@ -185,8 +200,8 @@ export default function TwoView() {
       setReports([]);
     }
 
-    // Sử dụng callback để log giá trị mới nhất của reports
     setReports(newReports => {
+      console.log("filteredReports", filteredReports);
       console.log('Updated Reports:', newReports);
       return newReports;
     });
@@ -199,9 +214,11 @@ export default function TwoView() {
       try {
         const response1 = await CampusService.getAllCampus();
         const response2 = await CleaningReportService.getAllCleaningReportInfo();
+
         setCampus(response1.data);
         setReports(response2.data);
         setMockReports(response2.data);
+
       } catch (error) {
         setError(error.message);
         console.error('Chi tiết lỗi:', error);
@@ -252,7 +269,17 @@ export default function TwoView() {
       console.error('Lỗi khi lấy danh sách tầng:', error);
     }
   };
-
+  const toggleProgressFilter = () => {
+    setShowProgressFilter(!showProgressFilter);
+  };
+  const handleFilterProgress = () => {
+    if (start !== null && end !== null) {
+      filterReports();
+    }
+    else {
+      setReports(mockReports);
+    }
+  };
   const handleFloorSelect = async (floorId: string) => {
     setSelectedFloor(floorId);
     try {
@@ -267,140 +294,187 @@ export default function TwoView() {
       console.error('Lỗi khi lấy danh sách tầng:', error);
     }
   };
+
+  const handleProgressChange = (setValue: React.Dispatch<React.SetStateAction<number | null>>) => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    setValue(value === '' ? null : Number(value));
+  };
   return (
     <Container maxWidth="xl">
       <Typography variant="h4">Danh sách báo cáo vệ sinh hằng ngày</Typography>
       <Box sx={{
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: 2,
+        flexDirection: 'column',
         marginBottom: 2,
         marginTop: 2,
+        gap: 2
       }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
-          <DatePicker
-            label="Chọn thời gian"
-            value={selectedDate}
-            onChange={(newDate: Dayjs | null) => {
-              console.log('Ngày được chọn:', newDate?.format('DD/MM/YYYY'));
-              setSelectedDate(newDate);
-            }}
-            onAccept={(newDate: Dayjs | null) => {
-              if (newDate && moment(newDate.format('DD/MM/YYYY'), 'DD/MM/YYYY', true).isValid()) {
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="vi">
+            <DatePicker
+              label="Chọn thời gian"
+              value={selectedDate}
+              onChange={(newDate: Dayjs | null) => {
+                console.log('Ngày được chọn:', newDate?.format('DD/MM/YYYY'));
                 setSelectedDate(newDate);
+              }}
+              onAccept={(newDate: Dayjs | null) => {
+                if (newDate && moment(newDate.format('DD/MM/YYYY'), 'DD/MM/YYYY', true).isValid()) {
+                  setSelectedDate(newDate);
+                }
+              }}
+              format="DD/MM/YYYY"
+
+            />
+          </LocalizationProvider>
+
+          <Box sx={{ display: 'flex', gap: 2}}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={toggleProgressFilter} color="primary">
+                <FilterListIcon />
+              </IconButton>
+              <Typography variant="body1" sx={{ ml: 1 }}>
+                Lọc theo tiến độ
+              </Typography>
+            </Box>
+            <Collapse in={showProgressFilter}>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 1 }}>
+                <TextField
+                  label="Tiến độ từ"
+                  type="number"
+                  value={start === null ? '' : start}
+                  onChange={handleProgressChange(setStart)}
+                  inputProps={{ min: 0, max: 100 }}
+                  sx={{ width: 120 }}
+                />
+                <TextField
+                  label="Tiến độ đến"
+                  type="number"
+                  value={end === null ? '' : end}
+                  onChange={handleProgressChange(setEnd)}
+                  inputProps={{ min: 0, max: 100 }}
+                  sx={{ width: 120 }}
+                />
+                <Button variant="contained" onClick={handleFilterProgress}>
+                  Lọc
+                </Button>
+              </Box>
+            </Collapse>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Autocomplete
+            fullWidth
+            sx={{ flex: 1 }}
+            options={campus}
+            getOptionLabel={(option: any) => option.campusName || ''}
+            value={campus.find((c: any) => c.id === selectedCampus) || null}
+            onChange={(event, newValue) => {
+              if (newValue) {
+                setSelectedCampus(newValue ? newValue.id : null);
+                handleCampusSelect(newValue ? newValue.id : '');
+              }
+              else {
+                setSelectedCampus(null);
+                setBlocks([]);
+                setSelectedBlock(null);
+                setFloors([]);
+                setSelectedFloor(null);
+                setRooms([]);
+                setSelectedRoom(null);
               }
             }}
-            format="DD/MM/YYYY"
-            
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Chọn cơ sở"
+                variant="outlined"
+              />
+            )}
+            noOptionsText="Không có dữ liệu cơ sở"
+            isOptionEqualToValue={(option, value) => option.id === value.id}
           />
-        </LocalizationProvider>
-        <Autocomplete
-              fullWidth
-              sx={{ flex: 1 }}
-              options={campus}
-              getOptionLabel={(option: any) => option.campusName || ''}
-              value={campus.find((c: any) => c.id === selectedCampus) || null}
-              onChange={(event, newValue) => {
-                if(newValue){
-                  setSelectedCampus(newValue ? newValue.id : null);
-                  handleCampusSelect(newValue ? newValue.id : '');
-                }
-                else{
-                  setSelectedCampus(null);
-                  setBlocks([]);
-                  setSelectedBlock(null);
-                  setFloors([]);
-                  setSelectedFloor(null);
-                  setRooms([]);
-                  setSelectedRoom(null);
-                }
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Chọn cơ sở"
-                  variant="outlined"
-                />
-              )}
-              noOptionsText="Không có dữ liệu cơ sở"
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-            />
-            <Autocomplete
-              fullWidth
-              sx={{ flex: 1 }}
-              options={blocks}
-              getOptionLabel={(option: any) => option.blockName || ''}
-              value={blocks.find((b: any) => b.id === selectedBlock) || null}
-              onChange={(event, newValue) => {
-                if(newValue){
-                  setSelectedBlock(newValue?newValue.id:null);
-                  handleBlockSelect(newValue ? newValue.id : '');
-                }
-                else{
-                  setSelectedBlock(null);
-                  setFloors([]);
-                  setSelectedFloor(null);
-                  setRooms([]);
-                  setSelectedRoom(null);
-                }
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Chọn tòa nhà"
-                  variant="outlined"
-                />
-              )}
-              noOptionsText="Không có dữ liệu tòa nhà"
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-            />
-            <Autocomplete
-              fullWidth
-              sx={{ flex: 1 }}
-              options={floors}
-              getOptionLabel={(option: Floor) => option.floorName || ''}
-              value={floors.find(floor => floor.id === selectedFloor) || null}
-              onChange={(event, newValue) => {
-                if(newValue){
-                  setSelectedFloor(newValue ? newValue.id : null);
-                  handleFloorSelect(newValue ? newValue.id : '');
-                }
-                else{
-                  setSelectedFloor(null);
-                  setRooms([]);
-                  setSelectedRoom(null);
-                }
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Chọn tầng"
-                  variant="outlined"
-                />
-              )}
-              noOptionsText="Không có dữ liệu tầng"
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-            />
-            <Autocomplete
-              fullWidth
-              sx={{ flex: 1 }}
-              options={rooms}
-              getOptionLabel={(option: any) => option.roomName || ''}
-              value={rooms.find(room => room.id === selectedRoom) || null}
-              onChange={(event, newValue) => {
-                setSelectedRoom(newValue ? newValue.id : null);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Chọn phòng"
-                  variant="outlined"
-                />
-              )}
-              noOptionsText="Không có dữ liệu phòng"
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-            />
+          <Autocomplete
+            fullWidth
+            sx={{ flex: 1 }}
+            options={blocks}
+            getOptionLabel={(option: any) => option.blockName || ''}
+            value={blocks.find((b: any) => b.id === selectedBlock) || null}
+            onChange={(event, newValue) => {
+              if (newValue) {
+                setSelectedBlock(newValue ? newValue.id : null);
+                handleBlockSelect(newValue ? newValue.id : '');
+              }
+              else {
+                setSelectedBlock(null);
+                setFloors([]);
+                setSelectedFloor(null);
+                setRooms([]);
+                setSelectedRoom(null);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Chọn tòa nhà"
+                variant="outlined"
+              />
+            )}
+            noOptionsText="Không có dữ liệu tòa nhà"
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+          />
+          <Autocomplete
+            fullWidth
+            sx={{ flex: 1 }}
+            options={floors}
+            getOptionLabel={(option: Floor) => option.floorName || ''}
+            value={floors.find(floor => floor.id === selectedFloor) || null}
+            onChange={(event, newValue) => {
+              if (newValue) {
+                setSelectedFloor(newValue ? newValue.id : null);
+                handleFloorSelect(newValue ? newValue.id : '');
+              }
+              else {
+                setSelectedFloor(null);
+                setRooms([]);
+                setSelectedRoom(null);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Chọn tầng"
+                variant="outlined"
+              />
+            )}
+            noOptionsText="Không có dữ liệu tầng"
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+          />
+          <Autocomplete
+            fullWidth
+            sx={{ flex: 1 }}
+            options={rooms}
+            getOptionLabel={(option: any) => option.roomName || ''}
+            value={rooms.find(room => room.id === selectedRoom) || null}
+            onChange={(event, newValue) => {
+              setSelectedRoom(newValue ? newValue.id : null);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Chọn phòng"
+                variant="outlined"
+              />
+            )}
+            noOptionsText="Không có dữ liệu phòng"
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+          />
+        </Box>
+
+
       </Box>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="Danh sách báo cáo vệ sinh">
@@ -417,7 +491,7 @@ export default function TwoView() {
           </TableHead>
           <TableBody>
             {reports?.map(report => (
-              <TableRow key={report.ReportID}>
+              <TableRow key={report.id}>
                 <TableCell align="center">{dayjs(report.createAt).format('DD/MM/YYYY')} ({report.startTime.substring(0, 5)} - {report.endTime.substring(0, 5)})</TableCell>
                 <TableCell align="center">{report.campusName}</TableCell>
                 <TableCell align="center">{report.blockName}</TableCell>

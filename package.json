@@ -8,9 +8,11 @@
     "@mui/x-date-pickers": "^7.16.0",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
+    "html-react-parser": "^5.1.16",
     "luxon": "^3.5.0",
     "moment": "^2.30.1",
-    "react-cookies": "^0.1.1"
+    "react-cookies": "^0.1.1",
+    "react-froala-wysiwyg": "^4.2.2"
   },
   "devDependencies": {
     "@types/react-cookies": "^0.1.3"
