@@ -29,6 +29,7 @@ import RoomService from 'src/@core/service/room';
 import CleaningReportService from 'src/@core/service/cleaningReport';
 import CleaningFormService from 'src/@core/service/form';
 import Contact from 'src/sections/components/form/RichTextEditor';
+import Upload from '../components/files/Upload';
 
 dayjs.locale('vi');
 interface Campus {
@@ -162,6 +163,7 @@ export default function OneView() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [criteria, setCriteria] = useState<Criteria[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentCriteriaID, setCurrentCriteriaID] = useState<string | null>(null);
 
@@ -170,8 +172,12 @@ export default function OneView() {
   const id = open ? 'simple-popover' : undefined;
 
 
+  const handleImagesChange = (images: string[]) => {
+    console.log('Images changed:', images);
+    setImages(images);
+    // Xử lý dữ liệu ảnh ở đây
+  };
 
-  
 
   const updateCriteriaEvaluation = (criteriaId: string, value: any, note: string) => {
     setCriteriaEvaluations(prevEvaluations => {
@@ -307,6 +313,10 @@ export default function OneView() {
   };
 
   const handleSubmit = async () => {
+    const imagesObject = images.reduce((acc: any, url: string, index: number) => {
+      acc[`image_${index + 1}`] = url;
+      return acc;
+    }, {});
     const reportData = {
       "formId": form.id,
       "shiftId": selectedShift,
@@ -317,15 +327,16 @@ export default function OneView() {
           "criteriaId": criteria.criteriaId,
           "value": criteria.value,
           "note": criteria.note,
+          "images": imagesObject
         }
       }),
     }
     console.log(reportData);
-    // const response = await CleaningReportService.PostReport(reportData);
-    // if (response.status === 200) {
-    //   alert("Gửi thành công");
-    //   window.location.reload();
-    // }
+    const response = await CleaningReportService.PostReport(reportData);
+    if (response.status === 200) {
+      alert("Gửi thành công");
+      window.location.reload();
+    }
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {
@@ -537,21 +548,15 @@ export default function OneView() {
                       </Box>
                     </TableCell>
                     <TableCell sx={{ width: '50%' }}>
-                      {/* <TextField fullWidth sx={{
+                      <TextField fullWidth sx={{
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
                           },
                         },
                       }} placeholder=''
                       onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
-                      /> */}
-                      <Box sx={{ width: '100%'}}>
-                        <Contact 
-                        criteriaId={criterion.id}
-                        value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.note || ''}
-                        onNoteChange={handleNoteChange}
-                         />
-                      </Box>
+                      />
+                      <Upload onImagesChange={handleImagesChange}></Upload>
                     </TableCell>
                   </TableRow>
                 ))}

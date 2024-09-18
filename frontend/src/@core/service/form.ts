@@ -15,9 +15,11 @@ type Form = {
  };
 
 export class CleaningFormService{
- getAllCleaningForm = async() => {
-    return axios.get(`${API_ENDPOINT}/api/CleaningForms`);
- }
+ getAllCleaningForm =async (pageNumber: number = 1, pageSize: number = 20) => {
+    return axios.get(`${API_ENDPOINT}/api/CleaningForms`, {
+      params: { pageNumber, pageSize }
+    });
+  }
  postCleaningForm = async(form:Form) => {
     return axios.post(`${API_ENDPOINT}/api/CleaningForms`,form);
  }

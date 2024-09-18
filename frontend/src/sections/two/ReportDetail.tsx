@@ -1,10 +1,9 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { Container, Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Rating } from '@mui/material';
+import { Container, Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Rating,Modal } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import dayjs from 'dayjs';
-import  CleaningReportService  from 'src/@core/service/cleaningReport';
-import parse from 'html-react-parser';
+import CleaningReportService from 'src/@core/service/cleaningReport';
 
 
 const renderRatingInput = (RatingType: string, RatingValue: any) => {
@@ -20,7 +19,7 @@ const renderRatingInput = (RatingType: string, RatingValue: any) => {
         <Rating
           value={RatingValue || 0}
           disabled
-          
+
         />
       );
     default:
@@ -30,16 +29,30 @@ const renderRatingInput = (RatingType: string, RatingValue: any) => {
 const ReportDetailView = ({ id }: { id: string }) => {
   const parse = require('html-react-parser').default;
   const [report, setReport] = useState<any>(null);
-  useEffect(()=>{
-    const fetchData = async()=>{
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchData = async () => {
       const response = await CleaningReportService.getCleaningReportById(id);
       setReport(response.data);
     }
     fetchData();
-  },[id]);
+  }, [id]);
   if (!report) {
     return
   }
+
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedImage(null);
+  };
+
+
   return (
     <Container maxWidth="lg" >
       <Button
@@ -64,29 +77,60 @@ const ReportDetailView = ({ id }: { id: string }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align='center' sx={{ width: '16.67%' }}>Tiêu chí</TableCell>
-                <TableCell align='center' sx={{ width: '33.33%' }}>Đánh giá</TableCell>
-                <TableCell align='center' sx={{ width: '33.33%' }}>Ghi chú</TableCell>
+                <TableCell align='center' sx={{ width: '25%' }}>Tiêu chí</TableCell>
+                <TableCell align='center' sx={{ width: '25%' }}>Đánh giá</TableCell>
+                <TableCell align='center' sx={{ width: '25%' }}>Ghi chú</TableCell>
+                <TableCell align='center' sx={{ width: '25%' }}>Ảnh</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {report.criteriaList.map((criterion: any,index:any) => (
+              {report.criteriaList.map((criterion: any, index: any) => (
                 <TableRow key={criterion.id}>
-                  <TableCell align='center' sx={{ width: '16.67%' }}>{criterion.name}</TableCell>
-                  <TableCell align='center' sx={{ width: '33.33%' }}>
-                    {/* <RenderRatingInput inputRatingType={criterion.criteriaType} value={criterion.value} disabled={true}/> */}
+                  <TableCell align='center' sx={{ width: '25%' }}>{criterion.name}</TableCell>
+                  <TableCell align='center' sx={{ width: '25%' }}>
                     {renderRatingInput(criterion.criteriaType, criterion.value)}
                   </TableCell>
-                  <TableCell align='center' sx={{ width: '33.33%' }}>
-                    {/* {criterion.note} */}
+                  <TableCell align='center' sx={{ width: '25%' }}>
                     {parse(criterion.note)}
-                    </TableCell>
+                  </TableCell>
+                  <TableCell align='center' sx={{ width: '25%' }}>
+                    {criterion.imageUrl && Object.entries(JSON.parse(criterion.imageUrl)).map(([key, url]: [string, unknown], index: number) => (
+                      typeof url === 'string' && (
+                          <img key={index} src={url} alt={`Image ${index}`} width={100} height={100} style={{ margin: '0 5px', cursor: 'zoom-in' }} onClick={() => handleImageClick(url)}/>
+                      )
+                    ))}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            maxHeight: "90%",
+            maxWidth: "90%",
+            overflow: "auto",
+          }}
+        >
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Zoomed"
+              style={{ width: "100%", height: "auto" }}
+            />
+          )}
+        </Box>
+      </Modal>
     </Container>
   );
 };

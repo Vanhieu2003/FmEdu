@@ -177,6 +177,7 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
       updateAt: new Date().toISOString()
     };
     const criteriaList = selectedCriteriaList;
+    console.log("Form",newForm);
     const formResponse = await CleaningFormService.postCleaningForm(newForm);
     
     const newCriteriaPerForm = {
@@ -271,8 +272,8 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
   };
 
   const handleRoomSelect = async (roomId:string)=>{
+    console.log("Room",roomId);
     var roomCategoryId = rooms.find(room=>room.id === roomId)?.roomCategoryId;
-    console.log("room",roomCategoryId);
     const response = await CriteriaService.getCriteriaByRoomCategoryId(roomCategoryId||'');
     setCriteriaList(response.data);
     console.log("Data",response.data);

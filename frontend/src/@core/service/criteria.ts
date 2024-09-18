@@ -19,9 +19,12 @@ export class CriteriaService {
     return axios.get(`${API_ENDPOINT}/api/Criteria/ByRoomId/${roomId}`);
   }
 
-  getAllCriteria = async () => {
-    return axios.get(`${API_ENDPOINT}/api/Criteria`);
-  }
+ // Lấy tất cả tiêu chí và hỗ trợ phân trang
+ getAllCriteria = async (pageNumber: number = 1, pageSize: number = 20) => {
+  return axios.get(`${API_ENDPOINT}/api/Criteria`, {
+    params: { pageNumber, pageSize }
+  });
+}
 
   getCriteriaByRoomIdMapByForm = async(roomId:string)=>{
     return axios.get(`${API_ENDPOINT}/api/Criteria/getCriteriaByRoom/${roomId}`)
