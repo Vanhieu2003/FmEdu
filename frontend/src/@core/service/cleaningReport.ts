@@ -5,7 +5,7 @@ export class CleaningReportService {
   PostReport = async (data: object) => {
     return axios.post(`${API_ENDPOINT}/api/CleaningReports/create`, data);
   }
-  getAllCleaningReportInfo = async (pageNumber: number = 1, pageSize: number = 5) => {
+  getAllCleaningReportInfo = async (pageNumber: number = 1, pageSize: number = 10) => {
     return axios.get(`${API_ENDPOINT}/api/CleaningReports/GetAllInfo`, {
       params: { pageNumber, pageSize }
     });

@@ -166,16 +166,17 @@ export default function OneView() {
   const [images, setImages] = useState<string[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentCriteriaID, setCurrentCriteriaID] = useState<string | null>(null);
-
+  const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
   const settings = useSettingsContext();
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
 
-  const handleImagesChange = (images: string[]) => {
-    console.log('Images changed:', images);
-    setImages(images);
-    // Xử lý dữ liệu ảnh ở đây
+  const handleImagesChange = (images: { [criteriaId: string]: string[] }) => {
+    setCriteriaImages(prevImages => ({
+      ...prevImages,
+      ...images
+    }));
   };
 
 
@@ -195,16 +196,7 @@ export default function OneView() {
     });
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>, criteriaID: string) => {
-    setAnchorEl(event.currentTarget);
-    setCurrentCriteriaID(criteriaID);
-  };
 
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setCurrentCriteriaID(null);
-  };
 
 
   useEffect(() => {
@@ -313,16 +305,18 @@ export default function OneView() {
   };
 
   const handleSubmit = async () => {
-    const imagesObject = images.reduce((acc: any, url: string, index: number) => {
-      acc[`image_${index + 1}`] = url;
-      return acc;
-    }, {});
+    
     const reportData = {
       "formId": form.id,
       "shiftId": selectedShift,
       "value": 0,
       "userId": "abc",
-      "criteriaList": criteriaEvaluations.map((criteria) => {
+      "criteriaList": criteriaEvaluations.map((criteria:any) => {
+        const images = criteriaImages[criteria.criteriaId] || [];
+        const imagesObject = images.reduce((acc: any, url: string, index: number) => {
+          acc[`image_${index + 1}`] = url;
+          return acc;
+        }, {});
         return {
           "criteriaId": criteria.criteriaId,
           "value": criteria.value,
@@ -554,9 +548,9 @@ export default function OneView() {
                           },
                         },
                       }} placeholder=''
-                      onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
+                        onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
                       />
-                      <Upload onImagesChange={handleImagesChange}></Upload>
+                      <Upload onImagesChange={handleImagesChange} criteriaId={criterion.id} ></Upload>
                     </TableCell>
                   </TableRow>
                 ))}

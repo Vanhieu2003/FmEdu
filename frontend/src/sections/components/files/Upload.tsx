@@ -8,11 +8,12 @@ import React from 'react';
 
 
 interface UploadProps {
-    onImagesChange: (images: string[]) => void;
+    onImagesChange: (images: { [criteriaId: string]: string[] }) => void;
+    criteriaId:string;
   }
 
 
-export default function Upload({ onImagesChange }: UploadProps) {
+export default function Upload({ onImagesChange,criteriaId}: UploadProps) {
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -28,7 +29,10 @@ export default function Upload({ onImagesChange }: UploadProps) {
                 const res = await FileService.PostFile(formData);
                 const newUrls = [...imageUrls, ...res.data.fileUrls];
                 setImageUrls(newUrls);
-                onImagesChange(newUrls); // Gọi callback
+                onImagesChange({ [criteriaId]: newUrls });
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
             }
         } catch (error) {
             console.error('Upload error:', error);
@@ -43,7 +47,7 @@ export default function Upload({ onImagesChange }: UploadProps) {
             console.log(res)
             const newUrls = imageUrls.filter(url => url !== urlToRemove);
             setImageUrls(newUrls);
-            onImagesChange(newUrls); // Gọi callback
+            onImagesChange({ [criteriaId]: newUrls }); // Thay đổi ở đây
         }
     };
  
