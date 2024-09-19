@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\wwwroot\\uploads\\638621884162660887.png",
+      "PackagePath": "staticwebassets\\uploads\\638621884162660887.png"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\wwwroot\\uploads\\638621887757457174.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638621887757457174.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\wwwroot\\uploads\\638621889874728231.png",
+      "PackagePath": "staticwebassets\\uploads\\638621889874728231.png"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\wwwroot\\uploads\\638622536832977215.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638622536832977215.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\wwwroot\\uploads\\638622553231090139.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638622553231090139.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\wwwroot\\uploads\\638622555493254819.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638622555493254819.jpg"
+    },
+    {
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.Project.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.build.Project.props",
+      "PackagePath": "build\\Project.props"
+    },
+    {
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.Project.props",
+      "PackagePath": "buildMultiTargeting\\Project.props"
+    },
+    {
+      "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.buildTransitive.Project.props",
+      "PackagePath": "buildTransitive\\Project.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
