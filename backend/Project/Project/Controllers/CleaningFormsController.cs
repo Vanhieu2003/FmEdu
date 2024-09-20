@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project.Dto;
 using Project.Entities;
 using Project.Repository;
 
@@ -25,28 +26,27 @@ namespace Project.Controllers
 
         // GET: api/CleaningForms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CleaningForm>>> GetCleaningForms([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<object>>> GetCleaningForms([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            if (pageNumber < 1)
-            {
-                return BadRequest("Số trang không hợp lệ.");
-            }
+            var result = await (from cf in _context.CleaningForms
+                                join r in _context.Rooms on cf.RoomId equals r.Id
+                                join f in _context.Floors on r.FloorId equals f.Id
+                                join b in _context.Blocks on r.BlockId equals b.Id
+                                join c in _context.Campuses on b.CampusId equals c.Id
+                                select new
+                                {
+                                    id = cf.Id,
+                                    formName = cf.FormName,
+                                    CampusName = c.CampusName,
+                                    BlockName = b.BlockName,
+                                    FloorName = f.FloorName,
+                                    RoomName = r.RoomName
+                                })
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
 
-            if (pageSize <= 0)
-            {
-                return BadRequest("Kích thước trang không hợp lệ.");
-            }
-
-            var cleaningForms = await _repo.GetAllCleaningForm(pageNumber, pageSize);
-
-
-            if (cleaningForms == null || !cleaningForms.Any())
-            {
-                return NotFound("Không tìm thấy Form.");
-            }
-
-
-            return Ok(cleaningForms);
+            return result;
         }
 
 
@@ -71,20 +71,43 @@ namespace Project.Controllers
         public async Task<ActionResult> GetFormDetails(string formId)
         {
             // Tìm form dựa vào formId
-            var form = await _context.CleaningForms
-                .Where(f => f.Id == formId)
-                .FirstOrDefaultAsync();
+            var form = await _context.CleaningForms.FirstOrDefaultAsync(f => f.Id == formId);
 
             if (form == null)
             {
                 return NotFound("Form không tồn tại");
             }
 
-            // Tìm thông tin Campus, Block, Floor, Room dựa trên form
-            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.Id == form.CampusId);
-            var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == form.BlockId);
-            var floor = await _context.Floors.FirstOrDefaultAsync(f => f.Id == form.FloorId);
+            if (form == null)
+            {
+                return NotFound("Form không tồn tại");
+            }
+
+            // Tìm thông tin Room dựa trên RoomId trong form
             var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == form.RoomId);
+            if (room == null)
+            {
+                return NotFound("Phòng không tồn tại");
+            }
+
+            // Tìm BlockId từ Room và sau đó lấy Block, Campus và Floor
+            var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == room.BlockId);
+            if (block == null)
+            {
+                return NotFound("Block không tồn tại");
+            }
+
+            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.Id == block.CampusId);
+            if (campus == null)
+            {
+                return NotFound("Campus không tồn tại");
+            }
+
+            var floor = await _context.Floors.FirstOrDefaultAsync(f => f.Id == room.FloorId);
+            if (floor == null)
+            {
+                return NotFound("Tầng không tồn tại");
+            }
 
             // Tìm tất cả các tiêu chí của form từ bảng CriteriasPerForm
             var criteriaPerForm = await _context.CriteriasPerForms
@@ -93,13 +116,10 @@ namespace Project.Controllers
 
             // Tạo danh sách các tiêu chí và các tag tương ứng
             var criteriaList = new List<object>();
-
             foreach (var cpf in criteriaPerForm)
             {
                 // Tìm thông tin chi tiết về từng tiêu chí
-                var criteria = await _context.Criteria
-                    .Where(c => c.Id == cpf.CriteriaId)
-                    .FirstOrDefaultAsync();
+                var criteria = await _context.Criteria.FirstOrDefaultAsync(c => c.Id == cpf.CriteriaId);
 
                 if (criteria != null)
                 {
@@ -241,8 +261,61 @@ namespace Project.Controllers
 
             return CreatedAtAction("PostCleaningForm", new { id = cleaningForm.Id }, cleaningForm);
         }
+        [HttpPost("create-form")]
+        public async Task<IActionResult> CreateCleaningForms([FromBody] CreateCleaningFormRequest request)
+        {
+            try
+            {
+                // Bắt đầu transaction để đảm bảo tất cả thao tác thực hiện thành công hoặc rollback khi có lỗi
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-        private bool CleaningFormExists(string id)
+                // Lặp qua từng RoomId
+                foreach (var room in request.RoomId)
+                {
+                    // Bước 1: Tạo mới CleaningForm cho mỗi RoomId
+                    var cleaningForm = new CleaningForm
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        FormName = request.FormName,
+                        RoomId = room.Id, // Mỗi RoomId sẽ tạo 1 CleaningForm
+                        CreateAt = DateTime.UtcNow,
+                        UpdateAt = DateTime.UtcNow,
+                    };
+
+                    await _context.CleaningForms.AddAsync(cleaningForm);
+                    await _context.SaveChangesAsync(); // Lưu CleaningForm để lấy FormId
+
+                    // Bước 2: Thêm các Criteria từ danh sách criteriaList vào CriteriaPerForm
+                    foreach (var criteria in request.CriteriaList)
+                    {
+                        var criteriaPerForm = new CriteriasPerForm
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            FormId = cleaningForm.Id, // FormId mới tạo
+                            CriteriaId = criteria.Id,
+                            CreateAt = DateTime.UtcNow,
+                            UpdateAt = DateTime.UtcNow
+                        };
+
+                        await _context.CriteriasPerForms.AddAsync(criteriaPerForm);
+                    }
+
+                    // Lưu CriteriaPerForm vào database
+                    await _context.SaveChangesAsync();
+                }
+
+                // Commit transaction sau khi hoàn thành
+                await transaction.CommitAsync();
+
+                return Ok(new { Message = "Tạo thành công các form", TotalFormsCreated = request.RoomId.Count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
+
+    private bool CleaningFormExists(string id)
         {
             return (_context.CleaningForms?.Any(e => e.Id == id)).GetValueOrDefault();
         }

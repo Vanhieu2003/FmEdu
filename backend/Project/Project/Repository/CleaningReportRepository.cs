@@ -29,10 +29,10 @@ namespace Project.Repository
         {
             var reportDetails = await (from cr in _context.CleaningReports
                                        join cf in _context.CleaningForms on cr.FormId equals cf.Id
-                                       join c in _context.Campuses on cf.CampusId equals c.Id
-                                       join b in _context.Blocks on cf.BlockId equals b.Id
-                                       join f in _context.Floors on cf.FloorId equals f.Id
                                        join r in _context.Rooms on cf.RoomId equals r.Id
+                                       join b in _context.Blocks on r.BlockId equals b.Id
+                                       join c in _context.Campuses on b.CampusId equals c.Id
+                                       join f in _context.Floors on r.FloorId equals f.Id
                                        where cr.Id == reportId
                                        select new CleaningReportDetailsDto
                                        {
@@ -51,16 +51,17 @@ namespace Project.Repository
             return reportDetails;
         }
 
+
         public async Task<List<CleaningReportDetailsDto>> GetReportInfo(int pageNumber = 1, int pageSize = 10)
         {
             // Tạo truy vấn lấy thông tin báo cáo
             var reportDetailsQuery = from cr in _context.CleaningReports
                                      join s in _context.Shifts on cr.ShiftId equals s.Id
                                      join cf in _context.CleaningForms on cr.FormId equals cf.Id
-                                     join c in _context.Campuses on cf.CampusId equals c.Id
-                                     join b in _context.Blocks on cf.BlockId equals b.Id
-                                     join f in _context.Floors on cf.FloorId equals f.Id
                                      join r in _context.Rooms on cf.RoomId equals r.Id
+                                     join b in _context.Blocks on r.BlockId equals b.Id
+                                     join c in _context.Campuses on b.CampusId equals c.Id
+                                     join f in _context.Floors on r.FloorId equals f.Id
                                      select new CleaningReportDetailsDto
                                      {
                                          id = cr.Id,
@@ -77,10 +78,10 @@ namespace Project.Repository
                                          updateAt = cr.UpdateAt
                                      };
 
-
+            // Sắp xếp báo cáo theo thời gian tạo mới nhất
             reportDetailsQuery = reportDetailsQuery.OrderByDescending(r => r.createAt);
 
-
+            // Phân trang và lấy kết quả
             var reportDetails = await reportDetailsQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)

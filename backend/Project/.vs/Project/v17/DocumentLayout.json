@@ -3,120 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\source\\repos\\Project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\cleaningreportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\cleaningreportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\criteriasperformscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\criteriasperformscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\criteriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\criteriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\icriteriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\icriteriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\criteriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\criteriacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\criteriadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\criteriadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\cleaningreportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\cleaningreportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\cleaningreportrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\cleaningreportrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\cleaningformrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\cleaningformrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\campusrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\campusrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\icleaningreportrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\icleaningreportrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\editformdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\editformdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\cleaningformscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\cleaningformscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\icleaningformrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\icleaningformrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\roomrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\roomrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\iroomrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\iroomrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\roomdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\roomdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\floorscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\floorscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\blockscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\blockscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\floorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\floorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\floordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\floordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\ifloorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\ifloorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\iblockrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\iblockrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\repository\\blockrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\blockrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\blockdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\blockdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\campuscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\campuscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\campusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\campusdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\dto\\criteriareportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\criteriareportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\controllers\\filescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\filescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\source\\repos\\project\\project\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -126,356 +22,46 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "CriteriaRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CriteriaRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\CriteriaRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CriteriaRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\CriteriaRepository.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAgwCYAAAAFAAAA",
+              "Title": "EditFormDto.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\EditFormDto.cs",
+              "RelativeDocumentMoniker": "Project\\Dto\\EditFormDto.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\EditFormDto.cs",
+              "RelativeToolTip": "Project\\Dto\\EditFormDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:49:34.698Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ICriteriaRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\ICriteriaRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\ICriteriaRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\ICriteriaRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\ICriteriaRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAABEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:49:15.62Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "CriteriaController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CriteriaController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\CriteriaController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CriteriaController.cs",
-              "RelativeToolTip": "Project\\Controllers\\CriteriaController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAsAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:48:37.351Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CriteriaDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CriteriaDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\CriteriaDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CriteriaDto.cs",
-              "RelativeToolTip": "Project\\Dto\\CriteriaDto.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:48:33.37Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CleaningReportDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CleaningReportDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\CleaningReportDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CleaningReportDto.cs",
-              "RelativeToolTip": "Project\\Dto\\CleaningReportDto.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:47:10.88Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CleaningReportRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CleaningReportRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\CleaningReportRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CleaningReportRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\CleaningReportRepository.cs",
-              "ViewState": "AQIAAB4AAAAAAAAAAAAmwFsAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:46:22.505Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CleaningReportsController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CleaningReportsController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\CleaningReportsController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CleaningReportsController.cs",
-              "RelativeToolTip": "Project\\Controllers\\CleaningReportsController.cs",
-              "ViewState": "AQIAAGkBAAAAAAAAAAA8wF0AAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T08:51:40.025Z",
+              "WhenOpened": "2024-09-20T05:57:06.8Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "CampusRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CampusRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\CampusRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CampusRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\CampusRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "DocumentIndex": 0,
+              "Title": "CriteriasPerFormsController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CriteriasPerFormsController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\CriteriasPerFormsController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CriteriasPerFormsController.cs",
+              "RelativeToolTip": "Project\\Controllers\\CriteriasPerFormsController.cs",
+              "ViewState": "AQIAAGkAAAAAAAAAAAAvwG4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:46:19.052Z"
+              "WhenOpened": "2024-09-20T05:34:20.877Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ICleaningReportRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\ICleaningReportRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\ICleaningReportRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\ICleaningReportRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\ICleaningReportRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:45:51.786Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 2,
               "Title": "CleaningFormsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CleaningFormsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CleaningFormsController.cs",
               "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CleaningFormsController.cs",
               "RelativeToolTip": "Project\\Controllers\\CleaningFormsController.cs",
-              "ViewState": "AQIAAM0AAAAAAAAAAAAmwPgAAAAFAAAA",
+              "ViewState": "AQIAALsAAAAAAAAAAAAAAMYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:43:46.599Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ICleaningFormRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\ICleaningFormRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\ICleaningFormRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\ICleaningFormRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\ICleaningFormRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAwAAABZAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:42:24.661Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CleaningFormRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CleaningFormRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\CleaningFormRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\CleaningFormRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\CleaningFormRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAABBAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:42:14.583Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "RoomRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\RoomRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\RoomRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\RoomRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\RoomRepository.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAADYAAAAPAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:40:41.208Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "RoomsController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\RoomsController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\RoomsController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\RoomsController.cs",
-              "RelativeToolTip": "Project\\Controllers\\RoomsController.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAAAIwEYAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:39:56.286Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "IRoomRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\IRoomRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\IRoomRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\IRoomRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\IRoomRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABKAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:40:26.192Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "RoomDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\RoomDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\RoomDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\RoomDto.cs",
-              "RelativeToolTip": "Project\\Dto\\RoomDto.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:40:11.036Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "FloorsController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\FloorsController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\FloorsController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\FloorsController.cs",
-              "RelativeToolTip": "Project\\Controllers\\FloorsController.cs",
-              "ViewState": "AQIAABkAAAAAAAAAAAAgwDcAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:39:06.989Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "BlocksController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\BlocksController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\BlocksController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\BlocksController.cs",
-              "RelativeToolTip": "Project\\Controllers\\BlocksController.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAADYAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:37:57.036Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "FloorDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\FloorDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\FloorDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\FloorDto.cs",
-              "RelativeToolTip": "Project\\Dto\\FloorDto.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:37:33.067Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "IFloorRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\IFloorRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\IFloorRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\IFloorRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\IFloorRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:37:24.911Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "FloorRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\FloorRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\FloorRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\FloorRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\FloorRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwA4AAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:36:58.349Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "IBlockRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\IBlockRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\IBlockRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\IBlockRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\IBlockRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:36:37.802Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "BlockRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\BlockRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\BlockRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Repository\\BlockRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\BlockRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAzAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:36:18.724Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "BlockDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\BlockDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\BlockDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\BlockDto.cs",
-              "RelativeToolTip": "Project\\Dto\\BlockDto.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:35:54.989Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "CampusDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CampusDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\CampusDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CampusDto.cs",
-              "RelativeToolTip": "Project\\Dto\\CampusDto.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:34:43.474Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "CampusController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CampusController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\CampusController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\CampusController.cs",
-              "RelativeToolTip": "Project\\Controllers\\CampusController.cs",
-              "ViewState": "AQIAABYAAAAAAAAAAAAgwEAAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T11:34:39.717Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "CriteriaReportDto.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CriteriaReportDto.cs",
-              "RelativeDocumentMoniker": "Project\\Dto\\CriteriaReportDto.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Dto\\CriteriaReportDto.cs",
-              "RelativeToolTip": "Project\\Dto\\CriteriaReportDto.cs",
-              "ViewState": "AQIAACAAAAAAAAAAAIAywC0AAAA+AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T08:59:10.786Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Program.cs",
-              "RelativeDocumentMoniker": "Project\\Program.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Program.cs",
-              "RelativeToolTip": "Project\\Program.cs",
-              "ViewState": "AQIAACIAAAAAAAAAAAAAADYAAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-18T04:37:24.25Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "FilesController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\FilesController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\FilesController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Controllers\\FilesController.cs",
-              "RelativeToolTip": "Project\\Controllers\\FilesController.cs",
-              "ViewState": "AQIAAFkAAAAAAAAAAAAAAF4AAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-17T08:39:39.367Z"
+              "WhenOpened": "2024-09-20T04:14:07.756Z",
+              "EditorCaption": ""
             }
           ]
         }

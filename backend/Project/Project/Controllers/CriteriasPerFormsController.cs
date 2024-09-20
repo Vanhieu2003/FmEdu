@@ -106,15 +106,8 @@ namespace Project.Controllers
             var existingForm = await _context.CleaningForms.FindAsync(formData.FormId);
             if (existingForm == null)
             {
-                return NotFound("Form not found.");
+                return NotFound("Form không tồn tại.");
             }
-
-            // Cập nhật thông tin cơ bản của Form
-            existingForm.CampusId = formData.CampusId;
-            existingForm.BlockId = formData.BlockId;
-            existingForm.FloorId = formData.FloorId;
-            existingForm.RoomId = formData.RoomId;
-            existingForm.UpdateAt = DateTime.Now;
 
             // Xóa các CriteriaPerForm cũ liên quan đến formId
             var oldCriteria = _context.CriteriasPerForms.Where(cpf => cpf.FormId == formData.FormId);
@@ -135,7 +128,7 @@ namespace Project.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return Ok("Form updated successfully.");
+            return Ok("Form cập nhật thành công.");
         }
 
         // POST: api/CriteriasPerForms

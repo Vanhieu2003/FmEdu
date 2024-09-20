@@ -26,7 +26,6 @@ namespace Project.Controllers
 
         // GET: api/Campus
         [HttpGet]
-        [HttpGet]
         public async Task<ActionResult<IEnumerable<CampusDto>>> GetCampus()
         {
             var campuses = from c in _context.Campuses

@@ -29,14 +29,14 @@
     }
     public class UpdateCleaningReportRequest
     {
-        public string ReportId { get; set; } // ID của CleaningReport
+        public string ReportId { get; set; }
         public List<UpdateCriteriaDto> CriteriaList { get; set; }
     }
 
     public class UpdateCriteriaDto
     {
-        public string Id { get; set; } // ID của CriteriaReport
-        public int? Value { get; set; } // Giá trị mới
-        public string? Note { get; set; } // Ghi chú mới
+        public string Id { get; set; }
+        public int? Value { get; set; }
+        public string? Note { get; set; }
     }
 }
