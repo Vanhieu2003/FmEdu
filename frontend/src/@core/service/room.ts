@@ -11,6 +11,9 @@ export class RoomService{
  getRoomsByFloorIdIfExistForm = async(floorId:string) => {
     return axios.get(`${API_ENDPOINT}/api/Rooms/IfExistForm/${floorId}`);
  }
+ getAllRooms = async() => {
+    return axios.get(`${API_ENDPOINT}/api/Rooms`);
+ }
 }
 
 export default new RoomService();

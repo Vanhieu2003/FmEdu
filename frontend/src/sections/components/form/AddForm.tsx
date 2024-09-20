@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, IconButton, InputLabel, MenuItem, Popover, Select, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from '@mui/material';
 import RoomService from 'src/@core/service/room';
 import BlockService from 'src/@core/service/block';
 import CampusService from 'src/@core/service/campus';
-import  CriteriaService  from 'src/@core/service/criteria';
+import CriteriaService from 'src/@core/service/criteria';
 import FloorService from 'src/@core/service/floor';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CleaningFormService from 'src/@core/service/form';
 
 interface Campus {
@@ -135,6 +137,7 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
   const [blocks, setBlocks] = useState<Blocks[]>([]);
   const [floors, setFloors] = useState<Floor[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [options, setOptions] = useState<string>("one");
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -142,25 +145,35 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
   const [selectedBlocks, setSelectedBlocks] = useState<string | null>(null);
   const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+  const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
   const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[]>([]);
 
-  const handleSave = async() => {
-    if (selectedCampus === null) {
-      alert('Vui lòng chọn cơ sở');
-      return;
+  const handleSave = async () => {
+    if (options === "one") {
+      if (selectedCampus === null) {
+        alert('Vui lòng chọn cơ sở');
+        return;
+      }
+      if (selectedBlocks === null) {
+        alert('Vui lòng chọn tòa nhà');
+        return;
+      }
+      if (selectedFloor === null) {
+        alert('Vui lòng chọn tầng');
+        return;
+      }
+      if (selectedRoom === null) {
+        alert('Vui lòng chọn phòng');
+        return;
+      }
     }
-    if (selectedBlocks === null) {
-      alert('Vui lòng chọn tòa nhà');
-      return;
+    else {
+      if (selectedRooms === null) {
+        alert('Vui lòng chọn phòng');
+        return;
+      }
     }
-    if (selectedFloor === null) {
-      alert('Vui lòng chọn tầng');
-      return;
-    }
-    if (selectedRoom === null) {
-      alert('Vui lòng chọn phòng');
-      return;
-    }
+
 
     const Criterialist = selectedCriteriaList;
     if (Criterialist.length === 0) {
@@ -168,26 +181,23 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
       return;
     }
     const newForm = {
-      formName: 'Form2',
-      campusId: selectedCampus,
-      blockId: selectedBlocks,
-      floorId: selectedFloor,
-      roomId: selectedRoom,
-      createAt: new Date().toISOString(),
-      updateAt: new Date().toISOString()
+      formName: options === "one" ? "Form cho phòng đơn" : "Form cho nhiều phòng",
+      RoomId: options === "one"
+        ? [{ id: selectedRoom }]
+        : selectedRooms.map(room => ({ id: room.id })),
+      criteriaList: selectedCriteriaList.map(criteria => ({ id: criteria.id }))
     };
-    const criteriaList = selectedCriteriaList;
-    console.log("Form",newForm);
-    const formResponse = await CleaningFormService.postCleaningForm(newForm);
-    
-    const newCriteriaPerForm = {
-        formId: formResponse.data.id,
-        criteriaList: criteriaList.map((criteria) => ({id:criteria.id})),
+
+    try {
+      const response = await CleaningFormService.postCleaningForm(newForm);
+      console.log("Form đã được tạo:", response.data);
+      alert('Form đã được tạo thành công');
+      window.location.reload();
+      setOpenPopup(false);
+    } catch (error) {
+      console.error("Lỗi khi tạo form:", error);
+      alert('Có lỗi xảy ra khi tạo form');
     }
-    
-    await CleaningFormService.postCriteriaPerForm(newCriteriaPerForm);
-    window.location.reload();
-    setOpenPopup(false);
   }
 
 
@@ -201,7 +211,7 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
       }
       return newSelectedCriteriaList;
     });
-    
+
   };
   useEffect(() => {
     const fetchCampus = async () => {
@@ -221,11 +231,11 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
     fetchCampus();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setSelectedBlocks(null);
     setSelectedFloor(null);
     setSelectedRoom(null);
-  },[selectedCampus]);
+  }, [selectedCampus]);
   const handleCampusSelect = async (CampusId: string) => {
     var campusId = CampusId;
     try {
@@ -271,141 +281,169 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
     }
   };
 
-  const handleRoomSelect = async (roomId:string)=>{
-    console.log("Room",roomId);
-    var roomCategoryId = rooms.find(room=>room.id === roomId)?.roomCategoryId;
-    const response = await CriteriaService.getCriteriaByRoomCategoryId(roomCategoryId||'');
+  const handleRoomSelect = async (roomId: string) => {
+    console.log("Room", roomId);
+    var roomCategoryId = rooms.find(room => room.id === roomId)?.roomCategoryId;
+    const response = await CriteriaService.getCriteriaByRoomCategoryId(roomCategoryId || '');
     setCriteriaList(response.data);
-    console.log("Data",response.data);
+    console.log("Data", response.data);
   }
 
-  useEffect(()=>{
-    console.log("Criteria",selectedCriteriaList);
-  },[selectedCriteriaList]);
-  return (
+  const handleOptionChange = async (option: string) => {
+    setOptions(option);
+
+    if (option === "one") {
+      setBlocks([]);
+      setFloors([]);
+      setRooms([]);
+      setCriteriaList([]);
+      setSelectedCampus(null);
+      setSelectedBlocks(null);
+      setSelectedFloor(null);
+      setSelectedRoom(null);
+      setSelectedCriteriaList([]);
+      setSelectedRooms([]);
+    }
+    if (option === "many") {
+      setSelectedCriteriaList([]);
+      setSelectedRooms([]);
+      const response1 = await CriteriaService.getAllCriterias();
+      const response2 = await RoomService.getAllRooms();
+      setCriteriaList(response1.data);
+      setRooms(response2.data);
+    }
+  }
+
+
+
+  useEffect(() => {
+    console.log(options);
+  }, [options]);
+
+  const renderOneFormContent = () => (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ position: 'relative' }}>
-        <Autocomplete
-          fullWidth
-          sx={{marginY:2}}
-          options={campus}
-          getOptionLabel={(option: any) => option.campusName || ''}
-          value={campus.find((c: any) => c.id === selectedCampus) || null}
-          onChange={(event, newValue) => {
-            if (newValue) {
-              setSelectedCampus(newValue ? newValue.id : null);
-              handleCampusSelect(newValue ? newValue.id : '');
-            }
-            else {
-              setSelectedCampus(null);
-              setBlocks([]);
-              setSelectedBlocks(null);
-              setFloors([]);
-              setSelectedFloor(null);
-              setRooms([]);
-              setSelectedRoom(null);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Chọn cơ sở"
-              variant="outlined"
-            />
-          )}
-          noOptionsText="Không có dữ liệu cơ sở"
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-        />
+      <Autocomplete
+        fullWidth
+        sx={{ marginY: 2 }}
+        options={campus}
+        getOptionLabel={(option: Campus) => option.campusName || ''}
+        value={campus.find((c: Campus) => c.id === selectedCampus) || null}
+        onChange={(event, newValue) => {
+          setSelectedCampus(newValue ? newValue.id : null);
+          if (newValue) handleCampusSelect(newValue.id);
+        }}
+        renderInput={(params) => <TextField {...params} label="Chọn cơ sở" variant="outlined" />}
+        noOptionsText="Không có dữ liệu cơ sở"
+      />
+      <Autocomplete
+        fullWidth
+        sx={{ marginY: 2 }}
+        options={blocks}
+        getOptionLabel={(option: any) => option.blockName || ''}
+        value={blocks.find((b: any) => b.id === selectedBlocks) || null}
+        onChange={(event, newValue) => {
+          if (newValue) {
+            setSelectedBlocks(newValue ? newValue.id : null);
+            handleBlockSelect(newValue ? newValue.id : '');
+          }
+          else {
+            setSelectedBlocks(null);
+            setFloors([]);
+            setSelectedFloor(null);
+            setRooms([]);
+            setSelectedRoom(null);
+          }
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Chọn tòa nhà"
+            variant="outlined"
+          />
+        )}
+        noOptionsText="Không có dữ liệu tòa nhà"
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+      />
+      <Autocomplete
+        fullWidth
+        sx={{ marginY: 2 }}
 
-        <Autocomplete
-          fullWidth
-          sx={{marginY:2}}
-          options={blocks}
-          getOptionLabel={(option: any) => option.blockName || ''}
-          value={blocks.find((b: any) => b.id === selectedBlocks) || null}
-          onChange={(event, newValue) => {
-            if (newValue) {
-              setSelectedBlocks(newValue ? newValue.id : null);
-              handleBlockSelect(newValue ? newValue.id : '');
-            }
-            else {
-              setSelectedBlocks(null);
-              setFloors([]);
-              setSelectedFloor(null);
-              setRooms([]);
-              setSelectedRoom(null);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Chọn tòa nhà"
-              variant="outlined"
-            />
-          )}
-          noOptionsText="Không có dữ liệu tòa nhà"
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-        />
-        <Autocomplete
-          fullWidth
-          sx={{marginY:2}}
-
-          options={floors}
-          getOptionLabel={(option: Floor) => option.floorName || ''}
-          value={floors.find(floor => floor.id === selectedFloor) || null}
-          onChange={(event, newValue) => {
-            if (newValue) {
-              setSelectedFloor(newValue ? newValue.id : null);
-              handleFloorSelect(newValue ? newValue.id : '');
-            }
-            else {
-              setSelectedFloor(null);
-              setRooms([]);
-              setSelectedRoom(null);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Chọn tầng"
-              variant="outlined"
-            />
-          )}
-          noOptionsText="Không có dữ liệu tầng"
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-        />
-        <Autocomplete
-          fullWidth
-          sx={{marginY:2}}
-          options={rooms}
-          getOptionLabel={(option: any) => option.roomName || ''}
-          value={rooms.find(room => room.id === selectedRoom) || null}
-          onChange={(event, newValue) => {
-            if (newValue) {
-              setSelectedRoom(newValue ? newValue.id : null);
-              handleRoomSelect(newValue ? newValue.id : '');
-            }
-            else {
-              setSelectedRoom(null);
-              setCriteriaList([]);
-            }
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Chọn phòng"
-              variant="outlined"
-            />
-          )}
-          noOptionsText="Không có dữ liệu phòng"
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          renderOption={(props, option) => (
-            <li {...props} key={option.id}>
-              {option.roomName}
-            </li>
-          )}
-        />
-        <Typography variant="h6">Chọn tiêu chí</Typography>
+        options={floors}
+        getOptionLabel={(option: Floor) => option.floorName || ''}
+        value={floors.find(floor => floor.id === selectedFloor) || null}
+        onChange={(event, newValue) => {
+          if (newValue) {
+            setSelectedFloor(newValue ? newValue.id : null);
+            handleFloorSelect(newValue ? newValue.id : '');
+          }
+          else {
+            setSelectedFloor(null);
+            setRooms([]);
+            setSelectedRoom(null);
+          }
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Chọn tầng"
+            variant="outlined"
+          />
+        )}
+        noOptionsText="Không có dữ liệu tầng"
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+      />
+      <Autocomplete
+        fullWidth
+        sx={{ marginY: 2 }}
+        options={rooms}
+        getOptionLabel={(option: any) => option.roomName || ''}
+        value={rooms.find(room => room.id === selectedRoom) || null}
+        onChange={(event, newValue) => {
+          if (newValue) {
+            setSelectedRoom(newValue ? newValue.id : null);
+            handleRoomSelect(newValue ? newValue.id : '');
+          }
+          else {
+            setSelectedRoom(null);
+            setCriteriaList([]);
+          }
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Chọn phòng"
+            variant="outlined"
+          />
+        )}
+        noOptionsText="Không có dữ liệu phòng"
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            {option.roomName}
+          </li>
+        )}
+      />
+      <Typography variant="h6">Chọn tiêu chí</Typography>
+      <Box sx={{
+        maxHeight: '100px',
+        overflowY: 'auto',
+        border: '1px solid #e0e0e0',
+        borderRadius: '4px',
+        padding: '10px',
+        '&::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: '#f1f1f1',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#888',
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#555',
+        },
+      }}>
         <FormGroup>
           {criteriaList.map((criteria) => (
             <FormControlLabel
@@ -416,9 +454,94 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
           ))}
         </FormGroup>
       </Box>
-      <Button onClick={handleSave} variant='outlined' sx={{ float: 'right' }}>Tạo</Button>
+
     </Box>
   );
-};
+
+  const renderManyFormsContent = () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Autocomplete
+        multiple
+        fullWidth
+        sx={{ marginY: 2 }}
+        options={rooms}
+        disableCloseOnSelect
+        getOptionLabel={(option: Room) => option.roomName || ''}
+        value={selectedRooms}
+        onChange={(event, newValue) => setSelectedRooms(newValue)}
+        renderOption={(props, option, { selected }) => (
+          <li {...props} key={option.id}>
+            <Checkbox
+              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+              checkedIcon={<CheckBoxIcon fontSize="small" />}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {option.roomName}
+          </li>
+        )}
+        renderInput={(params) => <TextField {...params} label="Chọn phòng" variant="outlined" />}
+        noOptionsText="Không có dữ liệu phòng"
+      />
+      <Box sx={{
+        maxHeight: '200px', // Bạn có thể điều chỉnh chiều cao tối đa ở đây
+        overflowY: 'auto',
+        border: '1px solid #e0e0e0',
+        borderRadius: '4px',
+        padding: '10px',
+        '&::-webkit-scrollbar': {
+          width: '8px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: '#f1f1f1',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#888',
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#555',
+        },
+      }}>
+        <FormGroup>
+          {criteriaList.map((criteria) => (
+            <FormControlLabel
+              key={criteria.id}
+              control={
+                <Checkbox
+                  checked={selectedCriteriaList.includes(criteria)}
+                  onChange={() => handleCriteriaChange(criteria)}
+                />
+              }
+              label={criteria.criteriaName}
+            />
+          ))}
+        </FormGroup>
+      </Box>
+    </Box>
+  );
+  return (
+    <>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Button
+          onClick={() => handleOptionChange("one")}
+          variant={options === "one" ? "contained" : "outlined"}
+          sx={{ '&:focus': { boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.5)' } }}
+        >
+          Tạo một form
+        </Button>
+        <Button
+          onClick={() => handleOptionChange("many")}
+          variant={options === "many" ? "contained" : "outlined"}
+          sx={{ '&:focus': { boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.5)' } }}
+        >
+          Tạo nhiều form
+        </Button>
+      </Box>
+      {options === "one" ? renderOneFormContent() : renderManyFormsContent()}
+      <Button onClick={handleSave} variant='outlined' sx={{ float: 'right', mt: 2 }}>Tạo</Button>
+    </>
+  );
+}
 
 export default AddForm;

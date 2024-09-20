@@ -38,7 +38,7 @@ export default function AnalyticsWidgetSummary({
           startColor: alpha(theme.palette[color].light, 0.2),
           endColor: alpha(theme.palette[color].main, 0.2),
         }),
-        py: 5,
+        py: 2,
         borderRadius: 2,
         textAlign: 'center',
         color: `${color}.darker`,
@@ -47,7 +47,7 @@ export default function AnalyticsWidgetSummary({
       }}
       {...other}
     >
-      {icon && <Box sx={{ width: 64, height: 64, mb: 1 }}>{icon}</Box>}
+      {icon && <Box sx={{ width: 64, height: 64}}>{icon}</Box>}
 
       <Typography variant="h3">{formatNumber(total)}{unit}</Typography>
 

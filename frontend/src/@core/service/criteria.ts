@@ -34,6 +34,10 @@ export class CriteriaService {
     return axios.get(`${API_ENDPOINT}/api/CriteriasPerForms/ByFormId/${formId}`);
   }
 
+  getAllCriterias = async()=>{
+    return axios.get(`${API_ENDPOINT}/api/Criteria/Getall`)
+  }
+
   postCriteria = async (data:object)=>{
     return axios.post(`${API_ENDPOINT}/api/Criteria/CreateCriteria`,data)
   }

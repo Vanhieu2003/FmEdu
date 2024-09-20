@@ -121,10 +121,6 @@ type Criteria = {
 type Form = {
  id?: string,
  formName: string,
- campusId: string,
- blockId: string,
- floorId: string,
- roomId: string,
  campusName?: string,
  blockName?: string,
  floorName?: string,
@@ -187,20 +183,8 @@ export default function FourView() {
       try {
         const response1 = await CampusService.getAllCampus();
         const response2 = await CleaningFormService.getAllCleaningForm();
-        const FormWithInfo = await Promise.all(response2.data.map(async (form: Form) => {
-          try {
-            const CampusName = await CampusService.getCampusById(form.campusId);
-            const BlockName = await BlockService.getBlockById(form.blockId);
-            const FloorName = await FloorService.getFloorById(form.floorId);
-            const RoomName = await RoomService.getRoomById(form.roomId);
-            return { ...form, campusName: CampusName.data.campusName, blockName: BlockName.data.blockName, floorName: FloorName.data.floorName, roomName: RoomName.data.roomName };
-          } catch (tagError) {
-            console.error(`Lỗi`, tagError);
-            return { ...criteria, tags: [] };
-          }
-        }));
         setCampus(response1.data);
-        setFormList(FormWithInfo);
+        setFormList(response2.data);
       } catch (error) {
         setError(error.message);
         console.error('Chi tiết lỗi:', error);
@@ -319,8 +303,8 @@ export default function FourView() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h4">Page four</Typography>
         <Button variant='contained' onClick={handleAddClick}>Tạo mới</Button>
-        <Popup title={isEditing ? 'Chỉnh sửa Form' : 'Tạo mới Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
-          {isEditing ? (
+        <Popup title={isEditing ? 'Chỉnh sửa Form' : 'Tạo mới Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} > 
+            {isEditing ? (
             <EditForm formId= {currentFormID} setOpenPopup={setOpenPopUp} />
           ) : (
             <AddForm  setOpenPopup={setOpenPopUp} />
@@ -385,7 +369,7 @@ export default function FourView() {
               sx={{ flex: 1 }}
               options={blocks}
               getOptionLabel={(option: any) => option.blockName || ''}
-              value={selectedBlocks}
+              value={blocks.find((b: any) => b.id === selectedBlocks) || null}
               onChange={(event, newValue) => {
                 if(newValue){
                   setSelectedBlocks(newValue ? newValue.id : null);
