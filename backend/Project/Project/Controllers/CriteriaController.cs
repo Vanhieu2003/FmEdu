@@ -52,7 +52,22 @@ namespace Project.Controllers
 
             return Ok(criterias);
         }
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<Criteria>> GetAllCriteria()
+        {
+            if (_context.Criteria == null)
+            {
+                return NotFound();
+            }
+            var criteria = await _context.Criteria.ToListAsync();
 
+            if (criteria == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(criteria);
+        }
 
         // GET: api/Criteria/5
         [HttpGet("{id}")]

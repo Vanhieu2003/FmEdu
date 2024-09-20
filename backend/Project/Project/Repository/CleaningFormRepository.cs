@@ -11,7 +11,6 @@ namespace Project.Repository
         {
             _context = context;
         }
-
         public async Task<CleaningForm> GetCleaningFormByRoomId(string roomId)
         {
             return await _context.CleaningForms.Where(x => x.RoomId == roomId).FirstOrDefaultAsync();
@@ -20,8 +19,9 @@ namespace Project.Repository
         public async Task<List<CleaningForm>> GetAllCleaningForm(int pageNumber = 1, int pageSize = 10)
         {
             var query = from cleaningForm in _context.CleaningForms
-                        join campus in _context.Campuses
-                        on cleaningForm.CampusId equals campus.Id
+                        join room in _context.Rooms on cleaningForm.RoomId equals room.Id
+                        join block in _context.Blocks on room.BlockId equals block.Id
+                        join campus in _context.Campuses on block.CampusId equals campus.Id
                         select new
                         {
                             CleaningForm = cleaningForm,
@@ -31,9 +31,9 @@ namespace Project.Repository
             query = query.OrderBy(cf => cf.SortOrder);
 
             var cleaningFormsDetails = await query.Skip((pageNumber - 1) * pageSize)
-                                                   .Take(pageSize)
-                                                   .Select(cf => cf.CleaningForm)
-                                                   .ToListAsync();
+                                                  .Take(pageSize)
+                                                  .Select(cf => cf.CleaningForm)
+                                                  .ToListAsync();
 
             return cleaningFormsDetails;
         }

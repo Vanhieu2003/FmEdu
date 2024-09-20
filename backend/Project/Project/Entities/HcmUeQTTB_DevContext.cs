@@ -189,12 +189,6 @@ namespace Project.Entities
             {
                 entity.ToTable("CleaningForm");
 
-                entity.Property(e => e.BlockId).HasMaxLength(450);
-
-                entity.Property(e => e.CampusId).HasMaxLength(450);
-
-                entity.Property(e => e.FloorId).HasMaxLength(450);
-
                 entity.Property(e => e.FormName).HasMaxLength(250);
 
                 entity.Property(e => e.RoomId).HasMaxLength(450);

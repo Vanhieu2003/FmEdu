@@ -41,6 +41,17 @@ namespace Project.Controllers
             return room;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllRooms()
+        {
+            var rooms = await _context.Rooms.ToListAsync();
+            if(rooms == null)
+            {
+                return NotFound();
+            }
+            return Ok(rooms);
+        }
+
 
         [HttpGet("Floor/{FloorId}")]
         public async Task<IActionResult> GetRoomsByFloorId(string FloorId)

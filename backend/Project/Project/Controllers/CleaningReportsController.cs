@@ -107,25 +107,56 @@ namespace Project.Controllers
         [HttpGet("GetFullInfo/{ReportId}")]
         public async Task<ActionResult> GetReportDetails(string ReportId)
         {
-            var report = _context.CleaningReports.Where(x => x.Id == ReportId).FirstOrDefault();
+            // Lấy báo cáo từ ReportId
+            var report = await _context.CleaningReports.FirstOrDefaultAsync(x => x.Id == ReportId);
+            if (report == null)
+            {
+                return NotFound("Report không tồn tại");
+            }
             // Tìm form dựa vào formId
             var formId = await _context.CleaningReports
                 .Where(r => r.Id == ReportId)
                 .Select(x => x.FormId)
                 .FirstOrDefaultAsync();
-            var form = await _context.CleaningForms.Where(f => f.Id == formId).FirstOrDefaultAsync();
+
+            var form = await _context.CleaningForms.FirstOrDefaultAsync(f => f.Id == formId);
             if (form == null)
             {
                 return NotFound("Form không tồn tại");
             }
 
-
-            // Tìm thông tin Campus, Block, Floor, Room dựa trên form
-            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.Id == form.CampusId);
-            var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == form.BlockId);
-            var floor = await _context.Floors.FirstOrDefaultAsync(f => f.Id == form.FloorId);
+            // Tìm thông tin phòng dựa trên RoomId
             var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == form.RoomId);
+            if (room == null)
+            {
+                return NotFound("Phòng không tồn tại");
+            }
+
+            // Lấy thông tin Block, Floor và Campus dựa trên RoomId
+            var block = await _context.Blocks.FirstOrDefaultAsync(b => b.Id == room.BlockId);
+            if (block == null)
+            {
+                return NotFound("Block không tồn tại");
+            }
+
+            var floor = await _context.Floors.FirstOrDefaultAsync(f => f.Id == room.FloorId);
+            if (floor == null)
+            {
+                return NotFound("Floor không tồn tại");
+            }
+
+            var campus = await _context.Campuses.FirstOrDefaultAsync(c => c.Id == block.CampusId);
+            if (campus == null)
+            {
+                return NotFound("Campus không tồn tại");
+            }
+
+            // Lấy thông tin shift từ báo cáo
             var shift = await _context.Shifts.FirstOrDefaultAsync(s => s.Id == report.ShiftId);
+            if (shift == null)
+            {
+                return NotFound("Shift không tồn tại");
+            }
 
             // Tìm tất cả các tiêu chí của form từ bảng CriteriaReport
             var criteriaPerReport = await _context.CriteriaReports
@@ -134,19 +165,19 @@ namespace Project.Controllers
 
             // Tạo danh sách các tiêu chí và các tag tương ứng
             var criteriaList = new List<object>();
-
             foreach (var cpr in criteriaPerReport)
             {
                 // Tìm thông tin chi tiết về từng tiêu chí
                 var criteria = await _context.Criteria
                     .Where(c => c.Id == cpr.CriteriaId)
                     .FirstOrDefaultAsync();
+
                 // Thêm tiêu chí vào danh sách
                 criteriaList.Add(new
                 {
-                    Id = criteria.Id,
-                    Name = criteria.CriteriaName,
-                    CriteriaType = criteria.CriteriaType,
+                    Id = criteria?.Id,
+                    Name = criteria?.CriteriaName,
+                    CriteriaType = criteria?.CriteriaType,
                     Value = cpr.Value,
                     Note = cpr.Note,
                     ImageUrl = cpr.ImageUrl
@@ -159,7 +190,7 @@ namespace Project.Controllers
                 Id = ReportId,
                 CampusName = campus?.CampusName,
                 BlockName = block?.BlockName,
-                FloorName = floor?.FloorName,
+                FloorName = floor?.FloorName, // Lấy FloorName từ Floor
                 RoomName = room?.RoomName,
                 CriteriaList = criteriaList,
                 createAt = report.CreateAt,
@@ -172,9 +203,9 @@ namespace Project.Controllers
             return Ok(result);
         }
 
-        // PUT: api/CleaningReports/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+            // PUT: api/CleaningReports/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutCleaningReport(string id, CleaningReport cleaningReport)
         {
             if (id != cleaningReport.Id)
