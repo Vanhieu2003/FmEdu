@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Autocomplete, Box, Button, Checkbox, FormControlLabel, FormGroup, TextField, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Autocomplete, Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, TextField, Typography } from '@mui/material';
 import RoomService from 'src/@core/service/room';
 import BlockService from 'src/@core/service/block';
 import CampusService from 'src/@core/service/campus';
@@ -8,6 +8,7 @@ import FloorService from 'src/@core/service/floor';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CleaningFormService from 'src/@core/service/form';
+import throttle from 'lodash/throttle';
 
 interface Campus {
   id: string;
@@ -147,6 +148,50 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
   const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[]>([]);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [inputValue, setInputValue] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const fetchRooms = useCallback(async (input: string) => {
+    setLoading(true);
+    try {
+      const response = await RoomService.searchRooms(input);
+      setRooms(response.data);
+    } catch (error) {
+      console.error('Lỗi khi tìm kiếm phòng:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  const throttledFetchRooms = useCallback(
+    throttle((input: string) => fetchRooms(input), 500, { leading: true, trailing: true }),
+    [fetchRooms]
+  );
+
+  const handleInputChange = (event: React.SyntheticEvent, newInputValue: string) => {
+    setInputValue(newInputValue);
+
+    // Hủy bỏ timeout trước đó nếu có
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    // Đặt một timeout mới
+    timeoutRef.current = setTimeout(() => {
+      if (newInputValue.trim()) {
+        throttledFetchRooms(newInputValue);
+      }
+    }, 500); // Đợi 500ms sau khi người dùng ngừng nhập
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSave = async () => {
     if (options === "one") {
@@ -314,12 +359,6 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
     }
   }
 
-
-
-  useEffect(() => {
-    console.log(options);
-  }, [options]);
-
   const renderOneFormContent = () => (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Autocomplete
@@ -469,6 +508,7 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
         getOptionLabel={(option: Room) => option.roomName || ''}
         value={selectedRooms}
         onChange={(event, newValue) => setSelectedRooms(newValue)}
+        onInputChange={handleInputChange}
         renderOption={(props, option, { selected }) => (
           <li {...props} key={option.id}>
             <Checkbox
@@ -480,44 +520,51 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
             {option.roomName}
           </li>
         )}
-        renderInput={(params) => <TextField {...params} label="Chọn phòng" variant="outlined" />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Chọn phòng"
+            variant="outlined"
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <React.Fragment>
+                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {params.InputProps.endAdornment}
+                </React.Fragment>
+              ),
+            }}
+          />
+        )}
         noOptionsText="Không có dữ liệu phòng"
+        loading={loading}
+        loadingText="Đang tìm kiếm..."
       />
-      <Box sx={{
-        maxHeight: '200px', // Bạn có thể điều chỉnh chiều cao tối đa ở đây
-        overflowY: 'auto',
-        border: '1px solid #e0e0e0',
-        borderRadius: '4px',
-        padding: '10px',
-        '&::-webkit-scrollbar': {
-          width: '8px',
-        },
-        '&::-webkit-scrollbar-track': {
-          background: '#f1f1f1',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: '#888',
-          borderRadius: '4px',
-        },
-        '&::-webkit-scrollbar-thumb:hover': {
-          background: '#555',
-        },
-      }}>
-        <FormGroup>
-          {criteriaList.map((criteria) => (
-            <FormControlLabel
-              key={criteria.id}
-              control={
-                <Checkbox
-                  checked={selectedCriteriaList.includes(criteria)}
-                  onChange={() => handleCriteriaChange(criteria)}
-                />
-              }
-              label={criteria.criteriaName}
+      <Autocomplete
+        multiple
+        options={criteriaList}
+        disableCloseOnSelect
+        getOptionLabel={(option) => option.criteriaName}
+        value={selectedCriteriaList}
+        onChange={(event, newValue) => {
+          setSelectedCriteriaList(newValue);
+        }}
+        renderOption={(props, option, { selected }) => (
+          <li {...props}>
+            <Checkbox
+              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+              checkedIcon={<CheckBoxIcon fontSize="small" />}
+              style={{ marginRight: 8 }}
+              checked={selected}
             />
-          ))}
-        </FormGroup>
-      </Box>
+            {option.criteriaName}
+          </li>
+        )}
+        style={{ width: '100%' }}
+        renderInput={(params) => (
+          <TextField {...params} label="Chọn tiêu chí" placeholder="Tiêu chí" />
+        )}
+      />
     </Box>
   );
   return (

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Project.csproj": {}
+    "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Project.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Project.csproj": {
+    "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Project.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Project.csproj",
+        "projectUniqueName": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Project.csproj",
         "projectName": "Project",
-        "projectPath": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\Project.csproj",
+        "projectPath": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Project.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Administrator\\source\\repos\\Project\\Project\\obj\\",
+        "outputPath": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
