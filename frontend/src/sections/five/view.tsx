@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import "src/global.css";
-import { Autocomplete, Button, Chip, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, Chip, Stack, TextField, Pagination } from '@mui/material';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
@@ -21,7 +21,7 @@ import AddCriteria from 'src/sections/components/form/AddCriteria';
 import CriteriaService from 'src/@core/service/criteria';
 import TagService from 'src/@core/service/tag';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
-import EditCriteria from 'src/sections/components/form/EditCriteria';
+
 dayjs.locale('vi');
 
 type Criteria = {
@@ -46,50 +46,54 @@ export default function FiveView() {
   const [selectedCriteria, setSelectedCriteria] = useState<Criteria | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  // const [allOptions, setAllOptions] = useState<Tag[]>(() => criteriaList.flatMap(criteria => criteria.tags || []));
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [isModified, setIsModified] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
   const [openAutocomplete, setOpenAutocomplete] = useState<{ [key: string]: boolean }>({});
   const [openPopUp, setOpenPopUp] = useState(false);
+  const [page, setPage] = useState(1);
+
+
+  const fetchCriteriaAndTags = async (pageNumber: number) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Fetch Criteria
+      const criteriaResponse = await CriteriaService.getAllCriteria(pageNumber);
+      const tagsResponse = await TagService.getAllTags();
+      const totalPages = Math.ceil(criteriaResponse.data.totalValue / 10);
+      setTotalPages(totalPages);
+
+      // Fetch tags for each criteria
+      const criteriaWithTags = await Promise.all(criteriaResponse.data.criterias.map(async (criteria: Criteria) => {
+        try {
+          const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
+          const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
+          return { ...criteria, tags: tagsResponse.data, roomName: roomCategoryResponse.data.categoryName };
+        } catch (tagError) {
+          console.error(`Lỗi khi lấy tags cho criteria ${criteria.id}:`, tagError);
+          return { ...criteria, tags: [] };
+        }
+      }));
+      setCriteriaList(criteriaWithTags);
+      setAllTags(tagsResponse.data);
+    } catch (error) {
+      setError(error.message);
+      console.error('Chi tiết lỗi khi lấy Criteria:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCriteriaAndTags = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        // Fetch Criteria
-        const criteriaResponse = await CriteriaService.getAllCriteria();
-        const tagsResponse = await TagService.getAllTags();
-        console.log('Dữ liệu Criteria:', criteriaResponse.data);
+    fetchCriteriaAndTags(page);
+    console.log("totalPages",totalPages);
+  }, [page]);
 
-        // Fetch tags for each criteria
-        const criteriaWithTags = await Promise.all(criteriaResponse.data.map(async (criteria: Criteria) => {
-          try {
-            const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
-            const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
-            return { ...criteria, tags: tagsResponse.data, roomName: roomCategoryResponse.data.categoryName };
-          } catch (tagError) {
-            console.error(`Lỗi khi lấy tags cho criteria ${criteria.id}:`, tagError);
-            return { ...criteria, tags: [] };
-          }
-        }));
-        setCriteriaList(criteriaWithTags);
-        setAllTags(tagsResponse.data);
-      } catch (error) {
-        setError(error.message);
-        console.error('Chi tiết lỗi khi lấy Criteria:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchCriteriaAndTags();
-  }, []);
-
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
   const filteredCriteriaList = criteriaList.filter((criteria) => {
     const matchesCriteria = !selectedCriteria || criteria.id === selectedCriteria.id;
     const matchesTags = selectedTags.length === 0 || selectedTags.every(selectedTag =>
@@ -125,7 +129,6 @@ export default function FiveView() {
     CriteriaService.disableCriteria(criteriaId);
     alert('Xóa thành công');
     window.location.reload();
-    console.log(criteriaId);
   }
   return (
     <Container>
@@ -218,20 +221,16 @@ export default function FiveView() {
                   )}
                 </TableCell>
                 <TableCell align="center">
-                  <DeleteIcon sx={{ marginRight: '5px', color: 'black',cursor:'pointer' }} onClick={() => HandleRemoveCriteria(criteria.id)}/>
+                  <DeleteIcon sx={{ marginRight: '5px', color: 'black', cursor: 'pointer' }} onClick={() => HandleRemoveCriteria(criteria.id)} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      {isModified && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <Button variant="contained" onClick={() => console.log('Saving...')}>
-            Lưu
-          </Button>
-        </Box>
-      )}
+      <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', margin: '10px', float: 'right' }}>
+        <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange}/>
+      </Stack>
     </Container>
   );
 }

@@ -7,7 +7,9 @@ import {
   TableCell, TableBody, MenuItem, FormControl, InputLabel, Select,
   Autocomplete,
   Button,
-  Collapse
+  Collapse,
+  Pagination,
+  Stack
 } from '@mui/material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -159,7 +161,8 @@ export default function TwoView() {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [showProgressFilter, setShowProgressFilter] = useState(false);
-
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [reports, setReports] = useState<any[]>();
   const [mockReports, setMockReports] = useState<any[]>();
   const filterReports = () => {
@@ -186,10 +189,10 @@ export default function TwoView() {
       const startOfDay = selectedDate.startOf('day');
       const endOfDay = selectedDate.endOf('day');
 
-        console.log('Ngày được chọn:', startOfDay.format('DD/MM/YYYY HH:mm:ss'), 'đến', endOfDay.format('DD/MM/YYYY HH:mm:ss'));
+      console.log('Ngày được chọn:', startOfDay.format('DD/MM/YYYY HH:mm:ss'), 'đến', endOfDay.format('DD/MM/YYYY HH:mm:ss'));
 
-        filteredReports = filteredReports?.filter(report => {
-          const reportDate = dayjs(report.createAt);
+      filteredReports = filteredReports?.filter(report => {
+        const reportDate = dayjs(report.createAt);
         return reportDate.isAfter(startOfDay) && reportDate.isBefore(endOfDay);
       });
     }
@@ -207,27 +210,25 @@ export default function TwoView() {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response1 = await CampusService.getAllCampus();
-        const response2 = await CleaningReportService.getAllCleaningReportInfo();
-
-        setCampus(response1.data);
-        setReports(response2.data);
-        setMockReports(response2.data);
-
-      } catch (error) {
-        setError(error.message);
-        console.error('Chi tiết lỗi:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  
+  const fetchData = async (pageNumber:number) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response1 = await CampusService.getAllCampus();
+      const response2 = await CleaningReportService.getAllCleaningReportInfo(pageNumber);
+      setCampus(response1.data);
+      setReports(response2.data.reports);
+      setMockReports(response2.data.reports);
+      var totalPages = Math.ceil(response2.data.totalValue / 10);
+      setTotalPages(totalPages);
+    } catch (error) {
+      setError(error.message);
+      console.error('Chi tiết lỗi:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
 
   useEffect(() => {
@@ -301,6 +302,16 @@ export default function TwoView() {
     const value = event.target.value;
     setValue(value === '' ? null : Number(value));
   };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  useEffect(() => {
+    fetchData(page);
+    console.log("totalPages", totalPages);
+  }, [page]);
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4">Danh sách báo cáo vệ sinh hằng ngày</Typography>
@@ -331,7 +342,7 @@ export default function TwoView() {
             />
           </LocalizationProvider>
 
-          <Box sx={{ display: 'flex', gap: 2}}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton onClick={toggleProgressFilter} color="primary">
                 <FilterListIcon />
@@ -537,6 +548,9 @@ export default function TwoView() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', margin: '10px', float: 'right' }}>
+        <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange} />
+      </Stack>
     </Container>
   );
 }

@@ -12,13 +12,9 @@ interface Props {
 }
 
 const RenderRatingInput = ({ criteriaID,inputRatingType,disabled=false,value,onValueChange }: Props) => {
-    const [ratingValues, setRatingValues] = useState<{[key:string]:any}>({});
     const handleChange = (value: any) => {
       onValueChange?.(criteriaID?criteriaID:'', value);
     };
-    useEffect(() => {
-        console.log("ratingvalue:", ratingValues);
-    }, [ratingValues]);
     switch (inputRatingType) {
         case "BINARY":
           return (

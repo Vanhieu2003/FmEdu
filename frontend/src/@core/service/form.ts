@@ -3,7 +3,7 @@ import { API_ENDPOINT } from "src/config-global";
 
 
 export class CleaningFormService{
- getAllCleaningForm =async (pageNumber: number = 1, pageSize: number = 20) => {
+ getAllCleaningForm =async (pageNumber: number = 1, pageSize: number = 10) => {
     return axios.get(`${API_ENDPOINT}/api/CleaningForms`, {
       params: { pageNumber, pageSize }
     });

@@ -20,7 +20,7 @@ export class CriteriaService {
   }
 
  // Lấy tất cả tiêu chí và hỗ trợ phân trang
- getAllCriteria = async (pageNumber: number = 1, pageSize: number = 20) => {
+ getAllCriteria = async (pageNumber: number = 1, pageSize: number = 10) => {
   return axios.get(`${API_ENDPOINT}/api/Criteria`, {
     params: { pageNumber, pageSize }
   });
