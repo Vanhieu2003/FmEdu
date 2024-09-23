@@ -297,7 +297,7 @@ export default function OneView() {
   const handleShiftSelect = async (ShiftId: string) => {
     setSelectedShift(ShiftId);
     try {
-      const response = await CriteriaService.getCriteriaByRoomIdMapByForm(selectedRoom);
+      const response = await CriteriaService.getCriteriaByRoomId(selectedRoom);
       setCriteria(response.data);
     } catch (error) {
       console.error('Lỗi khi lấy danh sách tiêu chí:', error);

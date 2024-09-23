@@ -15,7 +15,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import RenderRatingInput from 'src/sections/components/rating/renderRatingInput';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Popup from 'src/sections/components/form/Popup';
 import AddCriteria from 'src/sections/components/form/AddCriteria';
 import CriteriaService from 'src/@core/service/criteria';
@@ -121,10 +121,12 @@ export default function FiveView() {
     setSelectedTags(updatedTagsSelected);
   };
 
-  useEffect(() => {
-    console.log(selectedTags);
-    console.log(criteriaList);
-  }, [selectedTags])
+  const HandleRemoveCriteria = (criteriaId: string) => {
+    CriteriaService.disableCriteria(criteriaId);
+    alert('Xóa thành công');
+    window.location.reload();
+    console.log(criteriaId);
+  }
   return (
     <Container>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
@@ -216,11 +218,7 @@ export default function FiveView() {
                   )}
                 </TableCell>
                 <TableCell align="center">
-                  <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }}>
-                  <Popup title="Chỉnh sửa tiêu chí" openPopup={openPopUp} setOpenPopup={setOpenPopUp}>
-                    <EditCriteria setOpenPopup={setOpenPopUp} />
-                  </Popup>
-                </EditOutlinedIcon>
+                  <DeleteIcon sx={{ marginRight: '5px', color: 'black',cursor:'pointer' }} onClick={() => HandleRemoveCriteria(criteria.id)}/>
                 </TableCell>
               </TableRow>
             ))}

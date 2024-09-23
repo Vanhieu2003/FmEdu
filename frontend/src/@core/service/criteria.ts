@@ -25,10 +25,6 @@ export class CriteriaService {
     params: { pageNumber, pageSize }
   });
 }
-
-  getCriteriaByRoomIdMapByForm = async(roomId:string)=>{
-    return axios.get(`${API_ENDPOINT}/api/Criteria/getCriteriaByRoom/${roomId}`)
-  }
   
   getCriteriaByFormId = async (formId: string) => {
     return axios.get(`${API_ENDPOINT}/api/CriteriasPerForms/ByFormId/${formId}`);
@@ -42,5 +38,8 @@ export class CriteriaService {
     return axios.post(`${API_ENDPOINT}/api/Criteria/CreateCriteria`,data)
   }
 
+  disableCriteria = async (criteriaId: string) => {
+    return axios.put(`${API_ENDPOINT}/api/Criteria/${criteriaId}`);
+  }
 }
 export default new CriteriaService();
