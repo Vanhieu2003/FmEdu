@@ -9,103 +9,161 @@ import AnalyticsWidgetSummary from '../components/Overview/OverViewAnalytics';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import HomeIcon from '@mui/icons-material/Home';
-import { PieChart } from '@mui/x-charts';
-import AnalyticsWebsiteVisits from '../components/Overview/AnalyticsWebsiteVisits';
-import AnalyticsCurrentVisits from '../components/Overview/AnalyticsCurrentVisit';
+import { useEffect, useState } from 'react';
+import DataChart from 'src/components/DataChart/DataChart';
+import { barChartData, HorizontalBarChartData, lineChartData } from 'src/_mock/chartData';
+
 
 // ----------------------------------------------------------------------
 
 export default function ThreeView() {
   const settings = useSettingsContext();
-  const handleImagesChange = (images: string[]) => {
-    console.log('Images changed:', images);
-    // Xử lý dữ liệu ảnh ở đây
+  const [chartData, setChartData] = useState({});
+  const [selectedBase, setSelectedBase] = useState("A");
+  const [selectedBase1, setSelectedBase1] = useState("A");
+  const [timeRange, setTimeRange] = useState("months");
+
+  const handleTimeRangeChange = (event: any) => {
+    setTimeRange(event.target.value);
   };
+
+  // Lấy dữ liệu tương ứng theo khoảng thời gian được chọn
+  const getDataForTimeRange = () => {
+    return lineChartData[timeRange as keyof typeof lineChartData];
+  };
+
+  const handleBaseChange = (event: any) => {
+    setSelectedBase(event.target.value);
+  };
+  const handleBaseChange1 = (event: any) => {
+    setSelectedBase1(event.target.value);
+  };
+  const getDataForSelectedBase = () => {
+    const datasets = barChartData.datasets.filter(dataset =>
+      dataset.title === `Cơ sở ${selectedBase}`
+    );
+    return {
+      labels: barChartData.labels,
+      datasets
+    };
+  };
+  const getDataForSelectedBase1 = () => {
+    const datasets = HorizontalBarChartData.datasets.filter(dataset =>
+      dataset.title === `Cơ sở ${selectedBase1}`
+    );
+    return {
+      labels: HorizontalBarChartData.labels,
+      datasets
+    };
+  };
+  useEffect(() => {
+    setChartData({
+      options: {
+        chart: {
+          id: "basic-bar"
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+        }
+      },
+      series: [
+        {
+          name: "series-1",
+          data: [30, 40, 45, 50, 49, 60, 70, 91]
+        }
+      ]
+    });
+  }, [])
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Typography variant="h4"> Page Three </Typography>
-      <Grid container spacing={3} sx={{ mt: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-        <Grid sx={{ flex: 1 }}>
-          <AnalyticsWidgetSummary
-            title="Tổng số báo cáo"
-            total={255}
-            icon={<ContentPasteIcon fontSize='large' />}
-          />
-        </Grid>
-        <Grid sx={{ flex: 1 }}>
-          <AnalyticsWidgetSummary
-            title="Tổng tiến độ báo cáo"
-            total={76}
-            unit='%'
-            icon={<FitnessCenterIcon fontSize='large' />}
-            color='secondary'
-          />
-        </Grid>
+    <>
+      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+        <Typography variant="h4"> Page Three </Typography>
+        <Grid container spacing={3} sx={{ mt: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+          <Grid sx={{ flex: 1 }}>
+            <AnalyticsWidgetSummary
+              title="Tổng số báo cáo"
+              total={255}
+              icon={<ContentPasteIcon fontSize='large' />}
+            />
+          </Grid>
+          <Grid sx={{ flex: 1 }}>
+            <AnalyticsWidgetSummary
+              title="Tổng tiến độ báo cáo"
+              total={76}
+              unit='%'
+              icon={<FitnessCenterIcon fontSize='large' />}
+              color='secondary'
+            />
+          </Grid>
 
-        <Grid sx={{ flex: 1 }}>
-          <AnalyticsWidgetSummary
-            title="Tổng khu vực đã báo cáo"
-            total={124}
-            icon={<HomeIcon fontSize='large' />}
-            color='info'
-          />
+          <Grid sx={{ flex: 1 }}>
+            <AnalyticsWidgetSummary
+              title="Tổng khu vực đã báo cáo"
+              total={124}
+              icon={<HomeIcon fontSize='large' />}
+              color='info'
+            />
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid spacing={2} sx={{ mt: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-        <Grid sx={{ flex: 1 }}>
-        <AnalyticsWebsiteVisits
-            title="Website Visits"
-            subheader="(+43%) than last year"
-            chart={{
-              labels: [
-                '01/01/2024',
-                '02/01/2024',
-                '03/01/2024',
-                '04/01/2024',
-                '05/01/2024',
-                '06/01/2024',
-                '07/01/2024',
-                '08/01/2024',
-                '09/01/2024',
-                '10/01/2024',
-                '11/01/2024',
-              ],
-              series: [
-                {
-                  name: 'Team A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+        <Grid spacing={2} sx={{ mt: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+          <Grid sx={{ flex: 1 }}>
+            <select onChange={handleTimeRangeChange} value={timeRange}>
+              <option value="months">12 Tháng</option>
+              <option value="years">5 Năm gần nhất</option>
+              <option value="weeks">4 Tuần gần nhất</option>
+              <option value="days">10 Ngày gần nhất</option>
+            </select>
+            <DataChart type={"line"} data={getDataForTimeRange()} />
+
+          </Grid>
+
+          <Grid sx={{ flex: 1 }}>
+            <select onChange={handleBaseChange} value={selectedBase} style={{ float: 'right' }}>
+              <option value="A">Cơ sở A</option>
+              <option value="B">Cơ sở B</option>
+              <option value="C">Cơ sở C</option>
+              <option value="D">Cơ sở D</option>
+              <option value="E">Cơ sở E</option>
+            </select>
+            <DataChart type={"bar"} data={getDataForSelectedBase()} options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: `Cơ sở ${selectedBase}`,
+                  font: {
+                    size: 18
+                  }
+                }
+              }
+            }} />
+          </Grid>
+        </Grid>
+        <Grid spacing={2} sx={{ mt: 5 }}>
+          <select onChange={handleBaseChange1} value={selectedBase1} style={{ float: 'right' }}>
+            <option value="A">Cơ sở A</option>
+            <option value="B">Cơ sở B</option>
+            <option value="C">Cơ sở C</option>
+            <option value="D">Cơ sở D</option>
+            <option value="E">Cơ sở E</option>
+          </select>
+          <DataChart type={"bar"} data={getDataForSelectedBase1()} options={{
+            indexAxis: 'y',
+              plugins: {
+                legend: {
+                  position: 'right',
                 },
-                {
-                  name: 'Team B',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                
-              ],
-            }}
-          />
+                title: {
+                  display: true,
+                  text: `Cơ sở ${selectedBase1}`,
+                  font: {
+                    size: 18
+                  }
+                }
+              }
+            }} />
         </Grid>
+      </Container>
+    </>
 
-        <Grid sx={{ flex: 1 }}>
-        <AnalyticsCurrentVisits
-            title="Current Visits"
-            chart={{
-              series: [
-                { label: 'Lau sàn', value: 4344 },
-                { label: 'Tổng vệ sinh định kỳ', value: 5435 },
-                { label: 'Lau kính', value: 1443 },
-                { label: 'Xịt mùi thơm', value: 4443 },
-                { label: 'Vệ sinh nhà bếp', value: 4443 },
-                { label: 'Vệ sinh nhà vệ sinh', value: 4443 },
-              ],
-            }}
-          />
-        </Grid>
-
-      </Grid>
-    </Container>
   );
 }
