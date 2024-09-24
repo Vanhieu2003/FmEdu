@@ -1,14 +1,6 @@
 import axios from "axios";
 import { API_ENDPOINT } from "src/config-global";
 
-type Criteria = {
-  criteriaName: string;
-  criteriaType: string;
-  roomCategoryId: string;
-  createAt: string;
-  updateAt: string;
-};
-
 
 export class CriteriaService {
   getCriteriaByRoomCategoryId = async (roomCategoricalId: string) => {
@@ -40,6 +32,9 @@ export class CriteriaService {
 
   disableCriteria = async (criteriaId: string) => {
     return axios.put(`${API_ENDPOINT}/api/Criteria/${criteriaId}`);
+  }
+  searchCriteria = async (search:string)=>{
+    return axios.get(`${API_ENDPOINT}/api/Criteria/search?keyword=${search}`)
   }
 }
 export default new CriteriaService();

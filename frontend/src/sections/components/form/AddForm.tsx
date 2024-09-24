@@ -185,7 +185,7 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
     }, 500); // Đợi 500ms sau khi người dùng ngừng nhập
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

@@ -1,10 +1,9 @@
 "use client"
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import "src/global.css";
 import { Autocomplete, Button, Chip, Stack, TextField, Pagination } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import Table from '@mui/material/Table';
@@ -21,6 +20,7 @@ import AddCriteria from 'src/sections/components/form/AddCriteria';
 import CriteriaService from 'src/@core/service/criteria';
 import TagService from 'src/@core/service/tag';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
+import { throttle } from 'lodash';
 
 dayjs.locale('vi');
 
@@ -40,7 +40,6 @@ type Tag = {
 };
 
 
-
 export default function FiveView() {
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
   const [selectedCriteria, setSelectedCriteria] = useState<Criteria | null>(null);
@@ -52,20 +51,59 @@ export default function FiveView() {
   const [openAutocomplete, setOpenAutocomplete] = useState<{ [key: string]: boolean }>({});
   const [openPopUp, setOpenPopUp] = useState(false);
   const [page, setPage] = useState(1);
+  const [state, setState] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [mockCriteria,setMockCriteria] = useState<Criteria[]>();
+  const [filterCriteriaList,setFilterCriteriaList] = useState<Criteria[]>();
 
+  const filterCriteria = () => {
+    let filteredCriteria = mockCriteria;
+    if(searchTerm){
+      filteredCriteria = filteredCriteria?.filter((criteria) => criteria.criteriaName.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
+    if (selectedTags.length > 0){
+      filteredCriteria = filteredCriteria?.filter((criteria) => {
+        return selectedTags.every(selectedTag =>
+          criteria.tags.some(tag => tag.tagName === selectedTag.tagName)
+        );
+      });
+    }
+    if (filteredCriteria && filteredCriteria?.length > 0) {
+      var totalPages = Math.ceil(filteredCriteria.length / 10);
+      const startIndex = (page - 1) * 10;
+      const endIndex = startIndex + 10;
+      setTotalPages(totalPages);
+      setPage(page);
+      setFilterCriteriaList(filteredCriteria.slice(startIndex, endIndex));
+    } else {
+      setTotalPages(1);
+      setPage(1);
+      setFilterCriteriaList([]);
+    }
+    setFilterCriteriaList(newReports => {
+      return newReports;
+    });
+  };
+ 
 
   const fetchCriteriaAndTags = async (pageNumber: number) => {
     setIsLoading(true);
     setError(null);
     try {
-      // Fetch Criteria
       const criteriaResponse = await CriteriaService.getAllCriteria(pageNumber);
       const tagsResponse = await TagService.getAllTags();
-      const totalPages = Math.ceil(criteriaResponse.data.totalValue / 10);
-      setTotalPages(totalPages);
-
-      // Fetch tags for each criteria
+      const allCriteriaResponse = await CriteriaService.getAllCriterias();
       const criteriaWithTags = await Promise.all(criteriaResponse.data.criterias.map(async (criteria: Criteria) => {
+        try {
+          const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
+          const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
+          return { ...criteria, tags: tagsResponse.data, roomName: roomCategoryResponse.data.categoryName };
+        } catch (tagError) {
+          console.error(`Lỗi khi lấy tags cho criteria ${criteria.id}:`, tagError);
+          return { ...criteria, tags: [] };
+        }
+      }));
+      const allCriteriaWithTags = await Promise.all(allCriteriaResponse.data.map(async (criteria: Criteria) => {
         try {
           const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
           const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
@@ -77,6 +115,8 @@ export default function FiveView() {
       }));
       setCriteriaList(criteriaWithTags);
       setAllTags(tagsResponse.data);
+      setMockCriteria(allCriteriaWithTags);
+      setTotalPages(Math.ceil(criteriaResponse.data.totalValue / 10));
     } catch (error) {
       setError(error.message);
       console.error('Chi tiết lỗi khi lấy Criteria:', error);
@@ -84,24 +124,37 @@ export default function FiveView() {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+    setFilterCriteriaList(criteriaList);
+  }, [criteriaList]);
 
   useEffect(() => {
-    fetchCriteriaAndTags(page);
-    console.log("totalPages",totalPages);
-  }, [page]);
+    filterCriteria();
+  }, [selectedTags,searchTerm]);
 
+
+  useEffect(() => {
+    if (selectedTags.length > 0) {
+      setState(true);
+    }
+    if (selectedTags.length == 0) {
+      setState(false);
+    }
+  }, [selectedTags]);
+
+  useEffect(() => {
+    if (filterCriteriaList !== undefined) {
+      filterCriteria();
+    }
+    else {
+      fetchCriteriaAndTags(page);
+    }
+  }, [page]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
-  const filteredCriteriaList = criteriaList.filter((criteria) => {
-    const matchesCriteria = !selectedCriteria || criteria.id === selectedCriteria.id;
-    const matchesTags = selectedTags.length === 0 || selectedTags.every(selectedTag =>
-      criteria.tags.some(tag => tag.tagName === selectedTag.tagName)
-    );
-
-    return matchesCriteria && matchesTags;
-  });
+  
 
   const handleAutocompleteChange = (criteriaID: string, newValue: (Tag | null)[]) => {
     const updatedTags = criteriaList.map((criteria) => {
@@ -130,18 +183,18 @@ export default function FiveView() {
     alert('Xóa thành công');
     window.location.reload();
   }
+
+ 
   return (
     <Container>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={criteriaList}
-            getOptionLabel={(option) => option.criteriaName}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Tìm kiếm tiêu chí" />}
-            onChange={(event, newValue: Criteria | null) => setSelectedCriteria(newValue)}
+          <TextField
+            label="Tìm kiếm tiêu chí"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => {setSearchTerm(e.target.value)}}
+            
           />
           <Autocomplete
             multiple
@@ -186,7 +239,7 @@ export default function FiveView() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredCriteriaList.map((criteria) => (
+            {filterCriteriaList?.map((criteria:any) => (
               <TableRow key={criteria.id}>
                 <TableCell>{criteria.criteriaName}</TableCell>
                 <TableCell>
@@ -197,7 +250,7 @@ export default function FiveView() {
                 <TableCell align="center">{criteria.roomName}</TableCell>
                 <TableCell>
                   <Stack direction='row' spacing={1}>
-                    {criteria.tags?.map((tag) =>
+                    {criteria.tags?.map((tag:any) =>
                       <Chip key={tag.id} label={tag.tagName} />
                     )}
                   </Stack>
@@ -229,7 +282,7 @@ export default function FiveView() {
         </Table>
       </TableContainer>
       <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', margin: '10px', float: 'right' }}>
-        <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange}/>
+        <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange} />
       </Stack>
     </Container>
   );

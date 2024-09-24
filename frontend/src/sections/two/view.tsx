@@ -161,6 +161,7 @@ export default function TwoView() {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [showProgressFilter, setShowProgressFilter] = useState(false);
+  const [filterReportsList, setfilterReportsList] = useState<any[]>();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [reports, setReports] = useState<any[]>();
@@ -198,30 +199,37 @@ export default function TwoView() {
     }
 
     if (filteredReports && filteredReports?.length > 0) {
-      setReports(filteredReports);
+      var totalPages = Math.ceil(filteredReports.length / 10);
+      const startIndex = (page - 1) * 10;
+      const endIndex = startIndex + 10;
+      setTotalPages(totalPages);
+      setPage(page);
+      setfilterReportsList(filteredReports.slice(startIndex, endIndex));
     } else {
-      setReports([]);
+      setTotalPages(1);
+      setPage(1);
+      setfilterReportsList([]);
     }
 
-    setReports(newReports => {
-      console.log("filteredReports", filteredReports);
-      console.log('Updated Reports:', newReports);
+    setfilterReportsList(newReports => {
       return newReports;
     });
   };
 
-  
-  const fetchData = async (pageNumber:number) => {
+
+  const fetchData = async (pageNumber: number) => {
     setIsLoading(true);
     setError(null);
     try {
       const response1 = await CampusService.getAllCampus();
       const response2 = await CleaningReportService.getAllCleaningReportInfo(pageNumber);
+      const response3 = await CleaningReportService.getAllCleaningReportInfo(1, 500);;
       setCampus(response1.data);
       setReports(response2.data.reports);
-      setMockReports(response2.data.reports);
+      setMockReports(response3.data.reports);
       var totalPages = Math.ceil(response2.data.totalValue / 10);
       setTotalPages(totalPages);
+
     } catch (error) {
       setError(error.message);
       console.error('Chi tiết lỗi:', error);
@@ -230,6 +238,11 @@ export default function TwoView() {
     }
   }
 
+  useEffect(() => {
+    setfilterReportsList(reports);
+    console.log("filterReportsList", filterReportsList);
+    console.log("reports", reports);
+  }, [reports]);
 
   useEffect(() => {
     filterReports();
@@ -308,8 +321,12 @@ export default function TwoView() {
   };
 
   useEffect(() => {
-    fetchData(page);
-    console.log("totalPages", totalPages);
+    if (filterReportsList !== undefined) {
+      filterReports();
+    }
+    else {
+      fetchData(page);
+    }
   }, [page]);
 
   return (
@@ -501,7 +518,7 @@ export default function TwoView() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {reports?.map(report => (
+            {filterReportsList?.map(report => (
               <TableRow key={report.id}>
                 <TableCell align="center">{dayjs(report.createAt).format('DD/MM/YYYY')} ({report.startTime.substring(0, 5)} - {report.endTime.substring(0, 5)})</TableCell>
                 <TableCell align="center">{report.campusName}</TableCell>

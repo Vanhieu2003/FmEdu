@@ -148,13 +148,13 @@ export default function FourView() {
   const [filterFormList, setFilterFormList] = useState<Form[]>();
   const [openPopUp, setOpenPopUp] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [mockForm, setMockForm] = useState<Form[]>();
   const open = Boolean(anchorEl);
 
-  const mockForm: Form[] = formList || [];
   const filterForm = () => {
     let filteredForm = mockForm;
     if (selectedCampus !== null) {
-      filteredForm = filteredForm.filter(report => report?.campusName === campus.find(campus => campus.id === selectedCampus)?.campusName);
+      filteredForm = filteredForm?.filter(report => report?.campusName === campus.find(campus => campus.id === selectedCampus)?.campusName);
     }
     if (selectedBlocks !== null) {
       filteredForm = filteredForm?.filter(report => report?.blockName === blocks.find(block => block.id === selectedBlocks)?.blockName);
@@ -167,9 +167,16 @@ export default function FourView() {
     }
 
     if (filteredForm && filteredForm.length > 0) {
-      setFilterFormList(filteredForm);
+      const startIndex = (page - 1) * 10;
+      const endIndex = startIndex + 10;
+      setFilterFormList(filteredForm.slice(startIndex, endIndex));
+      var totalPages = Math.ceil(filteredForm.length / 10);
+      setPage(page);
+      setTotalPages(totalPages);
     } else {
       setFilterFormList([]);
+      setTotalPages(1);
+      setPage(1);
     }
     setFilterFormList(newReports => {
       console.log('Updated Reports:', newReports);
@@ -184,8 +191,10 @@ export default function FourView() {
     try {
       const response1 = await CampusService.getAllCampus();
       const response2 = await CleaningFormService.getAllCleaningForm(pageNumber);
+      const response3 = await CleaningFormService.getAllCleaningForm(1,500);
       setCampus(response1.data);
       setFormList(response2.data.result);
+      setMockForm(response3.data.result);
       var totalPages = Math.ceil(response2.data.totalValue / 10);
       setTotalPages(totalPages);
     } catch (error) {
@@ -211,38 +220,15 @@ const handleEditClick = () => {
   setOpenPopUp(true);
 }
 
-useEffect(() => { console.log(currentFormID); }, [currentFormID]);
+
 
 const handleClose = () => {
   setAnchorEl(null);
 };
 useEffect(() => {
   filterForm();
-
 }, [selectedCampus, selectedBlocks, selectedFloor, selectedRoom]);
-//   console.log(newForm);
-//   if (formList && formList.length !== 0) {
-//     formList.map((form) => {
-//       if (form.id === newForm.id) {
-//         form.formName = newForm.formName;
-//         form.campusId = newForm.campusId;
-//         form.blockId = newForm.blockId;
-//         form.floorId = newForm.floorId;
-//         form.roomId = newForm.roomId;
-//         console.log("OK")
-//       }
-//       else {
-//         const updatedFormList = [...formList, newForm];
-//         setFormList(updatedFormList);
-//         console.log("else")
-//       }
-//     })
-//   }
-//   else {
-//     const updatedFormList = [...(formList || []), newForm];
-//     setFormList(updatedFormList);
-//   }
-// };
+
 
 useEffect(() => {
   setFilterFormList(formList);
@@ -299,8 +285,14 @@ const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
 };
 
 useEffect(() => {
-  fetchData(page);
-  console.log("totalPages", totalPages);
+  if (filterFormList !== undefined) {
+    filterForm();
+  }
+  else {
+    fetchData(page);
+    console.log("totalPages", totalPages);
+  }
+
 }, [page]);
 
 return (
@@ -460,7 +452,7 @@ return (
             <TableBody>
               {filterFormList?.map((form: any, index) => (
                 <TableRow key={form.id} sx={{ marginTop: '5px' }}>
-                  <TableCell align='center' sx={{ width: '5px' }}>{index + 1}</TableCell>
+                  <TableCell align='center' sx={{ width: '5px' }}>{index + 1 + ((page-1)*10)}</TableCell>
                   <TableCell align='center'>
                     {form.campusName}
                   </TableCell>
