@@ -7,12 +7,13 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { bgGradient } from 'src/theme/css';
 import { ColorSchema } from 'src/theme/palette';
 import formatNumber from 'src/utils/format-number';
+import { isNumber } from 'lodash';
 
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
   title: string;
-  total: number;
+  total: any;
   unit?: string;
   icon: React.ReactNode;
   color?: ColorSchema;
@@ -49,7 +50,7 @@ export default function AnalyticsWidgetSummary({
     >
       {icon && <Box sx={{ width: 64, height: 64}}>{icon}</Box>}
 
-      <Typography variant="h3">{formatNumber(total)}{unit}</Typography>
+      <Typography variant="h3">{isNumber(total) ? formatNumber(total) : total}{unit}</Typography>
 
       <Typography variant="subtitle2" sx={{ opacity: 0.64 }}>
         {title}

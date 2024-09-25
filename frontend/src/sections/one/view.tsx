@@ -326,11 +326,11 @@ export default function OneView() {
       }),
     }
     console.log(reportData);
-    const response = await CleaningReportService.PostReport(reportData);
-    if (response.status === 200) {
-      alert("Gửi thành công");
-      window.location.reload();
-    }
+    // const response = await CleaningReportService.PostReport(reportData);
+    // if (response.status === 200) {
+    //   alert("Gửi thành công");
+    //   window.location.reload();
+    // }
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {

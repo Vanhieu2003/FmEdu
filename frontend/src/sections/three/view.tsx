@@ -1,24 +1,27 @@
 'use client';
 
 
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
+
 import { useSettingsContext } from 'src/components/settings';
 import Grid from "@mui/material/Grid2";
+import { useEffect, useState } from 'react';
+import { barChartData, HorizontalBarChartData, lineChartData } from 'src/_mock/chartData';
+import  ChartService  from 'src/@core/service/chart';
+import { Container, MenuItem, Select, Typography } from '@mui/material';
+import DataChart from 'src/components/DataChart/DataChart';
 import AnalyticsWidgetSummary from '../components/Overview/OverViewAnalytics';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import HomeIcon from '@mui/icons-material/Home';
-import { useEffect, useState } from 'react';
-import DataChart from 'src/components/DataChart/DataChart';
-import { barChartData, HorizontalBarChartData, lineChartData } from 'src/_mock/chartData';
+import SpeedIcon from '@mui/icons-material/Speed';
 
 
 // ----------------------------------------------------------------------
 
 export default function ThreeView() {
   const settings = useSettingsContext();
-  const [chartData, setChartData] = useState({});
+  const [totalReportCount, setTotalReportCount] = useState(0);
+  const [totalReportPerDayCount, setTotalReportPerDayCount] = useState(0);
+  const [totalRoomCount, setTotalRoomCount] = useState(0);
   const [selectedBase, setSelectedBase] = useState("A");
   const [selectedBase1, setSelectedBase1] = useState("A");
   const [timeRange, setTimeRange] = useState("months");
@@ -56,7 +59,18 @@ export default function ThreeView() {
       datasets
     };
   };
-  
+
+  useEffect(()=>{
+    const fetchData = async()=>{
+      var response = await ChartService.GetCleaningReportCount();
+      var response1 = await ChartService.GetTotalReportPerDayCount();
+      setTotalReportCount(response.data.totalCount);
+      setTotalReportPerDayCount(response1.data.totalReports);
+      setTotalRoomCount(response1.data.totalRooms);
+    }
+    fetchData();
+  },[])
+
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -64,8 +78,8 @@ export default function ThreeView() {
         <Grid container spacing={3} sx={{ mt: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
           <Grid sx={{ flex: 1 }}>
             <AnalyticsWidgetSummary
-              title="Tổng số báo cáo"
-              total={255}
+              title="Tổng số báo cáo trong ngày"
+              total={totalReportCount}
               icon={<ContentPasteIcon fontSize='large' />}
             />
           </Grid>
@@ -74,7 +88,7 @@ export default function ThreeView() {
               title="Tổng tiến độ báo cáo"
               total={76}
               unit='%'
-              icon={<FitnessCenterIcon fontSize='large' />}
+              icon={<SpeedIcon fontSize='large' />}
               color='secondary'
             />
           </Grid>
@@ -82,7 +96,7 @@ export default function ThreeView() {
           <Grid sx={{ flex: 1 }}>
             <AnalyticsWidgetSummary
               title="Tổng khu vực đã báo cáo"
-              total={124}
+              total={`${totalReportPerDayCount} / ${totalRoomCount}`}
               icon={<HomeIcon fontSize='large' />}
               color='info'
             />
@@ -90,24 +104,36 @@ export default function ThreeView() {
         </Grid>
         <Grid spacing={2} sx={{ mt: 5, display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
           <Grid sx={{ flex: 1 }}>
-            <select onChange={handleTimeRangeChange} value={timeRange}>
-              <option value="months">12 Tháng</option>
-              <option value="years">5 Năm gần nhất</option>
-              <option value="weeks">4 Tuần gần nhất</option>
-              <option value="days">10 Ngày gần nhất</option>
-            </select>
+          <Select
+            labelId="time-range-select-label"
+            id="time-range-select"
+            value={timeRange}
+            onChange={handleTimeRangeChange}
+          >
+            <MenuItem value="months">12 Tháng</MenuItem>
+            <MenuItem value="years">5 Năm gần nhất</MenuItem>
+            <MenuItem value="weeks">4 Tuần gần nhất</MenuItem>
+            <MenuItem value="days">10 Ngày gần nhất</MenuItem>
+          </Select>
             <DataChart type={"line"} data={getDataForTimeRange()} />
 
           </Grid>
 
           <Grid sx={{ flex: 1 }}>
-            <select onChange={handleBaseChange} value={selectedBase} style={{ float: 'right' }}>
-              <option value="A">Cơ sở A</option>
-              <option value="B">Cơ sở B</option>
-              <option value="C">Cơ sở C</option>
-              <option value="D">Cơ sở D</option>
-              <option value="E">Cơ sở E</option>
-            </select>
+
+                <Select
+                  labelId="base-select-label"
+                  id="base-select"
+                  value={selectedBase}
+                  onChange={handleBaseChange}
+                  style={{ float: 'right' }}
+                >
+                  <MenuItem value="A">Cơ sở A</MenuItem>
+                  <MenuItem value="B">Cơ sở B</MenuItem>
+                  <MenuItem value="C">Cơ sở C</MenuItem>
+                  <MenuItem value="D">Cơ sở D</MenuItem>
+                  <MenuItem value="E">Cơ sở E</MenuItem>
+                </Select>
             <DataChart type={"bar"} data={getDataForSelectedBase()} options={{
               plugins: {
                 title: {
@@ -122,13 +148,20 @@ export default function ThreeView() {
           </Grid>
         </Grid>
         <Grid spacing={2} sx={{ mt: 5 }}>
-          <select onChange={handleBaseChange1} value={selectedBase1} style={{ float: 'right' }}>
-            <option value="A">Cơ sở A</option>
-            <option value="B">Cơ sở B</option>
-            <option value="C">Cơ sở C</option>
-            <option value="D">Cơ sở D</option>
-            <option value="E">Cơ sở E</option>
-          </select>
+
+              <Select
+                labelId="base-select-label1"
+                id="base-select1"
+                value={selectedBase1}
+                onChange={handleBaseChange1}
+                style={{ float: 'right' }}
+              >
+                <MenuItem value="A">Cơ sở A</MenuItem>
+                <MenuItem value="B">Cơ sở B</MenuItem>
+                <MenuItem value="C">Cơ sở C</MenuItem>
+                <MenuItem value="D">Cơ sở D</MenuItem>
+                <MenuItem value="E">Cơ sở E</MenuItem>
+              </Select>
           <DataChart type={"bar"} data={getDataForSelectedBase1()} options={{
             indexAxis: 'y',
               plugins: {

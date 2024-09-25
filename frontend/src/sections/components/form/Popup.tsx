@@ -12,7 +12,7 @@ type PopupProps = {
 
 const Popup = ({ title, children, openPopup,formId, setOpenPopup}: PopupProps) => {
   return (
-    <Dialog open={openPopup} fullWidth maxWidth="sm">
+    <Dialog open={openPopup} fullWidth maxWidth="xl">
       <DialogTitle>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography>{title}</Typography>
