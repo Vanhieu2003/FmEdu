@@ -223,7 +223,7 @@ export default function TwoView() {
     try {
       const response1 = await CampusService.getAllCampus();
       const response2 = await CleaningReportService.getAllCleaningReportInfo(pageNumber);
-      const response3 = await CleaningReportService.getAllCleaningReportInfo(1, 500);;
+      const response3 = await CleaningReportService.getAllCleaningReportInfo(1, 9999999);
       setCampus(response1.data);
       setReports(response2.data.reports);
       setMockReports(response3.data.reports);
@@ -291,7 +291,7 @@ export default function TwoView() {
       filterReports();
     }
     else {
-      setReports(mockReports);
+      filterReports();
     }
   };
   const handleFloorSelect = async (floorId: string) => {

@@ -67,10 +67,10 @@ const ReportDetailView = ({ id }: { id: string }) => {
           <Typography variant="h6">Ngày đánh giá: {dayjs(report.createAt).format('DD/MM/YYYY')}</Typography>
           <Typography variant="h6">Ngày cập nhật: {dayjs(report.updateAt).format('DD/MM/YYYY')}</Typography>
           <Typography variant="h6">Ca: {report.startTime.substring(0, 5)} - {report.endTime.substring(0, 5)}</Typography>
-          <Typography variant="h6">Cơ sở: {report.campusName}</Typography>
-          <Typography variant="h6">Cơ sở: {report.blockName}</Typography>
-          <Typography variant="h6">Tầng: {report.floorName}</Typography>
-          <Typography variant="h6">Khu vực: {report.roomName}</Typography>
+          <Typography variant="h6"> {report.campusName}</Typography>
+          <Typography variant="h6"> {report.blockName}</Typography>
+          <Typography variant="h6"> {report.floorName}</Typography>
+          <Typography variant="h6">{report.roomName}</Typography>
           <Typography variant="h6">Người đánh giá: Nhân viên A</Typography>
         </Box>
         <TableContainer component={Paper}>

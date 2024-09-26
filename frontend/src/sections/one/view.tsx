@@ -7,7 +7,7 @@ import "src/global.css";
 import SendIcon from '@mui/icons-material/Send';
 import { useSettingsContext } from 'src/components/settings';
 import { Button, FormControl, FormControlLabel, IconButton, InputLabel, Link, MenuItem, Popover, Radio, RadioGroup, Select, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
@@ -30,6 +30,7 @@ import CleaningReportService from 'src/@core/service/cleaningReport';
 import CleaningFormService from 'src/@core/service/form';
 import Contact from 'src/sections/components/form/RichTextEditor';
 import Upload from '../components/files/Upload';
+import SnackbarComponent from '../components/snackBar';
 
 dayjs.locale('vi');
 interface Campus {
@@ -165,8 +166,11 @@ export default function OneView() {
   const [criteria, setCriteria] = useState<Criteria[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [currentCriteriaID, setCurrentCriteriaID] = useState<string | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
+  const [isSending, setIsSending] = useState(false);
   const settings = useSettingsContext();
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -305,13 +309,13 @@ export default function OneView() {
   };
 
   const handleSubmit = async () => {
-    
+
     const reportData = {
       "formId": form.id,
       "shiftId": selectedShift,
       "value": 0,
       "userId": "abc",
-      "criteriaList": criteriaEvaluations.map((criteria:any) => {
+      "criteriaList": criteriaEvaluations.map((criteria: any) => {
         const images = criteriaImages[criteria.criteriaId] || [];
         const imagesObject = images.reduce((acc: any, url: string, index: number) => {
           acc[`image_${index + 1}`] = url;
@@ -326,11 +330,21 @@ export default function OneView() {
       }),
     }
     console.log(reportData);
-    // const response = await CleaningReportService.PostReport(reportData);
-    // if (response.status === 200) {
-    //   alert("Gửi thành công");
-    //   window.location.reload();
-    // }
+    if (criteriaEvaluations.length < criteria.length) {
+      setSnackbarMessage("Vui lòng đánh giá đầy đủ các tiêu chí");
+      setSnackbarStatus('error');
+      setSnackbarOpen(true);
+    }
+    else {
+      
+    }
+      const response = await CleaningReportService.PostReport(reportData);
+      if (response.status === 200) {
+        setIsSending(true);
+        setSnackbarMessage("Đã gửi thành công");
+        setSnackbarStatus("success");
+        setSnackbarOpen(true);
+      }
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {
@@ -343,9 +357,17 @@ export default function OneView() {
     updateCriteriaEvaluation(criteriaId, existingEvaluation?.value || '', note);
   };
 
-  useEffect(() => {
-    console.log("criteriaEvaluations:", criteriaEvaluations);
-  }, [criteriaEvaluations]);
+  const handleSnackbarClose = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+    if (snackbarStatus === 'success') {
+      window.location.reload();
+    } else {
+      setIsSending(false); // Enable lại nút Send nếu có lỗi
+    }
+  }, [snackbarStatus]);
   //UI of the website
   return (
     <Container maxWidth={false ? false : 'xl'}>
@@ -559,9 +581,22 @@ export default function OneView() {
           </TableContainer>
         </Box>
         {criteria.length !== 0 &&
-          <Button variant="contained" endIcon={<SendIcon />} sx={{ mt: 'auto', alignSelf: 'flex-end', mb: 2, mr: 2 }} onClick={handleSubmit}>
+          <Box sx={{ mt: 'auto', alignSelf: 'flex-end', mb: 2, mr: 2 }}>
+          <Button
+            variant="contained"
+            endIcon={<SendIcon />}
+            onClick={handleSubmit}
+            disabled={isSending}
+          >
             Send
-          </Button>}
+          </Button>
+          <SnackbarComponent
+            status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+            open={snackbarOpen}
+            message={snackbarMessage}
+            onClose={handleSnackbarClose}
+          />
+        </Box>}
       </Box>
 
     </Container>

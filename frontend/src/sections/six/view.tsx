@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import ChartService from 'src/@core/service/chart';
 import DataChart from 'src/components/DataChart/DataChart';
 import CampusService from 'src/@core/service/campus';
+import SnackbarComponent from '../components/snackBar';
 
 // ----------------------------------------------------------------------
 
@@ -16,20 +17,39 @@ export default function SixView() {
   const [chartData1, setChartData1] = useState<any>({ labels: [], datasets: [] });
   const [campus, setCampus] = useState<any[]>([]);
   const [selectedCampus, setSelectedCampus] = useState<any>(null);
-  const [selectedType,setSelectedType] = useState<any>(null);
+  const [selectedType, setSelectedType] = useState<any>("ByQuater");
+  const [lineChartData, setLineChartData] = useState<any>({ labels: [], datasets: [] });
 
-  useEffect(()=>{
-    switch(selectedType){
+  const fetchDataByType = async (type: string) => {
+    switch (type) {
       case "ByQuater":
-
+        const response = await ChartService.GetCleaningReportByQuarter();
+        setLineChartData(processLineChartData(response.data,type));
         break;
       case "ByYear":
-
+        const response1 = await ChartService.GetCleaningReportByYear();
+        setLineChartData(processLineChartData(response1.data,type));
         break;
       case "BySixMonth":
+        const response2 = await ChartService.GetCleaningReportBySixMonth();
+        setLineChartData(processLineChartData(response2.data,type));
         break;
     }
-  },[selectedType])
+  }
+
+  useEffect(() => {
+    switch (selectedType) {
+      case "ByQuater":
+        fetchDataByType("ByQuater");
+        break;
+      case "ByYear":
+        fetchDataByType("ByYear");
+        break;
+      case "BySixMonth":
+        fetchDataByType("BySixMonth");
+        break;
+    }
+  }, [selectedType])
   useEffect(() => {
     const fetchData = async () => {
       const response = await CampusService.getAllCampus();
@@ -38,6 +58,7 @@ export default function SixView() {
     };
     fetchData();
   }, []);
+
   useEffect(() => {
     fetchData(selectedCampus);
     console.log(campus)
@@ -51,11 +72,68 @@ export default function SixView() {
     processData1(response1.data);
   };
 
+  const processLineChartData = (data: any, type: string) => {
+    switch (type) {
+      case "ByQuater":
+        const campusMap = new Map<string, Map<string,number>>();
+        const quartersSet = new Set<string>();
+
+        // Khởi tạo mảng dữ liệu cho mỗi cơ sở
+        data.forEach((item:any) => {
+          if (!campusMap.has(item.campusName)) {
+            campusMap.set(item.campusName, new Map<string,number>());
+          }
+          campusMap.get(item.campusName)!.set(item.reportTime, item.averageValue);
+          quartersSet.add(item.reportTime);
+        });
+
+        // Chuyển Set thành Array và sắp xếp các quý
+        const quarters = Array.from(quartersSet).sort();
+
+        // Chuyển đổi dữ liệu thành định dạng mong muốn
+        const datasets = Array.from(campusMap.entries()).map(([campusName, values]) => ({
+          label: campusName,
+          data: quarters.map(quarter => values.get(quarter) || 0),
+        }));
+
+        return {
+          labels: quarters,
+          datasets: datasets,
+        };
+      case "ByYear":
+        const campusMap1 = new Map<string, Map<string,number>>();
+        const YearSet = new Set<string>();
+
+        // Khởi tạo mảng dữ liệu cho mỗi cơ sở
+        data.forEach((item:any) => {
+          if (!campusMap1.has(item.campusName)) {
+            campusMap1.set(item.campusName, new Map<string,number>());
+          }
+          campusMap1.get(item.campusName)!.set(item.reportTime, item.averageValue);
+          YearSet.add(item.reportTime);
+        });
+
+        // Chuyển Set thành Array và sắp xếp các quý
+        const Years = Array.from(YearSet).sort();
+
+        // Chuyển đổi dữ liệu thành định dạng mong muốn
+        const datasets1 = Array.from(campusMap1.entries()).map(([campusName, values]) => ({
+          label: campusName,
+          data: Years.map(year => values.get(year) || 0),
+        }));
+
+        return {
+          labels: Years,
+          datasets: datasets1,
+        };
+    }
+  };
+
   // Bước 2: Chuyển Đổi Dữ Liệu
   const processData = (data: any) => {
-    const labels = data.map((item: any) => `Tháng ${String(item.reportTime).slice(0,2)}`);
+    const labels = data.map((item: any) => item.day);
     const values = data.map((item: any) => item.averageValue);
-  
+
     setChartData({
       labels: labels,
       datasets: [
@@ -73,7 +151,7 @@ export default function SixView() {
   const processData1 = (data: any) => {
     const labels = data.map((item: any) => `${item.criteriaName}`);
     const values = data.map((item: any) => item.value);
-  
+
     setChartData1({
       labels: labels,
       datasets: [
@@ -95,7 +173,7 @@ export default function SixView() {
         value={selectedCampus || ''}
         onChange={(e) => setSelectedCampus(e.target.value)}
       >
-        {campus.map((c:any) => (
+        {campus.map((c: any) => (
           <option key={c.id} value={c.id}>
             {c.campusName}
           </option>
@@ -109,7 +187,7 @@ export default function SixView() {
           plugins: {
             title: {
               display: true,
-              text: `Tiến độ các tiêu chí của ${campus.find((c:any) => c.id === selectedCampus)?.campusName}`,
+              text: `Tiến độ các tiêu chí của ${campus.find((c: any) => c.id === selectedCampus)?.campusName}`,
               font: { size: 18 },
             }
           }
@@ -122,7 +200,31 @@ export default function SixView() {
           plugins: {
             title: {
               display: true,
-              text: `Tiến độ trung bình của${campus.find((c:any) => c.id === selectedCampus)?.campusName}`,
+              text: `Tiến độ trung bình của${campus.find((c: any) => c.id === selectedCampus)?.campusName}`,
+              font: { size: 18 },
+            }
+          }
+        }}
+      />
+      <select
+        value={selectedType || ''}
+        onChange={(e) => setSelectedType(e.target.value)}
+      >
+          <option key={1} value={"ByQuater"}>
+            Quý
+          </option>
+          <option key={2} value={"ByYear"}>
+            Năm
+          </option>
+      </select>
+      <DataChart
+        type={"line"}
+        data={lineChartData}
+        options={{
+          plugins: {
+            title: {
+              display: true,
+              text: `Báo cáo`,
               font: { size: 18 },
             }
           }
