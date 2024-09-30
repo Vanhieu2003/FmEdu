@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Project.Entities;
+using Project.Interface;
 using Project.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +31,6 @@ builder.Services.AddDbContext<HcmUeQTTB_DevContext>(option => option.UseSqlServe
 builder.Services.AddScoped<IFloorRepository, FloorRepository>();
 builder.Services.AddScoped<IRoomRepository,RoomRepository>(); 
 builder.Services.AddScoped<IBlockRepository, BlockRepository>();
-builder.Services.AddScoped<ICampusRepository, CampusRepository>();
 builder.Services.AddScoped<IShiftRepository,ShiftRepository>();
 builder.Services.AddScoped<ICriteriaRepository, CriteriaRepository>();
 builder.Services.AddScoped<ICleaningFormRepository, CleaningFormRepository>();

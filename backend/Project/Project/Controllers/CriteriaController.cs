@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
+using Project.Interface;
 using Project.Repository;
 
 namespace Project.Controllers
@@ -42,15 +43,14 @@ namespace Project.Controllers
             }
 
             var criterias = await _repo.GetAllCriteria(pageNumber, pageSize);
-
+            var totalValue = await _context.Criteria.CountAsync(c => c.Status == "ENABLE");
 
             if (criterias == null || !criterias.Any())
             {
                 return NotFound("Không tìm thấy tiêu chí.");
             }
-
-
-            return Ok(criterias);
+            var response = new { criterias, totalValue };
+            return Ok(response);
         }
         [HttpGet("GetAll")]
         public async Task<ActionResult<Criteria>> GetAllCriteria()
@@ -59,7 +59,7 @@ namespace Project.Controllers
             {
                 return NotFound();
             }
-            var criteria = await _context.Criteria.ToListAsync();
+            var criteria = await _context.Criteria.Where(c=>c.Status == "ENABLE").ToListAsync();
 
             if (criteria == null)
             {
@@ -106,66 +106,42 @@ namespace Project.Controllers
             }
             return Ok(criteriaList);
         }
-        [HttpGet("getCriteriaByRoom/{roomId}")]
-        public async Task<IActionResult> GetCriteriaByRoom(string roomId)
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchCriteria([FromQuery] string keyword)
         {
-            // Bước 1: Tìm tất cả các Form liên quan đến RoomId
-            var formId = await _context.CleaningForms
-                .Where(cf => cf.RoomId == roomId)
-                .Select(cf => cf.Id)
-                .FirstOrDefaultAsync();
-
-            if (!formId.Any())
-            {
-                return NotFound("No forms found for the given room.");
-            }
-
-            // Bước 2: Tìm tất cả các Criteria liên quan đến các Form từ bước 1
-            var criteriaIds = await _context.CriteriasPerForms
-                .Where(cpf => formId == cpf.FormId)
-                .Select(cpf => cpf.CriteriaId)
-                .Distinct()
-                .ToListAsync();
-
-            if (!criteriaIds.Any())
-            {
-                return NotFound("No criteria found for the given room.");
-            }
-
-            // Bước 3: Lấy thông tin chi tiết về các Criteria từ bảng Criteria
-            var criteriaList = await _context.Criteria
-                .Where(c => criteriaIds.Contains(c.Id))
-                .ToListAsync();
-
-            return Ok(criteriaList);
+            // Execute search using repository
+            var criteria = await _repo.SearchCriteria(keyword);
+            return Ok(criteria);
         }
+
+
+
+
         // PUT: api/Criteria/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCriteria(string id, Criteria criteria)
+        public async Task<IActionResult> DisableCriteria(string id)
         {
-            if (id != criteria.Id)
+            // Kiểm tra nếu _context.Criteria null
+            if (_context.Criteria == null)
             {
-                return BadRequest();
+                return NotFound("Criteria table is not available.");
             }
 
-            _context.Entry(criteria).State = EntityState.Modified;
+            // Tìm kiếm criteria theo id
+            var criteria = await _context.Criteria.FindAsync(id);
+            if (criteria == null)
+            {
+                return NotFound($"Criteria with ID '{id}' not found.");
+            }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CriteriaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            // Cập nhật cột Status thành "DISABLE"
+            criteria.Status = "DISABLE";
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _context.Criteria.Update(criteria);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -178,7 +154,7 @@ namespace Project.Controllers
         {
             // Kiểm tra CriteriaName có trùng lặp không
             var existingCriteria = await _context.Criteria
-                .FirstOrDefaultAsync(c => c.CriteriaName == criteriaDto.CriteriaName);
+                .FirstOrDefaultAsync(c => c.CriteriaName == criteriaDto.CriteriaName && c.Status=="ENABLE");
 
             if (existingCriteria != null)
             {
@@ -193,7 +169,8 @@ namespace Project.Controllers
                 RoomCategoryId = criteriaDto.RoomCategoryId,
                 CriteriaType = criteriaDto.CriteriaType,
                 CreateAt = DateTime.UtcNow,
-                UpdateAt = DateTime.UtcNow
+                UpdateAt = DateTime.UtcNow,
+                Status = "ENABLE"
             };
 
             _context.Criteria.Add(newCriteria);

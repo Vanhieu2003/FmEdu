@@ -16,12 +16,12 @@ namespace Project.Controllers
     public class CampusController : ControllerBase
     {
         private readonly HcmUeQTTB_DevContext _context;
-        private readonly ICampusRepository _repo;
 
-        public CampusController(HcmUeQTTB_DevContext context, ICampusRepository repo)
+
+        public CampusController(HcmUeQTTB_DevContext context)
         {
             _context = context;
-            _repo = repo;
+ 
         }
 
         // GET: api/Campus

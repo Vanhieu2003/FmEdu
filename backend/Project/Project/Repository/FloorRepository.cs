@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
+using Project.Interface;
 
 namespace Project.Repository
 {

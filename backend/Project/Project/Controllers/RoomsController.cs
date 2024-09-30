@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Entities;
-using Project.Repository;
+using Project.Interface;
+
 
 namespace Project.Controllers
 {
@@ -44,7 +45,7 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllRooms()
         {
-            var rooms = await _context.Rooms.ToListAsync();
+            var rooms = await _context.Rooms.Take(50).ToListAsync();
             if(rooms == null)
             {
                 return NotFound();
@@ -78,6 +79,12 @@ namespace Project.Controllers
 
             return Ok(rooms);
         }
+        [HttpGet("SearchRoom/{roomName}")] 
+        public async Task<IActionResult> SearchRoom (string roomName)
+        {
+            var rooms = await _repo.SearchRoom(roomName);
+            return Ok(rooms);
 
+        }
     }
 }

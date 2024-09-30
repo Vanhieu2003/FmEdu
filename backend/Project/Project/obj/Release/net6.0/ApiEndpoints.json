@@ -88,6 +88,58 @@
     ]
   },
   {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetAverageValues",
+    "RelativePath": "api/Chart/average-values",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCleaningReportCount",
+    "RelativePath": "api/Chart/GetCleaningReportCount",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCriteriaValuesByCampus",
+    "RelativePath": "api/Chart/GetCriteriaValuesByCampus/{campusId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetReportInADay",
+    "RelativePath": "api/Chart/GetReportInADay",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Project.Controllers.CleaningFormsController",
     "Method": "GetCleaningForms",
     "RelativePath": "api/CleaningForms",
@@ -508,7 +560,7 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriaController",
-    "Method": "PutCriteria",
+    "Method": "DisableCriteria",
     "RelativePath": "api/Criteria/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -517,11 +569,6 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "criteria",
-        "Type": "Project.Entities.Criteria",
         "IsRequired": true
       }
     ],
@@ -613,16 +660,16 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriaController",
-    "Method": "GetCriteriaByRoom",
-    "RelativePath": "api/Criteria/getCriteriaByRoom/{roomId}",
+    "Method": "SearchCriteria",
+    "RelativePath": "api/Criteria/search",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "roomId",
+        "Name": "keyword",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1244,6 +1291,22 @@
     "Parameters": [
       {
         "Name": "FloorId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.RoomsController",
+    "Method": "SearchRoom",
+    "RelativePath": "api/Rooms/SearchRoom/{roomName}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomName",
         "Type": "System.String",
         "IsRequired": true
       }

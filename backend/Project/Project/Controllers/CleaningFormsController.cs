@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
-using Project.Repository;
+using Project.Interface;
 
 namespace Project.Controllers
 {
@@ -26,13 +26,17 @@ namespace Project.Controllers
 
         // GET: api/CleaningForms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetCleaningForms([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<object>>> GetCleaningForms(
+     [FromQuery] int pageNumber = 1,
+     [FromQuery] int pageSize = 10)
         {
+            // Truy vấn với sắp xếp theo SortOrder của Campus
             var result = await (from cf in _context.CleaningForms
                                 join r in _context.Rooms on cf.RoomId equals r.Id
                                 join f in _context.Floors on r.FloorId equals f.Id
                                 join b in _context.Blocks on r.BlockId equals b.Id
                                 join c in _context.Campuses on b.CampusId equals c.Id
+                                orderby c.SortOrder // Sắp xếp theo SortOrder của Campus
                                 select new
                                 {
                                     id = cf.Id,
@@ -42,11 +46,16 @@ namespace Project.Controllers
                                     FloorName = f.FloorName,
                                     RoomName = r.RoomName
                                 })
-                    .Skip((pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToListAsync();
 
-            return result;
+            // Tính tổng số bản ghi
+            var totalValue = await _context.CleaningForms.CountAsync();
+
+            // Trả về kết quả và tổng số bản ghi
+            var response = new { result, totalValue };
+            return Ok(response);
         }
 
 

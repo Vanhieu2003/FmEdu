@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
+using Project.Interface;
 using Project.Repository;
 
 namespace Project.Controllers
@@ -145,88 +146,9 @@ namespace Project.Controllers
             return CreatedAtAction("GetCriteriaReport", new { id = criteriaReport.Id }, criteriaReport);
         }
 
-        [HttpPost("submit-report")]
-        
-        //public async Task<IActionResult> PostReport([FromBody] ReportDto report)
-        //{
-        //    if (report == null)
-        //    {
-        //        return BadRequest("Report data is null.");
-        //    }
+      
 
-        //    // Lưu từng criteria vào bảng tương ứng
-        //    foreach (var criteria in report.CriteriaList)
-        //    {
-        //        var criteriaPerForm = new CriteriaReport
-        //        {
-        //            Id = Guid.NewGuid().ToString(),
-        //            ReportId = report.ReportId,
-        //            CriteriaId = criteria.CriteriaId,
-        //            FormId = report.FormId,
-        //            Value = criteria.Value,
-        //            Note = criteria.Note,
-        //            CreateAt = criteria.CreateAt,
-        //            UpdateAt = criteria.UpdateAt
-        //        };
-
-        //        _context.CriteriaReports.Add(criteriaPerForm);
-        //    }
-
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(new { message = "Report submitted successfully." });
-        //}
-
-        [HttpPost("calculate-average/{reportId}")]
-        public async Task<IActionResult> CalculateAverage(string reportId)
-        {
-            var criteriaReports = await _context.CriteriaReports
-                .Where(cr => cr.ReportId == reportId)
-                .ToListAsync();
-
-            if (!criteriaReports.Any())
-            {
-                return NotFound("Không có tiêu chí nào cho reportId này.");
-            }
-
-            // Tính tổng(1) của tất cả các giá trị tiêu chí
-            var totalValue = criteriaReports.Sum(cr => Convert.ToInt32(cr.Value));
-
-            // Lấy danh sách criteriaId
-            var criteriaIds = criteriaReports.Select(cr => cr.CriteriaId).ToList();
-
-            var criteriaTypes = _context.Criteria
-            .Where(c => criteriaIds.Contains(c.Id))
-            .Select(c => c.CriteriaType)
-            .ToList();
-
-            int totalWeight = criteriaTypes.Sum(type =>
-            type == "BINARY" ? 2 :
-            type == "RATING" ? 5 : 0);
-            var finalValue = (double)totalValue / totalWeight * 100;
-            finalValue = Math.Round(finalValue, 2);
-            return Ok(new { reportId = reportId, finalValue = finalValue });
-        }
-
-        // DELETE: api/CriteriaReports/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCriteriaReport(string id)
-        {
-            if (_context.CriteriaReports == null)
-            {
-                return NotFound();
-            }
-            var criteriaReport = await _context.CriteriaReports.FindAsync(id);
-            if (criteriaReport == null)
-            {
-                return NotFound();
-            }
-
-            _context.CriteriaReports.Remove(criteriaReport);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+      
 
         private bool CriteriaReportExists(string id)
         {

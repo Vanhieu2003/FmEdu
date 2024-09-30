@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Project.Dto;
 
 namespace Project.Entities
 {
@@ -82,7 +83,9 @@ namespace Project.Entities
         public virtual DbSet<UserRequestBasis> UserRequestBases { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
-
+        public virtual DbSet<CampusAverageValueDto> CampusAverageValueDto { get; set; } = null!;
+        public virtual DbSet<ReportInADayValueDto> ReportInADayValueDto { get; set; } = null!;
+        public virtual DbSet<BlockReportDto> BlockReportDto { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -95,6 +98,16 @@ namespace Project.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
+
+            modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
+            modelBuilder.Entity<BlockReportDto>().HasNoKey();
+            modelBuilder.Entity<CleaningReportCountDto>().HasNoKey();
+            modelBuilder.Entity<CleaningReportDto>().HasNoKey();
+            modelBuilder.Entity<ReportInADayValueDto>().HasNoKey();
+
+            modelBuilder.Entity<CriteriaValueDto>()
+           .HasNoKey()
+           .ToView(null);
 
             modelBuilder.Entity<Block>(entity =>
             {
@@ -1573,6 +1586,7 @@ namespace Project.Entities
 
                 entity.Property(e => e.VisitorName).HasMaxLength(256);
             });
+            modelBuilder.Entity<CampusAverageValueDto>().HasNoKey();
 
             OnModelCreatingPartial(modelBuilder);
         }
