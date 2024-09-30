@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
-using Project.Repository;
+using Project.Interface;
 
 namespace Project.Controllers
 {

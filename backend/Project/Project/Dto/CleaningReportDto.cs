@@ -10,7 +10,13 @@
     //    public DateTime? CreateAt { get; set; }
 
     //}
-
+    public class CleaningReportCountDto
+    {
+        public int TotalCount { get; set; }
+        public int TotalCountYesterday { get; set; }
+        public int TotalReports { get; set; }
+        public int Change { get; set; }
+    }
     public class CleaningReportDetailsDto
     {
         public string id { get; set; } = null!;

@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Project.Dto;
 using Project.Entities;
-using Project.Repository;
+using Project.Interface;
+
 
 namespace Project.Controllers
 {
@@ -88,9 +89,10 @@ namespace Project.Controllers
             {
                 return NotFound("Không tìm thấy báo cáo nào phù hợp với tiêu chí tìm kiếm.");
             }
-
+            var totalValue = await _context.CleaningReports.CountAsync();
             // Trả về danh sách báo cáo
-            return Ok(reports);
+            var response = new { reports, totalValue };
+            return Ok(response);
         }
 
         [HttpGet("ByReportId/{ReportId}")]

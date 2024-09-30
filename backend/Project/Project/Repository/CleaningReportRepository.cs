@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Project.Dto;
 using Project.Entities;
+using Project.Interface;
 
 namespace Project.Repository
 {

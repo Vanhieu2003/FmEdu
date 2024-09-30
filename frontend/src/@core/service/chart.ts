@@ -12,6 +12,12 @@ export class ChartService {
     );
   };
 
+  GetBlockReports = async (campusId: string) => {
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/GetBlockReports/${campusId}`
+    );
+  };
+
   GetCleaningReportCount = async () => {
     return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportCount`);
   }
@@ -29,6 +35,7 @@ export class ChartService {
   GetCleaningReportBySixMonth = async ()=>{
     return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsBy6Months`)
   }
+
 }
 
 export default new ChartService();

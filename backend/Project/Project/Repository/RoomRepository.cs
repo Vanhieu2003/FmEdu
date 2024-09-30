@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
+using Project.Interface;
 
 namespace Project.Repository
 {
@@ -56,6 +57,18 @@ namespace Project.Repository
             }).ToList();
 
             return roomDtos;
+        }
+
+        public async Task<List<Room>> SearchRoom(string roomName)
+        {
+            if (string.IsNullOrWhiteSpace(roomName))
+            {
+                return await _context.Rooms.Take(50).ToListAsync();
+            }
+
+            return await _context.Rooms
+                .Where(r => r.RoomName.Contains(roomName))
+                .ToListAsync();
         }
     }
 }

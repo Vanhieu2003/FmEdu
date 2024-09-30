@@ -6,7 +6,8 @@ import { useSettingsContext } from 'src/components/settings';
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from 'react';
 import ChartService from 'src/@core/service/chart';
-import { Container, MenuItem, Select, Typography } from '@mui/material';
+import { Container, MenuItem, Select, TableContainer, Typography,  Table, TableHead, TableRow,
+  TableCell, TableBody,Paper } from '@mui/material';
 import DataChart from 'src/components/DataChart/DataChart';
 import AnalyticsWidgetSummary from '../components/Overview/OverViewAnalytics';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
@@ -29,6 +30,11 @@ export default function ThreeView() {
   const [selectedCampusForHorizontalBarChart, setSelectedCampusForHorizontalBarChart] = useState<any>(null);
   const [selectedType, setSelectedType] = useState<any>("ByQuater");
   const [lineChartData, setLineChartData] = useState<any>({ labels: [], datasets: [] });
+
+
+
+
+
 
   const fetchDataByType = async (type: string) => {
     switch (type) {
@@ -303,6 +309,21 @@ export default function ThreeView() {
             }}
           />
         </Grid>
+        <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="Danh sách báo cáo vệ sinh">
+        <TableHead>
+            <TableRow>
+              <TableCell align="center">Tòa nhà</TableCell>
+              <TableCell align="center">Tổng số phòng</TableCell>
+              <TableCell align="center">Đã đánh giá </TableCell>
+              <TableCell align="center">Phần trăm hoàn thành</TableCell>
+              <TableCell align="center">Tiến độ báo cáo</TableCell>
+              <TableCell align="center"></TableCell>
+            </TableRow>
+          </TableHead>
+
+          </Table>
+        </TableContainer>
       </Container>
     </>
 
