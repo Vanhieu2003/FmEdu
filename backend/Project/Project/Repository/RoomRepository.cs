@@ -70,5 +70,27 @@ namespace Project.Repository
                 .Where(r => r.RoomName.Contains(roomName))
                 .ToListAsync();
         }
+
+
+        public async Task<List<RoomDto>> GetRoomsByBlockAndCampusAsync(string blockId, string campusId)
+        {
+            var rooms = await (from room in _context.Rooms
+                               join block in _context.Blocks
+                               on room.BlockId equals block.Id
+                               orderby room.SortOrder
+                               where room.BlockId == blockId && block.CampusId == campusId
+                     
+                               select new RoomDto
+                               {
+                                   Id = room.Id,
+                                   RoomName = room.RoomName,
+                                   FloorId = room.FloorId,
+                                   BlockId = room.BlockId,
+                                   RoomCategoryId = room.RoomCategoryId
+                               }).ToListAsync();
+
+            return rooms;
+        }
+
     }
 }

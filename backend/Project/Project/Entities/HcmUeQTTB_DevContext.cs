@@ -43,6 +43,7 @@ namespace Project.Entities
         public virtual DbSet<FormTemplateProcessTrigger> FormTemplateProcessTriggers { get; set; } = null!;
         public virtual DbSet<FormTemplateWatcher> FormTemplateWatchers { get; set; } = null!;
         public virtual DbSet<Group> Groups { get; set; } = null!;
+        public virtual DbSet<GroupRoom> GroupRooms { get; set; } = null!;
         public virtual DbSet<Item> Items { get; set; } = null!;
         public virtual DbSet<ItemGroup> ItemGroups { get; set; } = null!;
         public virtual DbSet<Lesson> Lessons { get; set; } = null!;
@@ -66,8 +67,11 @@ namespace Project.Entities
         public virtual DbSet<RequestFormWatcher> RequestFormWatchers { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
+        public virtual DbSet<RoomByGroup> RoomByGroups { get; set; } = null!;
         public virtual DbSet<RoomCategory> RoomCategories { get; set; } = null!;
         public virtual DbSet<RoomSchedule> RoomSchedules { get; set; } = null!;
+        public virtual DbSet<Schedule> Schedules { get; set; } = null!;
+        public virtual DbSet<ScheduleDetail> ScheduleDetails { get; set; } = null!;
         public virtual DbSet<Section> Sections { get; set; } = null!;
         public virtual DbSet<Shift> Shifts { get; set; } = null!;
         public virtual DbSet<Specialization> Specializations { get; set; } = null!;
@@ -83,15 +87,15 @@ namespace Project.Entities
         public virtual DbSet<UserRequestBasis> UserRequestBases { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
-        public virtual DbSet<CampusAverageValueDto> CampusAverageValueDto { get; set; } = null!;
-        public virtual DbSet<ReportInADayValueDto> ReportInADayValueDto { get; set; } = null!;
-        public virtual DbSet<BlockReportDto> BlockReportDto { get; set; } = null!;
+        public virtual DbSet<GroupWithRoomsViewDto> GroupWithRoomsViewDto { get; set; } = null!;
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=WIN-9HQD014PA4B;Database=HcmUeQTTB_Dev;Persist Security Info=True;User ID=hung;Password=hung123@;Encrypt=False");
+                optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=HcmUeQTTB_Dev;Integrated Security=True");
             }
         }
 
@@ -99,15 +103,14 @@ namespace Project.Entities
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
 
+            modelBuilder.Entity<GroupWithRoomsViewDto>().HasNoKey();
             modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
             modelBuilder.Entity<BlockReportDto>().HasNoKey();
             modelBuilder.Entity<CleaningReportCountDto>().HasNoKey();
             modelBuilder.Entity<CleaningReportDto>().HasNoKey();
             modelBuilder.Entity<ReportInADayValueDto>().HasNoKey();
+            modelBuilder.Entity<CampusAverageValueDto>().HasNoKey();
 
-            modelBuilder.Entity<CriteriaValueDto>()
-           .HasNoKey()
-           .ToView(null);
 
             modelBuilder.Entity<Block>(entity =>
             {
@@ -231,6 +234,10 @@ namespace Project.Entities
                 entity.Property(e => e.Note).HasMaxLength(450);
 
                 entity.Property(e => e.ReportId).HasMaxLength(450);
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<CriteriasPerForm>(entity =>
@@ -724,6 +731,22 @@ namespace Project.Entities
                 entity.Property(e => e.Description).HasMaxLength(450);
 
                 entity.Property(e => e.Name).HasMaxLength(450);
+            });
+
+            modelBuilder.Entity<GroupRoom>(entity =>
+            {
+                entity.ToTable("GroupRoom");
+
+                entity.HasIndex(e => e.Id, "UQ__GroupRoo__3214EC063F2E8ADB")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description).HasMaxLength(255);
+
+                entity.Property(e => e.GroupName).HasMaxLength(255);
             });
 
             modelBuilder.Entity<Item>(entity =>
@@ -1329,6 +1352,26 @@ namespace Project.Entities
                     .HasConstraintName("FK_Room_RoomCategories");
             });
 
+            modelBuilder.Entity<RoomByGroup>(entity =>
+            {
+                entity.ToTable("RoomByGroup");
+
+                entity.HasIndex(e => e.Id, "UQ__RoomByGr__3214EC0618902A80")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GroupRoomId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoomId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<RoomCategory>(entity =>
             {
                 entity.Property(e => e.CategoryCode).HasMaxLength(255);
@@ -1357,6 +1400,50 @@ namespace Project.Entities
                 entity.Property(e => e.TeacherCode).HasMaxLength(20);
 
                 entity.Property(e => e.TeacherName).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.ToTable("Schedule");
+
+                entity.HasIndex(e => e.Id, "UQ__Schedule__3214EC061F131916")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description).HasMaxLength(255);
+
+                entity.Property(e => e.RecurrenceRule).HasMaxLength(255);
+
+                entity.Property(e => e.Title).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<ScheduleDetail>(entity =>
+            {
+                entity.ToTable("ScheduleDetail");
+
+                entity.HasIndex(e => e.Id, "UQ__Schedule__3214EC06D892ACEF")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoomId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RoomType).HasMaxLength(255);
+
+                entity.Property(e => e.ScheduleId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserGroupId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Section>(entity =>
@@ -1586,7 +1673,6 @@ namespace Project.Entities
 
                 entity.Property(e => e.VisitorName).HasMaxLength(256);
             });
-            modelBuilder.Entity<CampusAverageValueDto>().HasNoKey();
 
             OnModelCreatingPartial(modelBuilder);
         }

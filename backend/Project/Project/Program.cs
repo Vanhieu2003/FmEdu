@@ -40,6 +40,7 @@ builder.Services.AddScoped<ITagsPerCriteriaRepository, TagsPerCriteriaRepository
 builder.Services.AddScoped<ICriteriasPerFormRepository, CriteriasPerFormRepository>();
 builder.Services.AddScoped<ICriteriaReportRepository, CriteriaReportRepository>();
 builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
+builder.Services.AddScoped<IGroupRoomRepository, GroupRoomRepository>();
 
 // Add Static Files Middleware
 builder.Services.AddDirectoryBrowser();
