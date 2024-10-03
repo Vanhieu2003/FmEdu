@@ -1619,23 +1619,28 @@
   dependencies:
     "@syncfusion/ej2-icons" "~27.1.50"
 
-"@syncfusion/ej2-buttons@~27.1.50":
-  version "27.1.50"
-  resolved "https://registry.npmjs.org/@syncfusion/ej2-buttons/-/ej2-buttons-27.1.50.tgz"
-  integrity sha512-v5q/ELNduED13F0XuoGuAWhjlAOtPvigVwC0VqxjgEglEbofMvwED2qHOcsOZOFRn22KT/NEDBiUx2L5NFO9EQ==
+"@syncfusion/ej2-buttons@~27.1.50", "@syncfusion/ej2-buttons@~27.1.51", "@syncfusion/ej2-buttons@27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-buttons/-/ej2-buttons-27.1.51.tgz"
+  integrity sha512-0Eg4M2NOpuuWQgOBeNvEMIyjg6fFUJ/0Qk3tAALRCKQDn627qfk32xIs5pKcZ8KVdZ2sjqql3QzQA2Jx9QkydQ==
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
 
-"@syncfusion/ej2-calendars@~27.1.50":
-  version "27.1.50"
-  resolved "https://registry.npmjs.org/@syncfusion/ej2-calendars/-/ej2-calendars-27.1.50.tgz"
-  integrity sha512-DnSKjU3D8/zYudB4ZhgXWdBu2v2e39MOyO28KbJVZfme+AToJ/0x/pmQfMLi6sHxvFHpHSB8MjByQc54szrrqQ==
+"@syncfusion/ej2-calendars@~27.1.50", "@syncfusion/ej2-calendars@27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-calendars/-/ej2-calendars-27.1.51.tgz"
+  integrity sha512-ogpSnUBAmTsVIsDTrTjoSNla7NXwkrGjsopSsNlGHsJtuO32vFNC2mDv+D7JHZkb+OtTF6WmJxf1Ig8NtaT9mA==
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
-    "@syncfusion/ej2-buttons" "~27.1.50"
+    "@syncfusion/ej2-buttons" "~27.1.51"
     "@syncfusion/ej2-inputs" "~27.1.50"
     "@syncfusion/ej2-lists" "~27.1.50"
     "@syncfusion/ej2-popups" "~27.1.50"
+
+"@syncfusion/ej2-cldr-data@^26.1.35":
+  version "26.1.35"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-cldr-data/-/ej2-cldr-data-26.1.35.tgz"
+  integrity sha512-W6HxM0mst+5/FodelhDWVakJuWuB9yB6um86QVrTdhNkfMXP/73OghQaOroNXMF7Myc8sTzFkYucgqCp/VMg/Q==
 
 "@syncfusion/ej2-compression@~27.1.50":
   version "27.1.50"
@@ -1644,23 +1649,23 @@
   dependencies:
     "@syncfusion/ej2-file-utils" "~27.1.50"
 
-"@syncfusion/ej2-data@~27.1.50":
-  version "27.1.50"
-  resolved "https://registry.npmjs.org/@syncfusion/ej2-data/-/ej2-data-27.1.50.tgz"
-  integrity sha512-MuXYHkd93qk97elaeAbA5scjfneD2/96vlLDmAxXTzeg34FZHJQVyBg/9HkZtk/M7YiNawSXXAF3m6D3bVm5xQ==
+"@syncfusion/ej2-data@~27.1.50", "@syncfusion/ej2-data@~27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-data/-/ej2-data-27.1.51.tgz"
+  integrity sha512-2KMeoqvYwc5wFTm8p/VYiKfrl2t5lqG5yT4QUrpcei+s+gt6S7H/1FzfgzWzWtEVownUc4yiSIGFnfQZoRb7qg==
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
 
-"@syncfusion/ej2-dropdowns@~27.1.50":
-  version "27.1.50"
-  resolved "https://registry.npmjs.org/@syncfusion/ej2-dropdowns/-/ej2-dropdowns-27.1.50.tgz"
-  integrity sha512-yCwd0qgfa8Le1Pt72KlKH45ham7l9KdRVowIcaY9D4uYAVVWpr0/573IWXKIJAlSdgxAvVBXuQCoYWuHWyIeEA==
+"@syncfusion/ej2-dropdowns@~27.1.50", "@syncfusion/ej2-dropdowns@27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-dropdowns/-/ej2-dropdowns-27.1.51.tgz"
+  integrity sha512-hX+/yvYrEm4x7p/Ss3g8FVJhWtfI5UmL+MallaNLkA48jdtuVSwtFFKd8f9I2GDe9nNzHsmrNqKicPXrRn0kbQ==
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
-    "@syncfusion/ej2-data" "~27.1.50"
+    "@syncfusion/ej2-data" "~27.1.51"
     "@syncfusion/ej2-inputs" "~27.1.50"
     "@syncfusion/ej2-lists" "~27.1.50"
-    "@syncfusion/ej2-navigations" "~27.1.50"
+    "@syncfusion/ej2-navigations" "~27.1.51"
     "@syncfusion/ej2-notifications" "~27.1.50"
     "@syncfusion/ej2-popups" "~27.1.50"
 
@@ -1682,7 +1687,7 @@
   resolved "https://registry.npmjs.org/@syncfusion/ej2-icons/-/ej2-icons-27.1.50.tgz"
   integrity sha512-LisXluEss0VnFuSh+pNSgHqT/Cg1FKTvkxdKWoSvqAma3dpcuCfrWP4svyMKPAsCi/hxAGdyy3ShKHu0PUP9iA==
 
-"@syncfusion/ej2-inputs@~27.1.50":
+"@syncfusion/ej2-inputs@~27.1.50", "@syncfusion/ej2-inputs@27.1.50":
   version "27.1.50"
   resolved "https://registry.npmjs.org/@syncfusion/ej2-inputs/-/ej2-inputs-27.1.50.tgz"
   integrity sha512-JO+J5hl62YGWddsHyZBfwQ2K1iCLHlut6rhHvyCgcOIV+0yXi1j6ZwW2ouc0+0aLeXHm7hLpdMhVX8zGMzRb6A==
@@ -1702,14 +1707,14 @@
     "@syncfusion/ej2-data" "~27.1.50"
     "@syncfusion/ej2-popups" "~27.1.50"
 
-"@syncfusion/ej2-navigations@~27.1.50":
-  version "27.1.50"
-  resolved "https://registry.npmjs.org/@syncfusion/ej2-navigations/-/ej2-navigations-27.1.50.tgz"
-  integrity sha512-dQM4o+2uCU7d+rCzfjphuDSwt98UVDfdHspe70Ev2S/dPgynIG8093tz5gDOdRC1gQEVRXFY116NClPDF1KtKQ==
+"@syncfusion/ej2-navigations@~27.1.50", "@syncfusion/ej2-navigations@~27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-navigations/-/ej2-navigations-27.1.51.tgz"
+  integrity sha512-k+sBExX3KlBMSLl1suO2P1gsaIlcvAJIczkteHN7fgH3h4g2l1lKBqzQpLxwM2fmD1DVzj+Hk9lao5GIzCKJJg==
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
-    "@syncfusion/ej2-buttons" "~27.1.50"
-    "@syncfusion/ej2-data" "~27.1.50"
+    "@syncfusion/ej2-buttons" "~27.1.51"
+    "@syncfusion/ej2-data" "~27.1.51"
     "@syncfusion/ej2-inputs" "~27.1.50"
     "@syncfusion/ej2-lists" "~27.1.50"
     "@syncfusion/ej2-popups" "~27.1.50"
@@ -1737,6 +1742,42 @@
   integrity sha512-mmU99YM+oHbSYVjH0zo8THxyCYc63WRks9JSMFlfF+Bq1uNxJ5a5Cwovhyl12uffrdZDmIxpH35yXy0T9ueCEQ==
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
+
+"@syncfusion/ej2-react-buttons@^27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-react-buttons/-/ej2-react-buttons-27.1.51.tgz"
+  integrity sha512-IzANgzPOF+FrysjGvw0noH6EAFslKVHJZ+FlrWHJ0xQgrqWwBAicAjutQUA35LATOaz5DIZPh964oAqlyzeOHw==
+  dependencies:
+    "@syncfusion/ej2-base" "~27.1.50"
+    "@syncfusion/ej2-buttons" "27.1.51"
+    "@syncfusion/ej2-react-base" "~27.1.50"
+
+"@syncfusion/ej2-react-calendars@^27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-react-calendars/-/ej2-react-calendars-27.1.51.tgz"
+  integrity sha512-DaHkkEt2cnrjrK9CdrQq6JiM19emA4RepJHMrXpbviHR6z+8NTBHg3O1KF257EvSvTJIjnpDHGr7PHjxIA9HtA==
+  dependencies:
+    "@syncfusion/ej2-base" "~27.1.50"
+    "@syncfusion/ej2-calendars" "27.1.51"
+    "@syncfusion/ej2-react-base" "~27.1.50"
+
+"@syncfusion/ej2-react-dropdowns@^27.1.51":
+  version "27.1.51"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-react-dropdowns/-/ej2-react-dropdowns-27.1.51.tgz"
+  integrity sha512-ulFAsEqojR8Aspkl8+hcU0kVH/CcDGI40yxATTe53MmXYojUBBtVl0+yPYkOgjwqe8x8dJq9KXdYZJhKq88nfA==
+  dependencies:
+    "@syncfusion/ej2-base" "~27.1.50"
+    "@syncfusion/ej2-dropdowns" "27.1.51"
+    "@syncfusion/ej2-react-base" "~27.1.50"
+
+"@syncfusion/ej2-react-inputs@^27.1.50":
+  version "27.1.50"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-react-inputs/-/ej2-react-inputs-27.1.50.tgz"
+  integrity sha512-982Qu25YO60TWPU1ljSaawte9ffeUFig4U9fVYA7u393qnCrhuWMrUzbU8CyCvQGFEBN2SvSknN+T8JbCK8rag==
+  dependencies:
+    "@syncfusion/ej2-base" "~27.1.50"
+    "@syncfusion/ej2-inputs" "27.1.50"
+    "@syncfusion/ej2-react-base" "~27.1.50"
 
 "@syncfusion/ej2-react-schedule@^27.1.50":
   version "27.1.50"
