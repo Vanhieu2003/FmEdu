@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'src/routes/hooks';
 
 import { PATH_AFTER_LOGIN } from 'src/config-global';
-import '../sections/components/calendar/CalendarStyle.css';
 
 // ----------------------------------------------------------------------
 

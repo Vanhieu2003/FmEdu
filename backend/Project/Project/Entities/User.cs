@@ -15,7 +15,7 @@ namespace Project.Entities
             RequestFormWatchers = new HashSet<RequestFormWatcher>();
             RequestForms = new HashSet<RequestForm>();
             UserDepartments = new HashSet<UserDepartment>();
-            UserGroups = new HashSet<UserGroup>();
+            UserGroup1s = new HashSet<UserGroup1>();
             UserRequestBases = new HashSet<UserRequestBasis>();
         }
 
@@ -41,7 +41,7 @@ namespace Project.Entities
         public virtual ICollection<RequestFormWatcher> RequestFormWatchers { get; set; }
         public virtual ICollection<RequestForm> RequestForms { get; set; }
         public virtual ICollection<UserDepartment> UserDepartments { get; set; }
-        public virtual ICollection<UserGroup> UserGroups { get; set; }
+        public virtual ICollection<UserGroup1> UserGroup1s { get; set; }
         public virtual ICollection<UserRequestBasis> UserRequestBases { get; set; }
     }
 }

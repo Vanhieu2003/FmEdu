@@ -86,5 +86,26 @@ namespace Project.Controllers
             return Ok(rooms);
 
         }
+
+        [HttpGet("GetRoomByBlocksAndCampus")]
+        public async Task<IActionResult> GetRoomsByBlockAndCampus([FromQuery] string blockId, [FromQuery] string campusId)
+        {
+            
+            if (string.IsNullOrEmpty(blockId) || string.IsNullOrEmpty(campusId))
+            {
+                return BadRequest("BlockId và CampusId không được bỏ trống.");
+            }
+
+           
+            var rooms = await _repo.GetRoomsByBlockAndCampusAsync(blockId, campusId);
+
+            if (rooms == null || rooms.Count == 0)
+            {
+                return NotFound("Không tìm thấy phòng nào cho block và campus được chỉ định.");
+            }
+
+            
+            return Ok(rooms);
+        }
     }
 }

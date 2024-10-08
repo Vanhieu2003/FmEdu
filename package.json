@@ -11,6 +11,7 @@
     "@syncfusion/ej2-grids": "^27.1.50",
     "@syncfusion/ej2-react-calendars": "^27.1.50",
     "@syncfusion/ej2-react-dropdowns": "^27.1.50",
+    "@syncfusion/ej2-react-lists": "^27.1.50",
     "@syncfusion/ej2-react-schedule": "^27.1.50",
     "@types/lodash": "^4.17.7",
     "axios": "^1.7.7",

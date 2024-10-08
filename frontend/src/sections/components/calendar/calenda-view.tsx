@@ -2,11 +2,13 @@
 registerLicense(CALENDAR_LICENSE_KEY as string);
 import {
   Week, Day, Month, Agenda, ScheduleComponent, ViewsDirective, ViewDirective, EventSettingsModel, DragEventArgs, ResizeEventArgs, Inject, Resize, DragAndDrop, TimelineMonth, TimelineViews,
-  CellClickEventArgs, CurrentAction,
-  ActionEventArgs
+  CellClickEventArgs, CurrentAction,ActionEventArgs,RecurrenceEditorComponent,
+  RecurrenceEditor,
+  ResourcesDirective,
+  ResourceDirective
 } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
-import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+import { ButtonComponent, CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { TextBoxComponent, TextAreaComponent } from '@syncfusion/ej2-react-inputs';
 import numberingSystems from '@syncfusion/ej2-cldr-data/supplemental/numberingSystems.json';
 import gregorian from '@syncfusion/ej2-cldr-data/main/vi/ca-gregorian.json';
@@ -20,14 +22,15 @@ import { Table, TableBody, TableCell, TableRow, Box, IconButton } from '@mui/mat
 import LocationSelector from './location';
 import AddIcon from '@mui/icons-material/Add';
 import { CALENDAR_LICENSE_KEY } from 'src/config-global';
+import CalendarList from './list-UserGroup-view';
 
 L10n.load({
   vi: {
     "schedule": {
-      "day": "ngày",
+      "day": "Ngày",
       "week": "Tuần",
-      "workWeek": "Tuần làm việc",
-      "month": "tháng",
+      "workWeek": "Tuần công việc",
+      "month": "Tháng",
       "year": "Năm",
       "agenda": "Chương trình nghị sự",
       "weekAgenda": "Chương trình nghị sự tuần",
@@ -39,27 +42,27 @@ L10n.load({
       "allDay": "Cả ngày",
       "start": "Khởi đầu",
       "end": "Kết thúc",
-      "more": "hơn",
+      "more": "Hơn",
       "close": "Đóng",
       "cancel": "Hủy bỏ",
       "noTitle": "(Không tiêu đề)",
       "delete": "Xóa bỏ",
-      "deleteEvent": "Sự kiện này",
+      "deleteEvent": "Xóa sự kiện",
       "deleteMultipleEvent": "Xóa nhiều sự kiện",
       "selectedItems": "Các mục được chọn",
-      "deleteSeries": "Toàn bộ loạt",
-      "edit": "Biên tập",
-      "editSeries": "Toàn bộ loạt",
-      "editEvent": "Sự kiện này",
-      "createEvent": "Tạo nên",
-      "subject": "Môn học",
+      "deleteSeries": "Xóa toàn bộ loạt sự kiện",
+      "edit": "Chỉnh sửa",
+      "editSeries": "Chỉnh sửa toàn bộ loạt sự kiện",
+      "editEvent": "Chỉnh sửa sự kiện",
+      "createEvent": "Tạo sự kiện",
+      "subject": "Tiêu đề sự kiện",
       "addTitle": "Thêm tiêu đề",
       "moreDetails": "Thêm chi tiết",
       "moreEvents": "Thêm sự kiện",
       "save": "Lưu",
       "editContent": "Bạn muốn thay đổi cuộc hẹn trong chuỗi như thế nào?",
-      "deleteContent": "Bạn có chắc chắn muốn xóa sự kiện này?",
-      "deleteMultipleContent": "Bạn có chắc chắn muốn xóa các sự kiện đã chọn?",
+      "deleteContent": "Bạn có chắc chắn muốn xóa sự kiện này không?",
+      "deleteMultipleContent": "Bạn có chắc chắn muốn xóa các sự kiện đã chọn không?",
       "newEvent": "Sự kiện mới",
       "title": "Tiêu đề",
       "location": "Vị trí",
@@ -71,7 +74,7 @@ L10n.load({
       "saveButton": "Lưu",
       "cancelButton": "Hủy bỏ",
       "deleteButton": "Xóa bỏ",
-      "recurrence": "Sự tái xuất",
+      "recurrence": "Sự lặp lại",
       "wrongPattern": "Mẫu tái phát không hợp lệ.",
       "seriesChangeAlert": "Bạn có muốn hủy các thay đổi được thực hiện cho các phiên bản cụ thể của chuỗi này và khớp lại với toàn bộ chuỗi không?",
       "createError": "Thời gian của sự kiện phải ngắn hơn tần suất xảy ra. Rút ngắn thời lượng hoặc thay đổi mẫu lặp lại trong trình chỉnh sửa sự kiện lặp lại.",
@@ -82,63 +85,63 @@ L10n.load({
       "alert": "Thông báo",
       "startEndError": "Ngày kết thúc được chọn xảy ra trước ngày bắt đầu.",
       "invalidDateError": "Giá trị ngày nhập không hợp lệ.",
-      "blockAlert": "Sự kiện không thể được lên lịch trong phạm vi thời gian bị chặn.",
+      "blockAlert": "Sự kiện không thể lên lịch trong thời gian bị chặn.",
       "ok": "Đồng ý",
-      "of": "của",
+      "of": "Của",
       "yes": "Đúng",
       "no": "Không",
       "occurrence": "Tần suất xảy ra",
       "series": "Loạt",
       "previous": "Trước",
       "next": "Kế tiếp",
-      "timelineDay": "Ngày giờ",
-      "timelineWeek": "Tuần thời gian",
-      "timelineWorkWeek": "Tuần làm việc",
-      "timelineMonth": "Mốc thời gian",
-      "timelineYear": "Mốc thời gian",
+      "timelineDay": "Mốc thời gian theo ngày",
+      "timelineWeek": "Mốc thời gian theo tuần",
+      "timelineWorkWeek": "Mốc thời gian theo tuần làm việc",
+      "timelineMonth": "Mốc thời gian theo tháng",
+      "timelineYear": "Mốc thời gian theo năm",
       "editFollowingEvent": "Sự kiện sau",
       "deleteTitle": "Xóa sự kiện",
       "editTitle": "Chỉnh sửa sự kiện",
       "beginFrom": "Bắt đầu từ",
       "endAt": "Kết thúc tại",
       "expandAllDaySection": "Mở rộng phần cả ngày",
-      "collapseAllDaySection": "Thu gọn-cả ngày-phần",
-      "searchTimezone": "Múi giờ tìm kiếm",
+      "collapseAllDaySection": "Thu gọn cả ngày phần",
+      "searchTimezone": "Tìm kiếm múi giờ",
       "noRecords": "Không có dữ liệu được tìm thấy"
     },
     "recurrenceeditor": {
-      "none": "không ai",
-      "daily": "hằng ngày",
+      "none": "Không có",
+      "daily": "Hằng ngày",
       "weekly": "Hàng tuần",
       "monthly": "Hàng tháng",
-      "month": "tháng",
+      "month": "Tháng",
       "yearly": "Hàng năm",
       "never": "Không bao giờ",
       "until": "Cho đến khi",
       "count": "Đếm",
       "first": "Đầu tiên",
       "second": "Thứ hai",
-      "third": "Ngày thứ ba",
+      "third": "Thứ ba",
       "fourth": "Thứ tư",
       "last": "Cuối cùng",
       "repeat": "Nói lại",
       "repeatEvery": "Lặp lại mỗi",
       "on": "Lặp lại trên",
       "end": "Kết thúc",
-      "onDay": "ngày",
+      "onDay": "Ngày",
       "days": "Ngày",
       "weeks": "Tuần",
-      "months": "Tháng)",
+      "months": "Tháng",
       "years": "Năm",
-      "every": "mỗi",
-      "summaryTimes": "thời gian",
-      "summaryOn": "trên",
-      "summaryUntil": "cho đến khi",
+      "every": "Mỗi",
+      "summaryTimes": "Thời gian",
+      "summaryOn": "Trên",
+      "summaryUntil": "Cho đến khi",
       "summaryRepeat": "Lặp lại",
-      "summaryDay": "ngày",
-      "summaryWeek": "tuần",
-      "summaryMonth": "tháng)",
-      "summaryYear": "năm",
+      "summaryDay": "Ngày",
+      "summaryWeek": "Tuần",
+      "summaryMonth": "Tháng",
+      "summaryYear": "Năm",
       "monthWeek": "Tháng tuần",
       "monthPosition": "Vị trí tháng",
       "monthExpander": "Mở rộng tháng",
@@ -154,15 +157,15 @@ interface Room {
   Id: string;
   Name: string;
 }
+interface CalendarItem {
+  text: string;
+  id: number;
+  color: string;
+  isChecked: boolean;
+}
 
 export default function Home() {
   loadCldr(numbers, timeZoneNames, gregorian, numberingSystems);
-  const scheduleObj = useRef<ScheduleComponent | null>(null);
-  const placeRef = useRef<Record<string, string[]>>({});
-
-  const updatePlace = useCallback((newPlace: Record<string, string[]>) => {
-    placeRef.current = newPlace;
-  }, []);
 
   const eventSettings = {
     dataSource: [
@@ -172,10 +175,11 @@ export default function Home() {
         StartTime: new Date(2024, 8, 28, 10, 0),
         EndTime: new Date(2024, 8, 28, 12, 30),
         IsAllDay: false,
-        Location: ['Phòng vệ sinh', 'Phòng học', 'Phòng nghỉ ngơi'],
         Description: 'Thảo luận dự án và đánh giá tiến độ',
         UserName: ['Alice'],
-        UserType: "Vệ sinh"
+        RecurrenceRule: 'FREQ=DAILY;INTERVAL=3;UNTIL=20241202T095121Z',
+        UserType: "Vệ sinh",
+
       },
       {
         Id: 2,
@@ -183,14 +187,14 @@ export default function Home() {
         StartTime: new Date(2024, 8, 29, 9, 0),
         EndTime: new Date(2024, 8, 29, 10, 0),
         IsAllDay: false,
-        Location: ['Phòng họp B', 'Phòng học A', 'Phòng học C'],
         Description: 'Tiến hành đánh giá tiến độ công việc',
-        UserName: ['Bob', 'Jack', 'Tom', 'Ashley'],
+        RecurrenceRule: '',
+        UserName: ['Nguyễn Vũ Hoàng'],
         UserType: "Điện",
         Place: {
           'Tòa nhà': [{ Id: '1', Name: 'Tòa nhà A' }, { Id: '2', Name: 'Tòa nhà B' }],
           'Phòng': [{ Id: '101', Name: 'Phòng 101' }, { Id: '102', Name: 'Phòng 102' }]
-        }
+        },
       }
     ],
     fields: {
@@ -200,13 +204,42 @@ export default function Home() {
       StartTime: { name: 'StartTime' },
       EndTime: { name: 'EndTime' },
       RecurrenceRule: { name: 'RecurrenceRule' },
-      Location: { name: 'Location' },
       Description: { name: 'Description' },
       UserName: { name: 'UserName' },
       UserType: { name: 'UserType' },
-      Place: { name: 'Place' }
+      Place: { name: 'Place' },
+      resourceFields: ['UserType'],
     }
   };
+  const scheduleObj = useRef<ScheduleComponent | null>(null);
+  const [calendars, setCalendars] = useState<CalendarItem[]>([
+    { id: 1, text: 'Vệ sinh', color: '#d81b60', isChecked: true },
+    { id: 2, text: 'Điện', color: '#ff7043', isChecked: true },
+    { id: 3, text: 'Âm nhạc', color: '#8e24aa', isChecked: true },
+  ]);
+  const [currentEventSettings, setCurrentEventSettings] = useState(eventSettings);
+
+  const handleFilterChange = useCallback((checkedIds: number[]) => {
+    const selectedUserTypes = calendars
+      .filter(cal => checkedIds.includes(cal.id))
+      .map(cal => cal.text);
+
+    const filteredEvents = eventSettings.dataSource.filter((event: any) =>
+      selectedUserTypes.includes(event.UserType)
+    );
+
+    setCurrentEventSettings(prev => ({
+      ...prev,
+      dataSource: selectedUserTypes.length > 0 ? filteredEvents : eventSettings.dataSource
+    }));
+
+    setCalendars(prevCalendars =>
+      prevCalendars.map(cal => ({
+        ...cal,
+        isChecked: checkedIds.includes(cal.id)
+      }))
+    );
+  }, [calendars, eventSettings.dataSource]);
   const buttonClickActions = useCallback((action: string) => {
     let eventData: any = {};
     let actionType: CurrentAction = "Add";
@@ -226,7 +259,6 @@ export default function Home() {
       addObj.Subject = formData.Subject && formData.Subject.length > 0 ? formData.Subject : "Add title";
       addObj.StartTime = new Date(cellDetails.startTime);
       addObj.EndTime = new Date(cellDetails.endTime);
-      addObj.Location = formData.Location;
       return addObj;
     };
 
@@ -266,25 +298,29 @@ export default function Home() {
   const onActionComplete = (args: ActionEventArgs) => {
     if (args.requestType === 'eventCreated' || args.requestType === 'eventChanged') {
       const eventData = args.data;
-      if (Array.isArray(eventData) && eventData.length > 0) {
-        eventData.forEach(processEventPlace);
-      } else if (typeof eventData === 'object' && eventData !== null && !Array.isArray(eventData)) {
-        processEventPlace(eventData);
+      if (Array.isArray(eventData)) {
+        eventData.forEach(processEventData);
+      } else if (typeof eventData === 'object' && eventData !== null) {
+        processEventData(eventData);
       }
+      console.log(args.requestType);
       console.log('Event Data:', eventData);
       // Ở đây bạn có thể gửi dữ liệu lên API của bạn
       // sendDataToAPI(eventData);
     }
   };
 
-  const processEventPlace = (event: any) => {
+  const processEventData = (event: any) => {
+    // Xử lý Place nếu cần
     if (event.Place && typeof event.Place === 'string') {
       try {
         event.Place = JSON.parse(event.Place);
       } catch (error) {
         console.error('Error parsing Place:', error);
-        event.Place = {};
       }
+    }
+    if (!event.UserType) {
+      event.UserType = calendars[0].text;
     }
   };
 
@@ -321,15 +357,14 @@ export default function Home() {
               <div>
                 <input className="subject e-field e-input" type="text" name="Subject" placeholder="Title" />
               </div>
-              <div>
-                <input className="location e-field e-input" type="text" name="Location" placeholder="Location" />
-              </div>
             </form>
           </div>
         ) : (
           <div className="e-event-content e-template">
             <div className="e-subject-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              {props.Location !== undefined && <div><b>Địa điểm:</b> {Array.isArray(props.Location) ? props.Location.join(', ') : props.Location}</div>}
+              {props.Place && (
+                <div><b>Địa điểm: </b>{formatLocation(props.Place)}</div>
+              )}
               <div>
                 <b>Thời gian: </b>
                 {props.StartTime.toLocaleDateString('vi-VN', { weekday: 'long' })} - {props.StartTime.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })},
@@ -378,59 +413,85 @@ export default function Home() {
   }
   const quickInfoTemplates = { header: header, content: content, footer: footer };
   const editorWindowTemplate = (props: any) => {
+    console.log(props);
     const [locations, setLocations] = useState(() => {
       if (props.Place && typeof props.Place === 'object') {
         return Object.entries(props.Place).map(([level, rooms]) => ({
           level,
-          room: Array.isArray(rooms) ? rooms.map((room: string) => ({ Id: room, Name: room })) : []
+          room: Array.isArray(rooms) ? rooms.map((room: { Id: string, Name: string }) => ({ Id: room.Id, Name: room.Name })) : []
+        }));
+      }
+      if (props.Place && typeof props.Place === 'string') {
+        return Object.entries(JSON.parse(props.Place)).map(([level, rooms]) => ({
+          level,
+          room: Array.isArray(rooms) ? rooms.map((room: { Id: string, Name: string }) => ({ Id: room.Id, Name: room.Name })) : []
         }));
       }
       return [{ level: '', room: [] }];
     });
     const [placeObject, setPlaceObject] = useState<Record<string, { Id: string, Name: string }[]>>({});
+    const [recurrenceRule, setRecurrenceRule] = useState(props.RecurrenceRule || '');
+    const [isAllDay, setIsAllDay] = useState(props.IsAllDay || false);
 
-    useEffect(() => {
-      const newPlaceObject = locations.reduce((acc, loc) => {
-        if (loc.level && Array.isArray(loc.room) && loc.room.length > 0) {
-          acc[loc.level] = loc.room.map(room => room.Id);
-        }
-        return acc;
-      }, {} as Record<string, string[]>);
-      updatePlace(newPlaceObject);
-    }, [locations, updatePlace]);
+    const handleIsAllDayChange = (args: any) => {
+      setIsAllDay(args.checked);
+    };
 
-    const handleLocationChange = (index: number, level: string, rooms: { Id: string; Name: string }[]) => {
+    const handleRecurrenceChange = (args: any) => {
+      const newRecurrenceRule = args.value;
+      setRecurrenceRule(newRecurrenceRule);
+    };
+
+
+    const handleLocationChange = useCallback((index: number, level: string, rooms: { Id: string; Name: string }[]) => {
       setLocations(prevLocations => {
-        const newLocations = [...prevLocations];
-        newLocations[index] = { level, room: rooms };
+        const newLocations = prevLocations.map((loc, i) =>
+          i === index ? { level, room: rooms } : loc
+        );
         return newLocations;
       });
 
-      setPlaceObject(prevPlace => {
-        const newPlace = { ...prevPlace };
+      setPlaceObject(prevPlaceObject => {
+        const newPlaceObject = { ...prevPlaceObject };
         if (rooms.length > 0) {
-          newPlace[level] = rooms;
+          newPlaceObject[level] = rooms;
         } else {
-          delete newPlace[level];
+          delete newPlaceObject[level];
         }
-        return newPlace;
+
+        return newPlaceObject;
       });
-    };
+    }, []);
 
-    const addLocation = () => {
-      setLocations(prev => [...prev, { level: '', room: [] }]);
-    };
 
-    const removeLocation = (index: number) => {
-      setLocations(prev => prev.filter((_, i) => i !== index));
-    };
+    const addLocation = useCallback(() => {
+      setLocations(prev => {
+        const newLocations = [...prev, { level: '', room: [] }];
+
+        return newLocations;
+      });
+    }, []);
+
+    const removeLocation = useCallback((index: number) => {
+      setLocations(prev => {
+        const newLocations = prev.filter((_, i) => i !== index);
+
+        return newLocations;
+      });
+    }, []);
 
     return (
-      <Table sx={{ zIndex: 1103 }}>
+      <Table>
         <TableBody>
           <TableRow>
             <TableCell colSpan={2}>
-              <TextBoxComponent id="Summary" name="Subject" className="e-field" floatLabelType="Always" placeholder='Tiêu đề' />
+              <TextBoxComponent
+                id="Summary"
+                data-name="Subject"
+                className="e-field"
+                floatLabelType="Always"
+                placeholder='Tiêu đề'
+                value={props.Subject || ''} />
             </TableCell>
 
           </TableRow>
@@ -439,7 +500,7 @@ export default function Home() {
               <MultiSelectComponent
                 id="EventType"
                 dataSource={['Nguyễn Vũ Hoàng', 'Phạm Văn Hiếu', 'Phan Huỳnh Nhật Hùng']}
-                fields={{ text: 'Location', value: 'Location' }}
+                fields={{ text: 'UserName', value: 'UserName' }}
                 placeholder="Chọn người dùng"
                 floatLabelType="Always"
                 mode="Box"
@@ -466,6 +527,7 @@ export default function Home() {
                 popupHeight="200px"
                 style={{ color: "#000" }}
                 showClearButton={true}
+                value={props.UserType || ''}
                 className='e-field'
                 data-name="UserType"
               />
@@ -473,10 +535,22 @@ export default function Home() {
           </TableRow>
           <TableRow>
             <TableCell>
-              <DateTimePickerComponent id="StartTime" data-name="StartTime" value={new Date(props.StartTime || props.StartTime)} format='dd/MM/yy hh:mm a' className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu'></DateTimePickerComponent >
+              <DateTimePickerComponent id="StartTime" data-name="StartTime" value={new Date(props.StartTime || props.StartTime)} format={isAllDay ? 'dd/MM/yy' : 'dd/MM/yy hh:mm a'} className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu'></DateTimePickerComponent >
             </TableCell>
             <TableCell>
-              <DateTimePickerComponent id="EndTime" data-name="EndTime" value={new Date(props.EndTime || props.EndTime)} format='dd/MM/yy hh:mm a' className='e-field' floatLabelType="Always" placeholder='Ngày kết thúc'></DateTimePickerComponent>
+              <DateTimePickerComponent id="EndTime" data-name="EndTime" value={new Date(props.EndTime || props.EndTime)} format={isAllDay ? 'dd/MM/yy' : 'dd/MM/yy hh:mm a'} className='e-field' floatLabelType="Always" placeholder='Ngày kết thúc'></DateTimePickerComponent>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={2}>
+              <CheckBoxComponent
+                id="IsAllDay"
+                checked={isAllDay}
+                label="Cả ngày"
+                change={handleIsAllDayChange}
+                className="e-field"
+                data-name="IsAllDay"
+              />
             </TableCell>
           </TableRow>
           <TableRow>
@@ -498,6 +572,24 @@ export default function Home() {
               </Box>
               <ButtonComponent onClick={() => console.log(JSON.stringify(placeObject))}>Log Place</ButtonComponent>
               <input type="hidden" className="e-field" data-name="Place" value={JSON.stringify(placeObject)} />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell colSpan={2}>
+              <RecurrenceEditorComponent
+                id='RecurrenceRule'
+                value={recurrenceRule}
+                change={handleRecurrenceChange}
+                locale='vi'
+              />
+              <ButtonComponent onClick={() => console.log(recurrenceRule)}>Log Recurrence Rule</ButtonComponent>
+              <input
+                type="hidden"
+                data-name="RecurrenceRule"
+                name="RecurrenceRule"
+                value={recurrenceRule}
+                className="e-field"
+              />
             </TableCell>
           </TableRow>
           <TableRow>
@@ -529,7 +621,7 @@ export default function Home() {
       }
     }
     return Object.entries(place).map(([level, rooms]) => {
-      const roomStrings = rooms.map((room:any) => `${room.Name}`);
+      const roomStrings = rooms.map((room: any) => `${room.Name}`);
       return `${roomStrings.join(', ')}`;
     }).join(', ');
   };
@@ -558,9 +650,33 @@ export default function Home() {
           <div><b>Địa điểm: </b>{formatLocation(props.Place)}</div>
         )}
         <div>
-          <b>{new Date(props.StartTime).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })},</b>
-          <b> {new Date(props.StartTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
-            {new Date(props.EndTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</b>
+          {props.IsAllDay ? (
+            <b>
+              {new Date(props.StartTime).toDateString() === new Date(props.EndTime).toDateString() ? (
+                new Date(props.StartTime).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
+              ) : (
+                `${new Date(props.StartTime).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })} - ${new Date(props.EndTime).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
+              )}
+            </b>
+          ) : (
+            <b>
+              {new Date(props.StartTime).toDateString() === new Date(props.EndTime).toDateString() ? (
+                <>
+                  {new Date(props.StartTime).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })},
+                  {' '}
+                  {new Date(props.StartTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
+                  {new Date(props.EndTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                </>
+              ) : (
+                <>
+                  {new Date(props.StartTime).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
+                  {new Date(props.StartTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
+                  {new Date(props.EndTime).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
+                  {new Date(props.EndTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                </>
+              )}
+            </b>
+          )}
         </div>
         {props.UserName && props.UserName.length > 0 && (
           <div><b>Người dùng: </b>{props.UserName.join(', ')}</div>
@@ -574,23 +690,43 @@ export default function Home() {
       </div>
     );
   };
+  
   return (
     <>
-      <div>
-        <div className='scheduler-title-container'>Title</div>
-        <div className='scheduler-component'>
-          <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{ ...eventSettings, template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate }} ref={scheduleObj} rowAutoHeight={true} quickInfoTemplates={quickInfoTemplates} enableAdaptiveUI={true} locale='vi' cssClass="schedule-customization" actionComplete={onActionComplete} 
-            editorTemplate={editorWindowTemplate}>
-            <ViewsDirective>
-              <ViewDirective option="Day" interval={5}></ViewDirective>
-              <ViewDirective option="Month" ></ViewDirective>
-              <ViewDirective option="Week" isSelected={true}></ViewDirective>
-              <ViewDirective option="TimelineDay" ></ViewDirective>
-              <ViewDirective option="TimelineMonth"></ViewDirective>
-              <ViewDirective option="Agenda"></ViewDirective>
-            </ViewsDirective>
-            <Inject services={[Week, Day, Month, Agenda, Resize, DragAndDrop, TimelineMonth, TimelineViews]} />
-          </ScheduleComponent>
+      <div className='scheduler-container'>
+        <div className='scheduler-container-left'>
+          <div className='scheduler-title-container'>Title</div>
+          <div className='scheduler-component'>
+            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{ ...currentEventSettings, template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate }} ref={scheduleObj} rowAutoHeight={true} enableAdaptiveUI={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} >
+              <ViewsDirective>
+                <ViewDirective option="Day" interval={5}></ViewDirective>
+                <ViewDirective option="Month" ></ViewDirective>
+                <ViewDirective option="Week" isSelected={true}></ViewDirective>
+                <ViewDirective option="TimelineDay" ></ViewDirective>
+                <ViewDirective option="TimelineMonth"></ViewDirective>
+                <ViewDirective option="Agenda"></ViewDirective>
+              </ViewsDirective>
+              <ResourcesDirective>
+                <ResourceDirective
+                  field='UserType'
+                  title='Nhóm người dùng'
+                  name='UserTypes'
+                  allowMultiple={true}
+                  dataSource={calendars}
+                  textField='text'
+                  idField='text'
+                  colorField='color'
+                />
+              </ResourcesDirective>
+              <Inject services={[Week, Day, Month, Agenda, Resize, DragAndDrop, TimelineMonth, TimelineViews, RecurrenceEditor]} />
+            </ScheduleComponent>
+          </div>
+        </div>
+        <div className='scheduler-container-right'>
+          <CalendarList
+            calendars={calendars}
+            onFilterChange={handleFilterChange}
+          />
         </div>
       </div>
     </>

@@ -11,7 +11,7 @@ namespace Project.Entities
             FormTemplateProcessApprovers = new HashSet<FormTemplateProcessApprover>();
             RequestFormGroups = new HashSet<RequestFormGroup>();
             RequestFormProcessApprovers = new HashSet<RequestFormProcessApprover>();
-            UserGroups = new HashSet<UserGroup>();
+            UserGroup1s = new HashSet<UserGroup1>();
         }
 
         public string Id { get; set; } = null!;
@@ -22,6 +22,6 @@ namespace Project.Entities
         public virtual ICollection<FormTemplateProcessApprover> FormTemplateProcessApprovers { get; set; }
         public virtual ICollection<RequestFormGroup> RequestFormGroups { get; set; }
         public virtual ICollection<RequestFormProcessApprover> RequestFormProcessApprovers { get; set; }
-        public virtual ICollection<UserGroup> UserGroups { get; set; }
+        public virtual ICollection<UserGroup1> UserGroup1s { get; set; }
     }
 }

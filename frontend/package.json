@@ -34,6 +34,8 @@
     "@syncfusion/ej2-react-calendars": "^27.1.51",
     "@syncfusion/ej2-react-dropdowns": "^27.1.51",
     "@syncfusion/ej2-react-inputs": "^27.1.50",
+    "@syncfusion/ej2-react-lists": "^27.1.50",
+    "@syncfusion/ej2-react-popups": "^27.1.50",
     "@syncfusion/ej2-react-schedule": "^27.1.50",
     "autosuggest-highlight": "^3.3.4",
     "axios": "^1.6.2",

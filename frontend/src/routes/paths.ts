@@ -28,5 +28,19 @@ export const paths = {
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
     },
+    roomgroup:{
+      root: `${ROOTS.DASHBOARD}/room-group`,
+      list: `${ROOTS.DASHBOARD}/room-group/list`,
+      details: (id: string) => `${ROOTS.DASHBOARD}/room-group/${id}`,
+      create: `${ROOTS.DASHBOARD}/room-group/create`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/room-group/${id}/edit`,
+    } ,
+    responsiblegroup:{
+      root: `${ROOTS.DASHBOARD}/responsible-group`,
+      list: `${ROOTS.DASHBOARD}/responsible-group/list`,
+      details: (id: string) => `${ROOTS.DASHBOARD}/responsible-group/detail/${id}`,
+      create: `${ROOTS.DASHBOARD}/responsible-group/create`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/responsible-group/${id}/edit`,
+    } ,
   },
 };

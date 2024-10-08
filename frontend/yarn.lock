@@ -1697,7 +1697,7 @@
     "@syncfusion/ej2-popups" "~27.1.50"
     "@syncfusion/ej2-splitbuttons" "~27.1.50"
 
-"@syncfusion/ej2-lists@~27.1.50":
+"@syncfusion/ej2-lists@~27.1.50", "@syncfusion/ej2-lists@27.1.50":
   version "27.1.50"
   resolved "https://registry.npmjs.org/@syncfusion/ej2-lists/-/ej2-lists-27.1.50.tgz"
   integrity sha512-CbTdJz4pz9k+/sYTeT5xJ6VZDKGzo9KF7oEeOqhXjRNm1qQd5ANonxsuOVAWLojJwhKQcfQxGTVrOjE/D+YBoA==
@@ -1728,7 +1728,7 @@
     "@syncfusion/ej2-buttons" "~27.1.50"
     "@syncfusion/ej2-popups" "~27.1.50"
 
-"@syncfusion/ej2-popups@~27.1.50":
+"@syncfusion/ej2-popups@~27.1.50", "@syncfusion/ej2-popups@27.1.50":
   version "27.1.50"
   resolved "https://registry.npmjs.org/@syncfusion/ej2-popups/-/ej2-popups-27.1.50.tgz"
   integrity sha512-CbG9/0JgjvJfb5JwmbTXluRkLGZsGFAQ4b86FzQw/467Oom6JHto0K8qkgfR4t7Ekng1WSycHDSQF7t3QIQL3w==
@@ -1777,6 +1777,24 @@
   dependencies:
     "@syncfusion/ej2-base" "~27.1.50"
     "@syncfusion/ej2-inputs" "27.1.50"
+    "@syncfusion/ej2-react-base" "~27.1.50"
+
+"@syncfusion/ej2-react-lists@^27.1.50":
+  version "27.1.50"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-react-lists/-/ej2-react-lists-27.1.50.tgz"
+  integrity sha512-mgqEYloMsFxheNZEooEnD7vWpDiGKSowacBzJuAMILQfyZjsUkbj+3F07hDanvdKY2LXVxcXv8ax1bolVRnPtg==
+  dependencies:
+    "@syncfusion/ej2-base" "~27.1.50"
+    "@syncfusion/ej2-lists" "27.1.50"
+    "@syncfusion/ej2-react-base" "~27.1.50"
+
+"@syncfusion/ej2-react-popups@^27.1.50":
+  version "27.1.50"
+  resolved "https://registry.npmjs.org/@syncfusion/ej2-react-popups/-/ej2-react-popups-27.1.50.tgz"
+  integrity sha512-cs9ZPv/j2a4+HqwmU3Ig2kxavNfE5axBpaSnd5LAYpKrjBeeazrrVz9nC1t3pJ/wLDpZQoQ7FORMlve5o0AHyg==
+  dependencies:
+    "@syncfusion/ej2-base" "~27.1.50"
+    "@syncfusion/ej2-popups" "27.1.50"
     "@syncfusion/ej2-react-base" "~27.1.50"
 
 "@syncfusion/ej2-react-schedule@^27.1.50":

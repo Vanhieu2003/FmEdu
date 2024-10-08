@@ -105,8 +105,69 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetBlockReports",
+    "RelativePath": "api/Chart/GetBlockReports",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "targetDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetCleaningReportCount",
     "RelativePath": "api/Chart/GetCleaningReportCount",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCleaningReportsBy6Month",
+    "RelativePath": "api/Chart/GetCleaningReportsBy6Months",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCleaningReportsByLast10Day",
+    "RelativePath": "api/Chart/GetCleaningReportsByLast10Days",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCleaningReportsByQuarter",
+    "RelativePath": "api/Chart/GetCleaningReportsByQuarter",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCleaningReportsByYear",
+    "RelativePath": "api/Chart/GetCleaningReportsByYear",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -137,6 +198,27 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetWeeklyCleaningReportsByMonth",
+    "RelativePath": "api/Chart/GetWeeklyCleaningReportsByMonth",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "monthNum",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -769,38 +851,6 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriaReportsController",
-    "Method": "DeleteCriteriaReport",
-    "RelativePath": "api/CriteriaReports/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriaReportsController",
-    "Method": "CalculateAverage",
-    "RelativePath": "api/CriteriaReports/calculate-average/{reportId}",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "reportId",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriaReportsController",
     "Method": "GetReportByCriteriaId",
     "RelativePath": "api/CriteriaReports/Criteria/{criteriaId}",
     "HttpMethod": "GET",
@@ -811,22 +861,6 @@
         "Name": "criteriaId",
         "Type": "System.String",
         "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriaReportsController",
-    "Method": "CalculateAverage",
-    "RelativePath": "api/CriteriaReports/submit-report",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "reportId",
-        "Type": "System.String",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1095,6 +1129,214 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "GetGroupRooms",
+    "RelativePath": "api/GroupRooms",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Project.Dto.GroupWithRoomsViewDto, Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "CreateGroupWithRooms",
+    "RelativePath": "api/GroupRooms",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Project.Dto.GroupWithRoomsDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "GetGroupRoom",
+    "RelativePath": "api/GroupRooms/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Entities.GroupRoom",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "PutGroupRoom",
+    "RelativePath": "api/GroupRooms/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "groupRoom",
+        "Type": "Project.Entities.GroupRoom",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "DeleteGroupRoom",
+    "RelativePath": "api/GroupRooms/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "GetResponsibleGroups",
+    "RelativePath": "api/ResponsibleGroups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Project.Dto.ResponsiableGroupViewDto, Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "CreateResponsiableGroupWithUser",
+    "RelativePath": "api/ResponsibleGroups",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Project.Dto.ResponsiableGroupDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Dto.ResponsiableGroupDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "GetResponsibleGroup",
+    "RelativePath": "api/ResponsibleGroups/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Dto.ResponsiableGroupDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "UpdateResponsibleGroup",
+    "RelativePath": "api/ResponsibleGroups/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "Project.Dto.ResponsibleGroupUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "DeleteResponsibleGroup",
+    "RelativePath": "api/ResponsibleGroups/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Project.Controllers.RoomCategoriesController",
     "Method": "GetRoomCategories",
     "RelativePath": "api/RoomCategories",
@@ -1277,6 +1519,27 @@
         "Name": "FloorId",
         "Type": "System.String",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.RoomsController",
+    "Method": "GetRoomsByBlockAndCampus",
+    "RelativePath": "api/Rooms/GetRoomByBlocksAndCampus",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "blockId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1699,6 +1962,115 @@
       {
         "Name": "newCriteria",
         "Type": "Project.Dto.CriteriaDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
+    "Method": "GetUsers",
+    "RelativePath": "api/Users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Project.Dto.UserDto, Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
+    "Method": "PostUser",
+    "RelativePath": "api/Users",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "Project.Entities.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Entities.User",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
+    "Method": "GetUser",
+    "RelativePath": "api/Users/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Entities.User",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
+    "Method": "PutUser",
+    "RelativePath": "api/Users/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "user",
+        "Type": "Project.Entities.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/Users/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

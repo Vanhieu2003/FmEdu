@@ -17,6 +17,9 @@ export class RoomService{
  searchRooms = async (input:string) => {
     return axios.get(`${API_ENDPOINT}/api/Rooms/SearchRoom/${input}`);
  }
+ getRoomByBlockAndCampus = async (campusId:string,blockId:string) => {
+   return axios.get(`${API_ENDPOINT}/api/Rooms/GetRoomByBlocksAndCampus?blockId=${blockId}&campusId=${campusId}`);
+}
 }
 
 export default new RoomService();

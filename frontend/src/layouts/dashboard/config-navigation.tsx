@@ -76,6 +76,27 @@ export function useNavData() {
               { title: 'six', path: paths.dashboard.group.six },
             ],
           },
+          {
+            title: 'Quản lý Nhóm Phòng',
+            path: paths.dashboard.roomgroup.root,
+            icon: ICONS.lock,
+            children: [
+              { title: 'Danh sách nhóm', path: paths.dashboard.roomgroup.list },
+              { title: 'Tạo nhóm', path: paths.dashboard.roomgroup.create },
+              { title: 'Chính sửa nhóm', path: paths.dashboard.roomgroup.root },
+            ],
+          },
+
+          {
+            title: 'Nhóm người chịu trách nhiệm',
+            path: paths.dashboard.responsiblegroup.root,
+            icon: ICONS.lock,
+            children: [
+              { title: 'Danh sách nhóm', path: paths.dashboard.responsiblegroup.list },
+              { title: 'Tạo nhóm', path: paths.dashboard.responsiblegroup.create },
+              { title: 'Chính sửa nhóm', path: paths.dashboard.responsiblegroup.root },
+            ],
+          },
         ],
       },
     ],

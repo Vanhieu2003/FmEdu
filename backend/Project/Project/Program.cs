@@ -29,9 +29,9 @@ builder.Services.Configure<FormOptions>(options =>
 });
 builder.Services.AddDbContext<HcmUeQTTB_DevContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
 builder.Services.AddScoped<IFloorRepository, FloorRepository>();
-builder.Services.AddScoped<IRoomRepository,RoomRepository>(); 
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBlockRepository, BlockRepository>();
-builder.Services.AddScoped<IShiftRepository,ShiftRepository>();
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<ICriteriaRepository, CriteriaRepository>();
 builder.Services.AddScoped<ICleaningFormRepository, CleaningFormRepository>();
 builder.Services.AddScoped<ICleaningReportRepository, CleaningReportRepository>();
@@ -40,6 +40,8 @@ builder.Services.AddScoped<ITagsPerCriteriaRepository, TagsPerCriteriaRepository
 builder.Services.AddScoped<ICriteriasPerFormRepository, CriteriasPerFormRepository>();
 builder.Services.AddScoped<ICriteriaReportRepository, CriteriaReportRepository>();
 builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
+builder.Services.AddScoped<IGroupRoomRepository, GroupRoomRepository>();
+builder.Services.AddScoped<IResponsibleGroupRepository, ResponsibleGroupRepository>();
 
 // Add Static Files Middleware
 builder.Services.AddDirectoryBrowser();
