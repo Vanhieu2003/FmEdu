@@ -8,6 +8,7 @@
     }
 
 
+<<<<<<< HEAD
     public class ResponsiableGroupDto
     {
 
@@ -29,6 +30,8 @@
 
 
 
+=======
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
     public class GroupWithRoomsViewDto
     {
         public string? CampusName { get; set; }
@@ -37,6 +40,7 @@
         public int NumberOfRoom { get; set; }
     }
 
+<<<<<<< HEAD
     public class ResponsiableGroupViewDto
     {
         public string? Id { get; set; }
@@ -46,4 +50,6 @@
         public int NumberOfUser { get; set; }
     }
 
+=======
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
 }

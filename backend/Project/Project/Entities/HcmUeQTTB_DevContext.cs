@@ -92,7 +92,12 @@ namespace Project.Entities
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
         public virtual DbSet<GroupWithRoomsViewDto> GroupWithRoomsViewDto { get; set; } = null!;
+<<<<<<< HEAD
         public virtual DbSet<ResponsiableGroupViewDto> ResponsiableGroupViewDto { get; set; } = null!;
+=======
+
+
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -106,9 +111,12 @@ namespace Project.Entities
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
 
+<<<<<<< HEAD
 
 
             modelBuilder.Entity<ResponsiableGroupViewDto>().HasNoKey();
+=======
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
             modelBuilder.Entity<GroupWithRoomsViewDto>().HasNoKey();
             modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
             modelBuilder.Entity<BlockReportDto>().HasNoKey();
@@ -116,6 +124,10 @@ namespace Project.Entities
             modelBuilder.Entity<CleaningReportDto>().HasNoKey();
             modelBuilder.Entity<ReportInADayValueDto>().HasNoKey();
             modelBuilder.Entity<CampusAverageValueDto>().HasNoKey();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
 
             modelBuilder.Entity<Block>(entity =>
             {
@@ -742,7 +754,11 @@ namespace Project.Entities
             {
                 entity.ToTable("GroupRoom");
 
+<<<<<<< HEAD
                 entity.HasIndex(e => e.Id, "UQ__GroupRoo__3214EC060D79CB40")
+=======
+                entity.HasIndex(e => e.Id, "UQ__GroupRoo__3214EC063F2E8ADB")
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -1379,7 +1395,11 @@ namespace Project.Entities
             {
                 entity.ToTable("RoomByGroup");
 
+<<<<<<< HEAD
                 entity.HasIndex(e => e.Id, "UQ__RoomByGr__3214EC06C14E89B3")
+=======
+                entity.HasIndex(e => e.Id, "UQ__RoomByGr__3214EC0618902A80")
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -1429,7 +1449,11 @@ namespace Project.Entities
             {
                 entity.ToTable("Schedule");
 
+<<<<<<< HEAD
                 entity.HasIndex(e => e.Id, "UQ__Schedule__3214EC0621AE3B36")
+=======
+                entity.HasIndex(e => e.Id, "UQ__Schedule__3214EC061F131916")
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -1447,7 +1471,11 @@ namespace Project.Entities
             {
                 entity.ToTable("ScheduleDetail");
 
+<<<<<<< HEAD
                 entity.HasIndex(e => e.Id, "UQ__Schedule__3214EC067A3CB033")
+=======
+                entity.HasIndex(e => e.Id, "UQ__Schedule__3214EC06D892ACEF")
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -1458,15 +1486,23 @@ namespace Project.Entities
                     .HasMaxLength(450)
                     .IsUnicode(false);
 
+<<<<<<< HEAD
                 entity.Property(e => e.RoomType)
                     .HasMaxLength(255)
                     .IsUnicode(false);
+=======
+                entity.Property(e => e.RoomType).HasMaxLength(255);
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
 
                 entity.Property(e => e.ScheduleId)
                     .HasMaxLength(450)
                     .IsUnicode(false);
 
+<<<<<<< HEAD
                 entity.Property(e => e.UserPerResGroupId)
+=======
+                entity.Property(e => e.UserGroupId)
+>>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
                     .HasMaxLength(450)
                     .IsUnicode(false);
             });
