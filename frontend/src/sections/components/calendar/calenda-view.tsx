@@ -23,6 +23,9 @@ import LocationSelector from './location';
 import AddIcon from '@mui/icons-material/Add';
 import { CALENDAR_LICENSE_KEY } from 'src/config-global';
 import CalendarList from './list-UserGroup-view';
+import ScheduleService from 'src/@core/service/schedule';
+import  ResponsibleGroupRoomService  from 'src/@core/service/responsiblegroup';
+import { getResponsibleGroupText } from 'src/utils/schedule/handle-schedule';
 
 L10n.load({
   vi: {
@@ -153,20 +156,22 @@ L10n.load({
     },
   }
 });
-interface Room {
-  Id: string;
-  Name: string;
-}
+
 interface CalendarItem {
   text: string;
-  id: number;
+  id: string;
   color: string;
   isChecked: boolean;
 }
 
 export default function Home() {
   loadCldr(numbers, timeZoneNames, gregorian, numberingSystems);
-
+  
+  const initialCalendars: CalendarItem[] = [
+    { id: "1", text: 'Vệ sinh', color: '#d81b60', isChecked: true },
+    { id: "2", text: 'Điện', color: '#ff7043', isChecked: true },
+    { id: "3", text: 'Âm nhạc', color: '#8e24aa', isChecked: true },
+  ]
   const eventSettings = {
     dataSource: [
       {
@@ -176,10 +181,13 @@ export default function Home() {
         EndTime: new Date(2024, 8, 28, 12, 30),
         IsAllDay: false,
         Description: 'Thảo luận dự án và đánh giá tiến độ',
-        UserName: ['Alice'],
+        Users: ['Alice'],
         RecurrenceRule: 'FREQ=DAILY;INTERVAL=3;UNTIL=20241202T095121Z',
-        UserType: "Vệ sinh",
-
+        ResponsibleGroupId: "1",
+        Place: [
+          { level: 'Tòa nhà', rooms: [{ Id: '1', Name: 'Tòa nhà A' }, { Id: '2', Name: 'Tòa nhà B' }] },
+          { level: 'Phòng', rooms: [{ Id: '101', Name: 'Phòng 101' }, { Id: '102', Name: 'Phòng 102' }] }
+        ],
       },
       {
         Id: 2,
@@ -189,12 +197,12 @@ export default function Home() {
         IsAllDay: false,
         Description: 'Tiến hành đánh giá tiến độ công việc',
         RecurrenceRule: '',
-        UserName: ['Nguyễn Vũ Hoàng'],
-        UserType: "Điện",
-        Place: {
-          'Tòa nhà': [{ Id: '1', Name: 'Tòa nhà A' }, { Id: '2', Name: 'Tòa nhà B' }],
-          'Phòng': [{ Id: '101', Name: 'Phòng 101' }, { Id: '102', Name: 'Phòng 102' }]
-        },
+        Users: ['Nguyễn Vũ Hoàng'],
+        ResponsibleGroupId: "2",
+        Place: [
+          { level: 'Tòa nhà', rooms: [{ Id: '1', Name: 'Tòa nhà A' }, { Id: '2', Name: 'Tòa nhà B' }] },
+          { level: 'Phòng', rooms: [{ Id: '101', Name: 'Phòng 101' }, { Id: '102', Name: 'Phòng 102' }] }
+        ],
       }
     ],
     fields: {
@@ -205,41 +213,38 @@ export default function Home() {
       EndTime: { name: 'EndTime' },
       RecurrenceRule: { name: 'RecurrenceRule' },
       Description: { name: 'Description' },
-      UserName: { name: 'UserName' },
-      UserType: { name: 'UserType' },
+      Users: { name: 'Users' },
+      ResponsibleGroupId: { name: 'ResponsibleGroupId' },
       Place: { name: 'Place' },
-      resourceFields: ['UserType'],
+      resourceFields: { name: 'ResponsibleGroupId' },
+      customId: { name: 'customId' }
     }
   };
   const scheduleObj = useRef<ScheduleComponent | null>(null);
-  const [calendars, setCalendars] = useState<CalendarItem[]>([
-    { id: 1, text: 'Vệ sinh', color: '#d81b60', isChecked: true },
-    { id: 2, text: 'Điện', color: '#ff7043', isChecked: true },
-    { id: 3, text: 'Âm nhạc', color: '#8e24aa', isChecked: true },
-  ]);
+  const [calendars, setCalendars] = useState<CalendarItem[]>(initialCalendars);
+  const timeScale = { enable: true, slotCount: 4 };
   const [currentEventSettings, setCurrentEventSettings] = useState(eventSettings);
-
-  const handleFilterChange = useCallback((checkedIds: number[]) => {
-    const selectedUserTypes = calendars
-      .filter(cal => checkedIds.includes(cal.id))
-      .map(cal => cal.text);
-
+  const handleFilterChange = useCallback((checkedIds: string[]) => {
+    const SelectedResponsibleGroup = calendars
+      .filter(cal => checkedIds.includes(cal.id.toString()))
+      .map(cal => cal.id);
+  
     const filteredEvents = eventSettings.dataSource.filter((event: any) =>
-      selectedUserTypes.includes(event.UserType)
+      SelectedResponsibleGroup.includes(event.ResponsibleGroupId)
     );
-
+  
     setCurrentEventSettings(prev => ({
       ...prev,
-      dataSource: selectedUserTypes.length > 0 ? filteredEvents : eventSettings.dataSource
+      dataSource: SelectedResponsibleGroup.length > 0 ? filteredEvents : eventSettings.dataSource
     }));
-
+  
     setCalendars(prevCalendars =>
       prevCalendars.map(cal => ({
         ...cal,
         isChecked: checkedIds.includes(cal.id)
       }))
     );
-  }, [calendars, eventSettings.dataSource]);
+  }, []);
   const buttonClickActions = useCallback((action: string) => {
     let eventData: any = {};
     let actionType: CurrentAction = "Add";
@@ -269,6 +274,8 @@ export default function Home() {
         if (eventData) scheduleObj.current?.addEvent(eventData);
         break;
       case "edit":
+        eventData = scheduleObj.current?.activeEventData?.event;
+        scheduleObj.current?.saveEvent(eventData);
       case "edit-series":
         eventData = scheduleObj.current?.activeEventData?.event;
         if (!eventData) break;
@@ -297,31 +304,40 @@ export default function Home() {
   }, []);
   const onActionComplete = (args: ActionEventArgs) => {
     if (args.requestType === 'eventCreated' || args.requestType === 'eventChanged') {
-      const eventData = args.data;
+      const eventData = args.data as any;
       if (Array.isArray(eventData)) {
         eventData.forEach(processEventData);
       } else if (typeof eventData === 'object' && eventData !== null) {
         processEventData(eventData);
       }
       console.log(args.requestType);
-      console.log('Event Data:', eventData);
-      // Ở đây bạn có thể gửi dữ liệu lên API của bạn
-      // sendDataToAPI(eventData);
+      console.log('Processed event data:', eventData);
     }
   };
 
   const processEventData = (event: any) => {
-    // Xử lý Place nếu cần
-    if (event.Place && typeof event.Place === 'string') {
-      try {
-        event.Place = JSON.parse(event.Place);
-      } catch (error) {
-        console.error('Error parsing Place:', error);
+    if (event.Place) {
+      if (typeof event.Place === 'string') {
+        try {
+          event.Place = JSON.parse(event.Place);
+        } catch (error) {
+          console.error('Error parsing Place:', error);
+          event.Place = []; 
+        }
+      } else if (!Array.isArray(event.Place)) {
+        console.warn('Place is not an array:', event.Place);
+        
+        event.Place = [event.Place];
       }
+    } else {
+      event.Place = []; 
     }
-    if (!event.UserType) {
-      event.UserType = calendars[0].text;
+
+    if (!event.ResponsibleGroupId) {
+      event.ResponsibleGroupId = calendars[0].id;
     }
+
+    console.log('Processed event:', event);
   };
 
   const header = (props: any) => {
@@ -370,8 +386,8 @@ export default function Home() {
                 {props.StartTime.toLocaleDateString('vi-VN', { weekday: 'long' })} - {props.StartTime.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })},
                 {props.StartTime.toLocaleTimeString({ hour: '2-digit', minute: '2-digit', hour12: true })} - {props.EndTime.toLocaleTimeString({ hour: '2-digit', minute: '2-digit', hour12: true })}
               </div>
-              {props.UserName !== undefined && <div><b>Người dùng:</b> {Array.isArray(props.UserName) ? props.UserName.join(', ') : props.UserName}</div>}
-              <div><b>Nhóm: </b>{props.UserType}</div>
+              {props.Users !== undefined && <div><b>Người dùng:</b> {Array.isArray(props.Users) ? props.Users.join(', ') : props.Users}</div>}
+              <div><b>Nhóm: </b>{getResponsibleGroupText(props.ResponsibleGroupId,calendars)}</div>
               {props.Description !== undefined && <div><b>Mô tả: </b> {props.Description}</div>}
             </div>
           </div>
@@ -415,21 +431,16 @@ export default function Home() {
   const editorWindowTemplate = (props: any) => {
     console.log(props);
     const [locations, setLocations] = useState(() => {
-      if (props.Place && typeof props.Place === 'object') {
-        return Object.entries(props.Place).map(([level, rooms]) => ({
-          level,
-          room: Array.isArray(rooms) ? rooms.map((room: { Id: string, Name: string }) => ({ Id: room.Id, Name: room.Name })) : []
-        }));
-      }
       if (props.Place && typeof props.Place === 'string') {
-        return Object.entries(JSON.parse(props.Place)).map(([level, rooms]) => ({
-          level,
-          room: Array.isArray(rooms) ? rooms.map((room: { Id: string, Name: string }) => ({ Id: room.Id, Name: room.Name })) : []
-        }));
+        try {
+          return JSON.parse(props.Place);
+        } catch (error) {
+          console.error('Error parsing Place:', error);
+          return []; // Đặt giá trị mặc định nếu parse thất bại
+        }
       }
-      return [{ level: '', room: [] }];
+      return props.Place || [];
     });
-    const [placeObject, setPlaceObject] = useState<Record<string, { Id: string, Name: string }[]>>({});
     const [recurrenceRule, setRecurrenceRule] = useState(props.RecurrenceRule || '');
     const [isAllDay, setIsAllDay] = useState(props.IsAllDay || false);
 
@@ -443,42 +454,20 @@ export default function Home() {
     };
 
 
-    const handleLocationChange = useCallback((index: number, level: string, rooms: { Id: string; Name: string }[]) => {
-      setLocations(prevLocations => {
-        const newLocations = prevLocations.map((loc, i) =>
-          i === index ? { level, room: rooms } : loc
-        );
-        return newLocations;
-      });
+    const handleLocationChange = (index: number, level: string, rooms: Array<{ id: string, name: string }>) => {
+      const newLocations = [...locations];
+      newLocations[index] = { level, rooms };
+      setLocations(newLocations);
+    };
 
-      setPlaceObject(prevPlaceObject => {
-        const newPlaceObject = { ...prevPlaceObject };
-        if (rooms.length > 0) {
-          newPlaceObject[level] = rooms;
-        } else {
-          delete newPlaceObject[level];
-        }
+    const addLocation = () => {
+      setLocations([...locations, { level: '', rooms: [] }]);
+    };
 
-        return newPlaceObject;
-      });
-    }, []);
-
-
-    const addLocation = useCallback(() => {
-      setLocations(prev => {
-        const newLocations = [...prev, { level: '', room: [] }];
-
-        return newLocations;
-      });
-    }, []);
-
-    const removeLocation = useCallback((index: number) => {
-      setLocations(prev => {
-        const newLocations = prev.filter((_, i) => i !== index);
-
-        return newLocations;
-      });
-    }, []);
+    const removeLocation = (index: number) => {
+      const newLocations = locations.filter((_: any, i: number) => i !== index);
+      setLocations(newLocations);
+    };
 
     return (
       <Table>
@@ -509,11 +498,11 @@ export default function Home() {
                 showDropDownIcon={true}
                 filterBarPlaceholder="Tìm kiếm người dùng"
                 popupHeight="200px"
-                value={props.UserName || []}
+                value={props.Users || []}
                 className='e-field'
                 allowFiltering={true}
                 filterType="Contains"
-                data-name="UserName"
+                data-name="Users"
               />
             </TableCell>
           </TableRow>
@@ -521,15 +510,16 @@ export default function Home() {
             <TableCell colSpan={2}>
               <DropDownListComponent
                 id="EventType"
-                dataSource={['Vệ sinh', 'Điện', 'Âm nhạc']}
+                dataSource={calendars.map(cal => ({ text: cal.text, id: cal.id }))}
+                fields={{ text: 'text', value: 'id' }}
                 placeholder="Chọn nhóm người"
                 floatLabelType="Always"
                 popupHeight="200px"
                 style={{ color: "#000" }}
                 showClearButton={true}
-                value={props.UserType || ''}
+                value={props.ResponsibleGroupId || ''}
                 className='e-field'
-                data-name="UserType"
+                data-name="ResponsibleGroupId"
               />
             </TableCell>
           </TableRow>
@@ -570,8 +560,12 @@ export default function Home() {
                   <AddIcon />
                 </IconButton>
               </Box>
-              <ButtonComponent onClick={() => console.log(JSON.stringify(placeObject))}>Log Place</ButtonComponent>
-              <input type="hidden" className="e-field" data-name="Place" value={JSON.stringify(placeObject)} />
+              <input
+                type="hidden"
+                className="e-field"
+                data-name="Place"
+                value={JSON.stringify(locations)}
+              />
             </TableCell>
           </TableRow>
           <TableRow>
@@ -611,7 +605,7 @@ export default function Home() {
       </Table>
     )
   }
-  const formatLocation = (place: Record<string, Room[]> | string) => {
+  const formatLocation = (place: any) => {
     if (typeof place === 'string') {
       try {
         place = JSON.parse(place);
@@ -620,19 +614,16 @@ export default function Home() {
         return '';
       }
     }
-    return Object.entries(place).map(([level, rooms]) => {
-      const roomStrings = rooms.map((room: any) => `${room.Name}`);
+    return place.map((item: any) => {
+      const roomStrings = item.rooms.map((room: any) => room.Name);
       return `${roomStrings.join(', ')}`;
-    }).join(', ');
+    }).join('; ');
   };
 
   const eventTemplate = (props: any) => {
     return (
       <div>
         <div><b>Tiêu đề: </b>{props.Subject}</div>
-        {props.Place && (
-          <div><b>Địa điểm: </b>{formatLocation(props.Place)}</div>
-        )}
         <div>
           <b>Thời gian: </b>
           {new Date(props.StartTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
@@ -678,11 +669,11 @@ export default function Home() {
             </b>
           )}
         </div>
-        {props.UserName && props.UserName.length > 0 && (
-          <div><b>Người dùng: </b>{props.UserName.join(', ')}</div>
+        {props.Users && props.Users.length > 0 && (
+          <div><b>Người dùng: </b>{props.Users.join(', ')}</div>
         )}
-        {props.UserType && (
-          <div><b>Nhóm: </b>{props.UserType}</div>
+        {props.ResponsibleGroupId && (
+          <div><b>Nhóm: </b>{getResponsibleGroupText(props.ResponsibleGroupId,calendars)}</div>
         )}
         {props.Description && (
           <div><b>Mô tả: </b>{props.Description}</div>
@@ -691,30 +682,42 @@ export default function Home() {
     );
   };
   
+
+  useEffect(()=>{
+    const fetchData = async()=>{
+      const ResponsibleGroupRes = await ResponsibleGroupRoomService.getAllResponsibleGroups();
+      const ScheduleData = await ScheduleService.getAllSchedule();
+      console.log(ResponsibleGroupRes.data);
+      console.log(ScheduleData.data);
+    }
+    fetchData();
+  },[])
+
+  
   return (
     <>
       <div className='scheduler-container'>
         <div className='scheduler-container-left'>
           <div className='scheduler-title-container'>Title</div>
           <div className='scheduler-component'>
-            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{ ...currentEventSettings, template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate }} ref={scheduleObj} rowAutoHeight={true} enableAdaptiveUI={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} >
+            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{ ...currentEventSettings, template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate }} ref={scheduleObj} rowAutoHeight={true} enableAdaptiveUI={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate}>
               <ViewsDirective>
                 <ViewDirective option="Day" interval={5}></ViewDirective>
                 <ViewDirective option="Month" ></ViewDirective>
-                <ViewDirective option="Week" isSelected={true}></ViewDirective>
+                <ViewDirective option="Week" isSelected={true} timeScale={timeScale}></ViewDirective>
                 <ViewDirective option="TimelineDay" ></ViewDirective>
                 <ViewDirective option="TimelineMonth"></ViewDirective>
                 <ViewDirective option="Agenda"></ViewDirective>
               </ViewsDirective>
               <ResourcesDirective>
                 <ResourceDirective
-                  field='UserType'
+                  field='ResponsibleGroupId'
                   title='Nhóm người dùng'
-                  name='UserTypes'
+                  name='ResponsibleGroupIds'
                   allowMultiple={true}
                   dataSource={calendars}
                   textField='text'
-                  idField='text'
+                  idField='id'
                   colorField='color'
                 />
               </ResourcesDirective>
@@ -726,6 +729,7 @@ export default function Home() {
           <CalendarList
             calendars={calendars}
             onFilterChange={handleFilterChange}
+            onCalendarsChange={e=>setCalendars(e)}
           />
         </div>
       </div>

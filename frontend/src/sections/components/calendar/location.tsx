@@ -3,90 +3,97 @@ import { MultiSelectComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Box, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import RoomService from 'src/@core/service/room';
 
 
 interface LocationItem {
-    Id: string;
-    Name: string;
+    id: string;
+    name: string;
 }
-
-const locationData: Record<string, LocationItem[]> = {
-    'Tòa nhà': [
-        { Id: '1', Name: 'Tòa nhà A' },
-        { Id: '2', Name: 'Tòa nhà B' },
-        { Id: '3', Name: 'Tòa nhà C' }
-    ],
-    'Tầng': [
-        { Id: '1', Name: 'Tầng 1' },
-        { Id: '2', Name: 'Tầng 2' },
-        { Id: '3', Name: 'Tầng 3' },
-        { Id: '4', Name: 'Tầng 4' },
-        { Id: '5', Name: 'Tầng 5' }
-    ],
-    'Phòng': [
-        { Id: '101', Name: 'Phòng 101' },
-        { Id: '102', Name: 'Phòng 102' },
-        { Id: '201', Name: 'Phòng 201' },
-        { Id: '202', Name: 'Phòng 202' },
-        { Id: '301', Name: 'Phòng 301' }
-    ],
-    'Cơ sở': [
-        { Id: '1', Name: 'Cơ sở 1' },
-        { Id: '2', Name: 'Cơ sở 2' },
-        { Id: '3', Name: 'Cơ sở 3' }
-    ]
-};
 
 interface Props {
     index: number;
     data: {
         level: string;
-        room: { Id: string; Name: string }[];
+        rooms: Array<{ id: string; name: string }>;
     };
-    onChange: (index: number, level: string, rooms: { Id: string; Name: string }[]) => void;
+    onChange: (index: number, level: string, rooms: Array<{ id: string; name: string }>) => void;
     onRemove: (index: number) => void;
 }
 
-const LocationSelector = ({ index, data, onChange, onRemove }: Props) => {
+const LocationSelector = React.memo(({ index, data, onChange, onRemove }: Props) => {
+    const [locationOptions, setLocationOptions] = useState<LocationItem[]>([]);
+
+    const levelOptions = ['Cơ sở', 'Tòa nhà', 'Tầng', 'Phòng'];
+
+    const fetchLocationData = async (level: string) => {
+        try {
+            const response = await RoomService.getRoomListByRoomType(level);
+            console.log(response.data);
+            setLocationOptions(response.data);
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu địa điểm:', error);
+            setLocationOptions([]);
+        }
+    };
+
+    useEffect(() => {
+        if (data.level) {
+            fetchLocationData(data.level);
+        }
+    }, [data.level]);
+
     return (
         <Box display="flex" alignItems="center" gap={2}>
             <Box width={"30%"}>
                 <DropDownListComponent
-                    dataSource={Object.keys(locationData)}
+                    dataSource={levelOptions}
                     value={data.level}
                     floatLabelType="Always"
-                    change={(e: any) => onChange(index, e.value, [])}
-                    placeholder="Chọn loại phòng"
+                    change={(e: any) => {
+                        if (e.value !== null) {
+                            if (e.value !== data.level) {
+                                console.log("location call",e.value);
+                                onChange(index, e.value, []);
+                                fetchLocationData(e.value);
+                            }
+                        }
+                    }}
+                    placeholder="Chọn loại địa điểm"
                 />
             </Box>
             <Box width={'70%'}>
                 <MultiSelectComponent
-                    dataSource={data.level ? locationData[data.level].map(item => ({ Id: item.Id, Name: item.Name })) : []}
-                    value={data.room.map(r => r.Id)}  
+                    dataSource={locationOptions.map(r => ({ id: r.id, name: r.name }))}
+                    value={data.rooms.map(r => r.id)}
                     change={(e: { value: string[] | null }) => {
                         if (e.value === null || e.value === undefined) {
-                            onChange(index, data.level, []);
+                            if (data.rooms.length > 0) {
+                                onChange(index, data.level, []);
+                            }
                         } else {
                             const selectedRooms = e.value.map(id => {
-                                const room = locationData[data.level].find(r => r.Id === id);
-                                return room ? { Id: room.Id, Name: room.Name } : { Id: id, Name: id };
+                                const room = locationOptions.find(r => r.id === id);
+                                return room ? { id: room.id, name: room.name } : { id: id, name: id };
                             });
-                            onChange(index, data.level, selectedRooms);
+                            if (JSON.stringify(selectedRooms) !== JSON.stringify(data.rooms)) {
+                                onChange(index, data.level, selectedRooms);
+                            }
                         }
                     }}
-                    placeholder="Chọn phòng"
+                    placeholder="Chọn địa điểm"
                     floatLabelType="Always"
                     mode="Box"
                     showClearButton={true}
                     style={{ color: "#000 !important" }}
-                    filterBarPlaceholder="Tìm kiếm phòng"
+                    filterBarPlaceholder="Tìm kiếm địa điểm"
                     popupHeight="200px"
                     className='e-field'
                     allowFiltering={true}
                     filterType="Contains"
                     enabled={!!data.level}
-                    fields={{ text: 'Name', value: 'Id' }}
+                    fields={{ text: 'name', value: 'id' }}
                 />
             </Box>
             {index > 0 && (
@@ -96,6 +103,6 @@ const LocationSelector = ({ index, data, onChange, onRemove }: Props) => {
             )}
         </Box>
     );
-};
+});
 
 export default LocationSelector;

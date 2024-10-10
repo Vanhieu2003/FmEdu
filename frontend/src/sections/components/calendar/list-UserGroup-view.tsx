@@ -4,43 +4,69 @@ import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddCalendarItemDialog from './add-UserGroup';
+import EditIcon from '@mui/icons-material/Edit';
+import  ResponsibleGroupRoomService  from 'src/@core/service/responsiblegroup';
 
 interface CalendarItem {
     text: string;
-    id: number;
+    id: string;
     color: string;
     isChecked: boolean;
 }
 
 interface CalendarListProps {
-    calendars: CalendarItem[];
-    onFilterChange: (checkedIds: number[]) => void;
+    calendars: (CalendarItem[]);
+    onFilterChange: (checkedIds: string[]) => void;
+    onCalendarsChange: (updatedCalendars: CalendarItem[]) => void; // Thêm prop mới
 }
 
 
-export default function CalendarList({ calendars, onFilterChange }: CalendarListProps) {
+export default function CalendarList({ calendars, onFilterChange, onCalendarsChange }: CalendarListProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogType, setDialogType] = useState<'add' | 'edit'>('add');
+    const [editingItem, setEditingItem] = useState<CalendarItem | null>(null);
 
     const handleAddClick = () => {
+        setDialogType('add');
+        setEditingItem(null);
+        setIsDialogOpen(true);
+    };
+
+    const handleEditClick = (item: CalendarItem) => {
+        setDialogType('edit');
+        setEditingItem(item);
         setIsDialogOpen(true);
     };
 
     const handleDialogClose = () => {
         setIsDialogOpen(false);
+        setEditingItem(null);
     };
-    const handleAddItem = (name: string, color: string) => {
+
+    const handleAddItem = async (name: string, color: string) => {
         const newItem: CalendarItem = {
-            id: calendars.length + 1,
+            id: "a",
             text: name,
             color: color,
             isChecked: true
         };
-        calendars.push(newItem);
-        console.log({text: newItem.text, color: newItem.color})
-        setIsDialogOpen(false);
+        const response = await ResponsibleGroupRoomService.createResponsibleGroups({GroupName: name, Color: color,Description:""});
+        if(response.status === 200){
+            calendars = [...calendars, newItem];
+            alert("Thêm thành công");
+            onCalendarsChange(calendars);
+        }
     };
-    const handleCheckboxChange = useCallback((id: number) => {
-        const updatedCalendars = calendars.map(cal => 
+
+    const handleEditItem = (id: string, name: string, color: string) => {
+        const updatedCalendars = calendars.map(cal =>
+            cal.id === id ? { ...cal, text: name, color: color } : cal
+        );
+        onCalendarsChange(updatedCalendars);
+    };
+
+    const handleCheckboxChange = useCallback((id: string) => {
+        const updatedCalendars = calendars.map(cal =>
             cal.id === id ? { ...cal, isChecked: !cal.isChecked } : cal
         );
         const checkedIds = updatedCalendars.filter(cal => cal.isChecked).map(cal => cal.id);
@@ -48,8 +74,12 @@ export default function CalendarList({ calendars, onFilterChange }: CalendarList
     }, [calendars, onFilterChange]);
 
     const listTemplate = (data: CalendarItem) => {
+        const handleEditButtonClick = (e: React.MouseEvent) => {
+            e.stopPropagation(); // Ngăn sự kiện lan truyền lên div cha
+            handleEditClick(data);
+        };
         return (
-            <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => handleCheckboxChange(data.id)}>
+            <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => handleCheckboxChange(data.id)} >
                 <span
                     style={{
                         backgroundColor: data.color,
@@ -60,6 +90,10 @@ export default function CalendarList({ calendars, onFilterChange }: CalendarList
                     }}
                 />
                 <span style={{ flex: 1 }}>{data.text}</span>
+                <IconButton onClick={handleEditButtonClick} style={{ padding: '2px' }}>
+                    <EditIcon sx={{ color: 'black', fontSize: '18px' }} />
+                </IconButton>
+
                 <CheckBoxComponent
                     checked={data.isChecked}
                 />
@@ -84,6 +118,9 @@ export default function CalendarList({ calendars, onFilterChange }: CalendarList
                 isOpen={isDialogOpen}
                 onClose={handleDialogClose}
                 onAdd={handleAddItem}
+                onEdit={handleEditItem}
+                type={dialogType}
+                initialData={editingItem ? { id: editingItem.id, name: editingItem.text, color: editingItem.color } : undefined}
             />
         </div>
     );
