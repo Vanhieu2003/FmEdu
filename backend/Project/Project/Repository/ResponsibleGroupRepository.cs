@@ -15,56 +15,11 @@ namespace Project.Repository
             _context = context;
         }
 
-        public async Task<List<ResponsiableGroupViewDto>> GetAllResponsiableGroup()
+        public async Task<List<ResponsibleGroup>> GetAllResponsiableGroup()
         {
-            
-                // Câu truy vấn SQL thuần túy
-                var sqlQuery = @"
-            SELECT 
 
-
-     rg.GroupName,
-     rg.Description,
-    rg.Id,
-     COUNT(rg.Id) AS NumberOfUser,
-	 rg.Color
- FROM 
-     UserPerResGroup ubrg
- JOIN 
-     [User] u ON ubrg.UserId = u.Id
- JOIN 
-     ResponsibleGroup rg ON ubrg.ResponsiableGroupId = rg.Id
-
- GROUP BY 
-  rg.GroupName, rg.Description,rg.Color,rg.Id;";
-
-                // Thực hiện truy vấn SQL
-                var responsiableGroups = new List<ResponsiableGroupViewDto>();
-
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = sqlQuery;
-                    _context.Database.OpenConnection();
-
-                    using (var result = await command.ExecuteReaderAsync())
-                    {
-                        while (await result.ReadAsync())
-                        {
-                            var responsiableGroup = new ResponsiableGroupViewDto
-                            {
-                                Color = result["Color"].ToString(),
-                                Id = result["id"].ToString(),
-                                GroupName = result["GroupName"].ToString(),
-                                Description = result["Description"].ToString(),
-                                NumberOfUser = (int)result["NumberOfUser"]
-                            };
-                        responsiableGroups.Add(responsiableGroup);
-                        }
-                    }
-                }
-
-                return responsiableGroups;
-            
+            var group = await _context.ResponsibleGroups.ToListAsync();
+            return group;
         }
 
         public async Task<ResponsiableGroupDto> GetAllResponsiableGroupById(string id)

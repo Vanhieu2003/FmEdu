@@ -6,7 +6,7 @@
         public string? BlockName { get; set; }
         public string? CampusId { get; set; }
         public string? CampusName { get; set; }
-        public int? SortOrder { get; set; } = null;
+
 
     }
 }

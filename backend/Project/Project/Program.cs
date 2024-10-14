@@ -41,10 +41,10 @@ builder.Services.AddScoped<ICriteriasPerFormRepository, CriteriasPerFormReposito
 builder.Services.AddScoped<ICriteriaReportRepository, CriteriaReportRepository>();
 builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
 builder.Services.AddScoped<IGroupRoomRepository, GroupRoomRepository>();
-<<<<<<< HEAD
+builder.Services.AddScoped<IScheduleRepository,ScheduleRepository>();
+
 builder.Services.AddScoped<IResponsibleGroupRepository, ResponsibleGroupRepository>();
-=======
->>>>>>> 579bf9acca3f6a300a1bc360abbe23a530fbe752
+
 
 // Add Static Files Middleware
 builder.Services.AddDirectoryBrowser();

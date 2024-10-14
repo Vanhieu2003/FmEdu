@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
 
-
-
 namespace Project.Controllers
 {
     [Route("api/[controller]")]

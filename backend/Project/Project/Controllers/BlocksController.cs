@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project.dto;
 using Project.Dto;
 using Project.Entities;
 using Project.Interface;
@@ -23,6 +24,32 @@ namespace Project.Controllers
             _context = context;
             _repo = repo;
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BlockDto>>> GetBlocks()
+        {
+            var blocks = from b in _context.Blocks
+                         select new
+                         {
+                             b.Id,
+                             b.BlockName,
+                             b.CampusId,
+                             b.CampusName,
+                             b.SortOrder
+                         };
+
+            var sortedBlocks = blocks.OrderBy(b => b.SortOrder)
+                                          .Select(b => new BlockDto
+                                          {
+                                              Id = b.Id,
+                                              BlockName = b.BlockName,
+                                              CampusId = b.CampusId,
+                                              CampusName = b.CampusName
+                                          });
+
+            return Ok(await sortedBlocks.ToListAsync());
+        }
+
 
         [HttpGet("ByCampus/{campusId}")]
         public async Task<IActionResult> GetBlocksByCampusId(string campusId)

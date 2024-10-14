@@ -27,10 +27,10 @@ namespace Project.Controllers
 
         // GET: api/ResponsibleGroups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ResponsiableGroupViewDto>>> GetResponsibleGroups()
+        public async Task<IActionResult> GetResponsibleGroups()
         {
-          
-            return await _repo.GetAllResponsiableGroup();
+            var result = await _repo.GetAllResponsiableGroup();
+            return Ok(result);
         }
 
         // GET: api/ResponsibleGroups/5
@@ -110,7 +110,7 @@ namespace Project.Controllers
 
    
         [HttpPost]
-        public async Task<ActionResult<ResponsiableGroupDto>> CreateResponsiableGroupWithUser([FromBody] ResponsiableGroupDto dto)
+        public async Task<IActionResult> CreateResponsiableGroupWithUser([FromBody] ResponsiableGroupDto dto)
         {
             try
             {
@@ -137,19 +137,21 @@ namespace Project.Controllers
                 await _context.SaveChangesAsync();
 
                 // Thêm các phòng vào nhóm vừa tạo
-                foreach (var userDto in dto.Users)
+                if (dto.Users != null)
                 {
-                    var userPerResGroup = new UserPerResGroup
+                    foreach (var userDto in dto.Users)
                     {
-                        Id = Guid.NewGuid().ToString(), // Tạo Guid cho RoomByGroup
-                        UserId = userDto.Id,
-                        ResponsiableGroupId = group.Id // Liên kết GroupRoomId với nhóm vừa tạo
-                    };
-                    _context.UserPerResGroups.Add(userPerResGroup);
+                        var userPerResGroup = new UserPerResGroup
+                        {
+                            Id = Guid.NewGuid().ToString(), // Tạo Guid cho RoomByGroup
+                            UserId = userDto.Id,
+                            ResponsiableGroupId = group.Id // Liên kết GroupRoomId với nhóm vừa tạo
+                        };
+                        _context.UserPerResGroups.Add(userPerResGroup);
+                    }
                 }
-
                 await _context.SaveChangesAsync();
-                return Ok(new { success = true, message = "Nhóm người chịu trách nhiệm được tạo thành công." });
+                return Ok(group);
             }
             catch (Exception ex)
             {
@@ -157,7 +159,7 @@ namespace Project.Controllers
             }
         }
 
-        // DELETE: api/ResponsibleGroups/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteResponsibleGroup(string id)
         {

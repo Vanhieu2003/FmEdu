@@ -41,8 +41,9 @@ namespace Project.Repository
         .Join(_context.CleaningForms,
               room => room.Id,
               form => form.RoomId,
-              (room, form) => room) 
-        .OrderBy(room => room.SortOrder) 
+              (room, form) => room)
+        .GroupBy(room => room.Id)
+        .Select(group => group.First())
         .ToListAsync();
 
             

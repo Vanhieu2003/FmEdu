@@ -24,8 +24,8 @@ namespace Project.Repository
                     Id = b.Id,
                     BlockName = b.BlockName,
                     CampusId = b.CampusId!,
-                    CampusName = b.CampusName,
-                    SortOrder = b.SortOrder  // Thêm SortOrder vào DTO
+                    CampusName = b.CampusName
+                  
                 })
                 .ToListAsync();
         }
