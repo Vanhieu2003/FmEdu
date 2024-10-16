@@ -74,9 +74,9 @@ namespace Project.Controllers
                 RecurrenceRule = s.RecurrenceRule,
                 AllDay = s.AllDay,
                 ResponsibleGroupId = s.ResponsibleGroupId,
-                Index = s.Index,
-                StartDate = s.StartDate,
-                EndDate = s.EndDate,
+                Index = s.Index ?? 0,
+                StartDate = s.StartDate ?? DateTime.Now,
+                EndDate = s.EndDate ?? DateTime.Now,
                 Users = s.Users,
                 Place = s.ScheduleDetails
                     .GroupBy(sd => sd.RoomType)
@@ -143,6 +143,19 @@ namespace Project.Controllers
 
             return schedule;
         }
+
+        // API để lấy danh sách người dùng chịu trách nhiệm cho roomId và shiftId
+        [HttpGet("GetResponsibleUsers")]
+        public async Task<IActionResult> GetResponsibleUsers([FromQuery] string roomId, [FromQuery] string shiftId)
+        {
+            var responsibleUsers = await _repo.GetResponsibleUsersForRoomAndShift(roomId, shiftId);
+            if (responsibleUsers == null || responsibleUsers.Count == 0)
+            {
+                return NotFound("No responsible users found for this room and shift.");
+            }
+            return Ok(responsibleUsers);
+        }
+
 
         // PUT: api/Schedules/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

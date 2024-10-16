@@ -40,6 +40,7 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/responsible-group/list`,
       details: (id: string) => `${ROOTS.DASHBOARD}/responsible-group/detail/${id}`,
       create: `${ROOTS.DASHBOARD}/responsible-group/create`,
+      createUserPerTag: `${ROOTS.DASHBOARD}/responsible-group/createUserPerTag`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/responsible-group/${id}/edit`,
     } ,
   },

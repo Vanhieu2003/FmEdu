@@ -33,6 +33,14 @@ namespace Project.Controllers
             return Ok(result);
         }
 
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _repo.GetAll();
+            return Ok(result);
+        }
+
+
         // GET: api/ResponsibleGroups/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponsiableGroupDto>> GetResponsibleGroup(string id)

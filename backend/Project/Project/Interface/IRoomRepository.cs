@@ -9,5 +9,6 @@ namespace Project.Interface
         public Task<List<RoomDto>> GetRoomByFloorIdIfFormExist(string id);
         public Task<List<Room>> SearchRoom(string roomName);
         public Task<List<RoomDto>> GetRoomsByBlockAndCampusAsync(string blockId, string campusId);
+        public Task<List<RoomDto>> GetRoomsByCampusAsync(string campusId);
     }
 }

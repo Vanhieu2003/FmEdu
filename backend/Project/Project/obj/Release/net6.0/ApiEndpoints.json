@@ -1337,6 +1337,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "GetAll",
+    "RelativePath": "api/ResponsibleGroups/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Project.Controllers.RoomCategoriesController",
     "Method": "GetRoomCategories",
     "RelativePath": "api/RoomCategories",
@@ -1546,6 +1556,22 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomsController",
+    "Method": "GetRoomsByCampusAsync",
+    "RelativePath": "api/Rooms/GetRoomByCampus",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.RoomsController",
     "Method": "GetRoomsByFloorIdIfFormExists",
     "RelativePath": "api/Rooms/IfExistForm/{FloorId}",
     "HttpMethod": "GET",
@@ -1671,6 +1697,27 @@
         "Name": "id",
         "Type": "System.String",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.SchedulesController",
+    "Method": "GetResponsibleUsers",
+    "RelativePath": "api/Schedules/GetResponsibleUsers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "shiftId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1926,6 +1973,42 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Project.Controllers.TagsController",
+    "Method": "GetTagAverageRatings",
+    "RelativePath": "api/Tags/average-ratings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsController",
+    "Method": "GetGroupInfoByTagId",
+    "RelativePath": "api/Tags/GetGroupInfoByTagId/{tagId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tagId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsController",
+    "Method": "GetTagGroupsWithUserCount",
+    "RelativePath": "api/Tags/GetTagGroups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Project.Controllers.TagsPerCriteriasController",
     "Method": "GetTagsPerCriteria",
     "RelativePath": "api/TagsPerCriterias",
@@ -2170,6 +2253,22 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersPerTagController",
+    "Method": "CreateUsersPerTag",
+    "RelativePath": "api/UsersPerTag",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Project.Dto.AssignUserRequest",
         "IsRequired": true
       }
     ],

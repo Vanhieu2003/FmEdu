@@ -42,7 +42,7 @@ builder.Services.AddScoped<ICriteriaReportRepository, CriteriaReportRepository>(
 builder.Services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
 builder.Services.AddScoped<IGroupRoomRepository, GroupRoomRepository>();
 builder.Services.AddScoped<IScheduleRepository,ScheduleRepository>();
-
+builder.Services.AddScoped<IUserPerTagRepository, UserPerTagRepository>();
 builder.Services.AddScoped<IResponsibleGroupRepository, ResponsibleGroupRepository>();
 
 

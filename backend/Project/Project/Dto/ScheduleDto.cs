@@ -50,4 +50,10 @@
         public string Id { get; set; }
         public string Name { get; set; }
     }
+    public class ResponsibleUserDto
+    {
+        public string UserId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
 }

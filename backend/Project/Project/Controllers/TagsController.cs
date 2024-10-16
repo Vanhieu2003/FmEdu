@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project.Dto;
 using Project.Entities;
 using Project.Interface;
 
@@ -35,6 +36,25 @@ namespace Project.Controllers
             return await _context.Tags.ToListAsync();
         }
 
+
+        [HttpGet("GetTagGroups")]
+        public async Task<IActionResult> GetTagGroupsWithUserCount()
+        {
+            var tagGroups = await _repo.GetTagGroupsWithUserCountAsync();
+            return Ok(tagGroups);
+        }
+
+        [HttpGet("GetGroupInfoByTagId/{tagId}")]
+        public async Task<IActionResult> GetGroupInfoByTagId(string tagId)
+        {
+            var result = await _repo.GetGroupInfoByTagId(tagId);
+            if (result == null || !result.Any())
+            {
+                return NotFound("No users found for the given tag.");
+            }
+            return Ok(result);
+        }
+
         // GET: api/Tags/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Tag>> GetTag(string id)
@@ -63,6 +83,16 @@ namespace Project.Controllers
             }
             return Ok(tags);
         }
+
+
+        [HttpGet("average-ratings")]
+        public async Task<IActionResult> GetTagAverageRatings()
+        {
+            var result = await _repo.GetTagAverageRatingsAsync();
+            return Ok(result);
+        }
+
+
 
 
         // PUT: api/Tags/5

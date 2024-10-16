@@ -11,11 +11,13 @@ export class ResponsibleGroupRoomService {
   getAllResponsibleGroups = async ()=>{
     return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups`);
   }
-
+  getAll = async ()=>{
+    return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/all`);
+  }
   getResponsibleGroupbyId = async (id:string)=>{
     return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/${id}`);
   }
-
+  
   updateResponsibleGroup = async (id:string ,data:object)=>{
     return axios.put(`${API_ENDPOINT}/api/ResponsibleGroups/${id}`,data);
   }

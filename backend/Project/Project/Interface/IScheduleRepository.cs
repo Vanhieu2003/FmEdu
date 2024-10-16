@@ -7,5 +7,6 @@ namespace Project.Interface
     {
         public Task<Schedule> CreateSchedule (ScheduleDto schedule);
         public Task<List<RoomItemDto>> GetListRoomByRoomType (string roomType);
+        Task<List<UserDto>> GetResponsibleUsersForRoomAndShift(string roomId, string shiftId);  
     }
 }

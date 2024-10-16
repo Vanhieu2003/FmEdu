@@ -7,12 +7,12 @@ import Typography from '@mui/material/Typography';
 import { useSettingsContext } from 'src/components/settings';
 import { useState, useEffect } from 'react';
 import CampusService from 'src/@core/service/campus';
-import BlockService from 'src/@core/service/block';
 import RoomService from 'src/@core/service/room';
 import { Button, Checkbox, Stack, Autocomplete, TextField, Alert } from '@mui/material';
 import GroupRoomService from 'src/@core/service/grouproom';
 import AlertTitle from '@mui/material/AlertTitle';
-
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 // ----------------------------------------------------------------------
 
 export default function RoomGroupCreate() {
@@ -27,6 +27,7 @@ export default function RoomGroupCreate() {
   const [selectedRooms, setSelectedRooms] = useState<any[]>([]); // Danh sách các phòng được chọn
   const [groupName, setGroupName] = useState<string>(''); // Tên nhóm
   const [description, setDescription] = useState<string>(''); // Mô tả nhóm
+  const [searchQuery, setSearchQuery] = useState<string>(''); // Biến tìm kiếm
   const [alert, setAlert] = useState<{ severity: 'success' | 'error'; message: string } | null>(null);
 
   // Fetch tất cả campus khi component được render
@@ -42,24 +43,12 @@ export default function RoomGroupCreate() {
     fetchCampus();
   }, []);
 
-  // Khi chọn campus, fetch block tương ứng
+  // Khi chọn campus, fetch room tương ứng
   const handleCampusChange = async (event: any, value: any) => {
     if (value && value.id) {
       setSelectedCampus(value);
       try {
-        const response: any = await BlockService.getBlockByCampusId(value.id);
-        setBlocks(response.data);
-      } catch (error: any) {
-        console.error('Error fetching blocks:', error);
-      }
-    }
-  };
-
-  const handleBlockChange = async (event: any, value: any) => {
-    if (value && value.id) {
-      setSelectedBlocks(value);
-      try {
-        const response: any = await RoomService.getRoomByBlockAndCampus(value.campusId, value.id);
+        const response: any = await RoomService.getRoomByCampus(value.id);
         if (response.data && Array.isArray(response.data)) {
           setRooms(response.data);
         } else {
@@ -71,6 +60,45 @@ export default function RoomGroupCreate() {
       }
     }
   };
+
+  // Xử lý tìm kiếm phòng
+  // Xử lý tìm kiếm phòng
+const handleSearch = async (event: any) => {
+  const input = event.target.value;
+  setSearchQuery(input);
+
+  if (input.trim() === '') {
+    // Nếu ô tìm kiếm rỗng, fetch lại danh sách phòng theo campus đã chọn
+    if (selectedCampus && selectedCampus.id) {
+      try {
+        const response: any = await RoomService.getRoomByCampus(selectedCampus.id);
+        if (response.data && Array.isArray(response.data)) {
+          setRooms(response.data);
+        } else {
+          console.error('Unexpected response format:', response.data);
+          setRooms([]);
+        }
+      } catch (error: any) {
+        console.error('Error fetching rooms:', error);
+      }
+    } else {
+      setRooms([]); // Không có campus nào được chọn, clear danh sách phòng
+    }
+  } else {
+    // Nếu ô tìm kiếm có giá trị, thực hiện tìm kiếm
+    try {
+      const response: any = await RoomService.searchRooms(input);
+      if (response.data && Array.isArray(response.data)) {
+        setRooms(response.data);
+      } else {
+        console.error('Unexpected response format:', response.data);
+        setRooms([]);
+      }
+    } catch (error: any) {
+      console.error('Error searching rooms:', error);
+    }
+  }
+};
 
   // Xử lý khi chọn phòng
   const handleRoomSelection = (event: any, room: any) => {
@@ -119,17 +147,18 @@ export default function RoomGroupCreate() {
       </Box>
 
       {/* Hiển thị thông báo nếu có */}
-{alert && (
-  <Box sx={{ display: 'flex', gap: 2, marginBottom: 3 }}>
-    <Alert 
-      severity={alert.severity} 
-      onClose={() => setAlert(null)} // Đóng thông báo khi nhấn vào icon
-    >
-      <AlertTitle>{alert.severity === 'error' ? 'Error' : 'Success'}</AlertTitle>
-      {alert.message}
-    </Alert>
-  </Box>
-)}
+      {alert && (
+        <Box sx={{ display: 'flex', gap: 2, marginBottom: 3 }}>
+          <Alert 
+            severity={alert.severity} 
+            onClose={() => setAlert(null)} // Đóng thông báo khi nhấn vào icon
+          >
+            <AlertTitle>{alert.severity === 'error' ? 'Error' : 'Success'}</AlertTitle>
+            {alert.message}
+          </Alert>
+        </Box>
+      )}
+
       {/* Autocomplete để chọn campus */}
       <Box sx={{ display: 'flex', gap: 2, marginBottom: 3 }}>
         <Autocomplete
@@ -139,14 +168,6 @@ export default function RoomGroupCreate() {
           sx={{ width: 300, marginBottom: 3 }}
           onChange={handleCampusChange}
           renderInput={(params: any) => <TextField {...params} label="Chọn Campus" />}
-        />
-        <Autocomplete
-          disablePortal
-          options={blocks}
-          getOptionLabel={(option: any) => option.blockName || ''}
-          sx={{ width: 300, marginBottom: 3 }}
-          onChange={handleBlockChange}
-          renderInput={(params: any) => <TextField {...params} label="Chọn Blocks" />}
         />
       </Box>
 
@@ -170,9 +191,29 @@ export default function RoomGroupCreate() {
           onChange={(e) => setDescription(e.target.value)}
         />
       </Box>
-      
+
+
+
       {/* Hiển thị danh sách phòng */}
       <Typography variant="h6">Danh sách phòng:</Typography>
+
+
+      <TextField
+  label="Tìm kiếm phòng"
+  variant="outlined"
+  value={searchQuery}
+  onChange={handleSearch}
+  fullWidth
+  sx={{ width: 300, marginBottom: 3 }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon />
+      </InputAdornment>
+    ),
+  }}
+/>
+   
       <Box 
         sx={{ 
           padding: 2, 

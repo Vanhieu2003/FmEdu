@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Project.Dto;
 
 namespace Project.Entities
 {
@@ -84,13 +85,12 @@ namespace Project.Entities
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<UserDepartment> UserDepartments { get; set; } = null!;
         public virtual DbSet<UserGroup> UserGroups { get; set; } = null!;
-        public virtual DbSet<UserGroup1> UserGroups1 { get; set; } = null!;
         public virtual DbSet<UserPerResGroup> UserPerResGroups { get; set; } = null!;
+        public virtual DbSet<UserPerTag> UserPerTags { get; set; } = null!;
         public virtual DbSet<UserRequestBasis> UserRequestBases { get; set; } = null!;
-        public virtual DbSet<UserResponsibleTag> UserResponsibleTags { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
-
+        public virtual DbSet<TagGroupDto> TagGroupDtos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -104,6 +104,18 @@ namespace Project.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
+
+            modelBuilder.Entity<GroupWithRoomsViewDto>().HasNoKey();
+            modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
+            modelBuilder.Entity<BlockReportDto>().HasNoKey();
+            modelBuilder.Entity<CleaningReportCountDto>().HasNoKey();
+            modelBuilder.Entity<CleaningReportDto>().HasNoKey();
+            modelBuilder.Entity<ReportInADayValueDto>().HasNoKey();
+            modelBuilder.Entity<CampusAverageValueDto>().HasNoKey();
+            modelBuilder.Entity<ResponsiableGroupViewDto>().HasNoKey();
+            modelBuilder.Entity<CriteriaValueDto>().HasNoKey();
+            modelBuilder.Entity<TagGroupDto>().HasNoKey();
+            modelBuilder.Entity<ResponsibleTagDto>().HasNoKey();
 
             modelBuilder.Entity<Block>(entity =>
             {
@@ -1621,28 +1633,6 @@ namespace Project.Entities
 
             modelBuilder.Entity<UserGroup>(entity =>
             {
-                entity.ToTable("UserGroup");
-
-                entity.HasIndex(e => e.Id, "UQ__UserGrou__3214EC0619C8F150")
-                    .IsUnique();
-
-                entity.Property(e => e.Id)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.GroupUserId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<UserGroup1>(entity =>
-            {
-                entity.ToTable("UserGroups");
-
                 entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.GroupId).HasMaxLength(450);
@@ -1652,13 +1642,13 @@ namespace Project.Entities
                 entity.Property(e => e.UserId).HasMaxLength(450);
 
                 entity.HasOne(d => d.Group)
-                    .WithMany(p => p.UserGroup1s)
+                    .WithMany(p => p.UserGroups)
                     .HasForeignKey(d => d.GroupId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserGroup_Group");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserGroup1s)
+                    .WithMany(p => p.UserGroups)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserGroup_User");
@@ -1682,6 +1672,15 @@ namespace Project.Entities
                 entity.Property(e => e.UserId)
                     .HasMaxLength(450)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UserPerTag>(entity =>
+            {
+                entity.ToTable("UserPerTag");
+
+                entity.Property(e => e.TagId).HasMaxLength(450);
+
+                entity.Property(e => e.UserId).HasMaxLength(450);
             });
 
             modelBuilder.Entity<UserRequestBasis>(entity =>
@@ -1711,34 +1710,6 @@ namespace Project.Entities
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserRequestBases_User");
-            });
-
-            modelBuilder.Entity<UserResponsibleTag>(entity =>
-            {
-                entity.ToTable("UserResponsibleTag");
-
-                entity.HasIndex(e => e.Id, "UQ__UserResp__3214EC06CBBDA82A")
-                    .IsUnique();
-
-                entity.Property(e => e.Id)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ReportId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.TagId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserPerResGroupId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<UserRole>(entity =>

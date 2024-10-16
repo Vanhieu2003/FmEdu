@@ -95,6 +95,50 @@ namespace Project.Repository
             return responsibleGroup;
         }
 
+        public async Task<List<ResponsiableGroupViewDto>> GetAll()
+        {
 
+            // Câu truy vấn SQL thuần túy
+            var sqlQuery = @"
+SELECT 
+    rg.GroupName,
+    COALESCE(rg.Description, 'Không có mô tả') AS Description,
+    rg.Id,
+    COUNT(u.Id) AS NumberOfUser,
+    rg.Color
+FROM 
+    ResponsibleGroup rg
+LEFT JOIN 
+    UserPerResGroup ubrg ON rg.Id = ubrg.ResponsiableGroupId
+LEFT JOIN 
+    [User] u ON ubrg.UserId = u.Id
+GROUP BY 
+    rg.GroupName, rg.Description, rg.Color, rg.Id
+";
+            // Thực hiện truy vấn SQL
+            var responsiableGroups = new List<ResponsiableGroupViewDto>();
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = sqlQuery;
+                _context.Database.OpenConnection();
+                using (var result = await command.ExecuteReaderAsync())
+                {
+                    while (await result.ReadAsync())
+                    {
+                        var responsiableGroup = new ResponsiableGroupViewDto
+                        {
+                            Color = result["Color"].ToString(),
+                            Id = result["id"].ToString(),
+                            GroupName = result["GroupName"].ToString(),
+                            Description = result["Description"].ToString(),
+                            NumberOfUser = (int)result["NumberOfUser"]
+                        };
+                        responsiableGroups.Add(responsiableGroup);
+                    }
+                }
+            }
+            return responsiableGroups;
+
+        }
     }
 }

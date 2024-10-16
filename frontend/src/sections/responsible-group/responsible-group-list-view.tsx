@@ -55,7 +55,7 @@ export default function ResponsibleGroupListView() {
 
     const fetchGroupRoom = async () => {
       try {
-        const response: any = await ResponsibleGroupRoomService.getAllResponsibleGroups();
+        const response: any = await ResponsibleGroupRoomService.getAll();
         setResponsibleGroups(response.data);
       } catch (error: any) {
         console.error('Error fetching Room Group data:', error);

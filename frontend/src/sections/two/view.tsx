@@ -143,7 +143,6 @@ export default function TwoView() {
 
   const handleClose = () => {
     setAnchorEl(null);
-
   };
 
   const settings = useSettingsContext();

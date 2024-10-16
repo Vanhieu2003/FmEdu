@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import  ResponsibleGroupRoomService  from 'src/@core/service/responsiblegroup';
 
 interface CalendarItem {
-    text: string;
+    groupName: string;
     id: string;
     color: string;
     isChecked: boolean;
@@ -44,16 +44,17 @@ export default function CalendarList({ calendars, onFilterChange, onCalendarsCha
     };
 
     const handleAddItem = async (name: string, color: string) => {
-        const newItem: CalendarItem = {
-            id: "a",
-            text: name,
-            color: color,
-            isChecked: true
-        };
         const response = await ResponsibleGroupRoomService.createResponsibleGroups({GroupName: name, Color: color,Description:""});
+        const newItem = {
+            id: response.data.id,
+            groupName: response.data.groupName,
+            color: response.data.color,
+            isChecked: true
+        }
         if(response.status === 200){
             calendars = [...calendars, newItem];
             alert("Thêm thành công");
+            console.log(response.data);
             onCalendarsChange(calendars);
         }
     };
@@ -89,7 +90,7 @@ export default function CalendarList({ calendars, onFilterChange, onCalendarsCha
                         marginRight: '10px',
                     }}
                 />
-                <span style={{ flex: 1 }}>{data.text}</span>
+                <span style={{ flex: 1 }}>{data.groupName}</span>
                 <IconButton onClick={handleEditButtonClick} style={{ padding: '2px' }}>
                     <EditIcon sx={{ color: 'black', fontSize: '18px' }} />
                 </IconButton>
@@ -120,7 +121,7 @@ export default function CalendarList({ calendars, onFilterChange, onCalendarsCha
                 onAdd={handleAddItem}
                 onEdit={handleEditItem}
                 type={dialogType}
-                initialData={editingItem ? { id: editingItem.id, name: editingItem.text, color: editingItem.color } : undefined}
+                initialData={editingItem ? { id: editingItem.id, name: editingItem.groupName, color: editingItem.color } : undefined}
             />
         </div>
     );

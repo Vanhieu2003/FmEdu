@@ -2,7 +2,7 @@
 using Project.Dto;
 using Project.Entities;
 using Project.Interface;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project.Repository
 {
@@ -92,6 +92,26 @@ namespace Project.Repository
 
             return room;
         }
+        public async Task<List<UserDto>> GetResponsibleUsersForRoomAndShift(string roomId, string shiftId)
+        {
+            
+            var responsibleUsers = await _context.ScheduleDetails
+                .Where(sd => sd.RoomId == roomId && sd.ScheduleId == shiftId)
+                .Join(_context.Users,
+                    sd => sd.UserId,
+                    u => u.Id,
+                    (sd, u) => new UserDto
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        UserName = u.UserName,
+                        Email = u.Email
+                    })
+                .Distinct()
+                .ToListAsync();
 
+            return responsibleUsers;
+        }
     }
 }

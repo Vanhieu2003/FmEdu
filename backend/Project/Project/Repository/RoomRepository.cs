@@ -93,5 +93,23 @@ namespace Project.Repository
             return rooms;
         }
 
+        public async Task<List<RoomDto>> GetRoomsByCampusAsync(string campusId)
+        {
+            var rooms = await (from room in _context.Rooms
+                               join block in _context.Blocks
+                               on room.BlockId equals block.Id
+                               where block.CampusId == campusId
+                               orderby room.SortOrder
+                               select new RoomDto
+                               {
+                                   Id = room.Id,
+                                   RoomName = room.RoomName,
+                                   FloorId = room.FloorId,
+                                   BlockId = room.BlockId,
+                                   RoomCategoryId = room.RoomCategoryId
+                               }).ToListAsync();
+
+            return rooms;
+        }
     }
 }

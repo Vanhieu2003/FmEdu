@@ -87,7 +87,6 @@ export function defaultProps(theme: Theme) {
     MuiAppBar: {
       defaultProps: {
         color: 'transparent',
-        zIndex: 1000,
       },
     },
     MuiAvatarGroup: {

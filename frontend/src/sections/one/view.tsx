@@ -144,8 +144,53 @@ type Criteria = {
   updateAt: string
 };
 
-
-
+const data = [
+  {
+    "Vệ sinh": [{
+      "id": "1",
+      "name": "Nguyễn Văn A",
+    },
+    {
+      "id": "2",
+      "name": "Nguyễn Văn B",
+    },
+    {
+      "id": "3",
+      "name": "Nguyễn Văn C",
+    },
+    ]
+  },
+  {
+    "Dọn dẹp": [{
+      "id": "1",
+      "name": "Nguyễn Văn D",
+    },
+    {
+      "id": "2",
+      "name": "Nguyễn Văn E",
+    },
+    {
+      "id": "3",
+      "name": "Nguyễn Văn F",
+    },
+    ]
+  },
+  {
+    "Tưới cây": [{
+      "id": "1",
+      "name": "Nguyễn Văn G",
+    },
+    {
+      "id": "2",
+      "name": "Nguyễn Văn H",
+    },
+    {
+      "id": "3",
+      "name": "Nguyễn Văn I",
+    },
+    ]
+  }
+]
 // ----------------------------------------------------------------------
 
 export default function OneView() {
@@ -164,17 +209,12 @@ export default function OneView() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [criteria, setCriteria] = useState<Criteria[]>([]);
-  const [images, setImages] = useState<string[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
   const [isSending, setIsSending] = useState(false);
-  const settings = useSettingsContext();
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
 
   const handleImagesChange = (images: { [criteriaId: string]: string[] }) => {
     setCriteriaImages(prevImages => ({
@@ -189,12 +229,10 @@ export default function OneView() {
       const numericValue = Number(value);
       const existingIndex = prevEvaluations.findIndex(evaluation => evaluation.criteriaId === criteriaId);
       if (existingIndex !== -1) {
-        // Nếu đã tồn tại, cập nhật giá trị
         const newEvaluations = [...prevEvaluations];
         newEvaluations[existingIndex] = { criteriaId, value: numericValue, note };
         return newEvaluations;
       } else {
-        // Nếu chưa tồn tại, thêm mới
         return [...prevEvaluations, { criteriaId, value: numericValue, note }];
       }
     });
@@ -255,7 +293,7 @@ export default function OneView() {
 
   const handleFloorSelect = async (floorId: string) => {
     var floorId = floorId;
-
+    console.log(floorId);
     try {
       const response = await RoomService.getRoomsByFloorIdIfExistForm(floorId);
       if (response.data.length > 0) {
@@ -309,7 +347,6 @@ export default function OneView() {
   };
 
   const handleSubmit = async () => {
-
     const reportData = {
       "formId": form.id,
       "shiftId": selectedShift,
@@ -336,15 +373,14 @@ export default function OneView() {
       setSnackbarOpen(true);
     }
     else {
-      
     }
-      const response = await CleaningReportService.PostReport(reportData);
-      if (response.status === 200) {
-        setIsSending(true);
-        setSnackbarMessage("Đã gửi thành công");
-        setSnackbarStatus("success");
-        setSnackbarOpen(true);
-      }
+    const response = await CleaningReportService.PostReport(reportData);
+    if (response.status === 200) {
+      setIsSending(true);
+      setSnackbarMessage("Đã gửi thành công");
+      setSnackbarStatus("success");
+      setSnackbarOpen(true);
+    }
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {
@@ -507,7 +543,7 @@ export default function OneView() {
                 />
               )}
               noOptionsText="Không có dữ liệu phòng"
-              isOptionEqualToValue={(option, value) => option.id === value.id}
+              isOptionEqualToValue={(option, value) => option.id === (value?.id || value)}
               renderOption={(props, option) => (
                 <li {...props} key={option.id}>
                   {option.roomName}
@@ -543,6 +579,7 @@ export default function OneView() {
                   <TableCell align='center' sx={{ width: '25%' }}>Tiêu chí</TableCell>
                   <TableCell align="center" sx={{ width: '25%' }}>Đánh giá</TableCell>
                   <TableCell align="center" sx={{ width: '50%' }}>Ghi chú</TableCell>
+
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -568,35 +605,53 @@ export default function OneView() {
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
                           },
-                        },
+                        }
                       }} placeholder=''
                         onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
                       />
                       <Upload onImagesChange={handleImagesChange} criteriaId={criterion.id} ></Upload>
                     </TableCell>
+
                   </TableRow>
                 ))}
+                {criteria.length > 0 && (
+                  <TableRow>
+                    <TableCell colSpan={3}>
+                      {data.map((group, groupIndex) => {
+                        const [groupName, groupMembers] = Object.entries(group)[0];
+                        return (
+                          <Box key={groupIndex} sx={{ mb: 1 }}>
+                            <Typography variant="subtitle1">
+                              {groupName}: {groupMembers.map((member: any) => member.name).join(', ')}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </TableCell>
+                  </TableRow>
+                )}
+
               </TableBody>
             </Table>
           </TableContainer>
         </Box>
         {criteria.length !== 0 &&
           <Box sx={{ mt: 'auto', alignSelf: 'flex-end', mb: 2, mr: 2 }}>
-          <Button
-            variant="contained"
-            endIcon={<SendIcon />}
-            onClick={handleSubmit}
-            disabled={isSending}
-          >
-            Send
-          </Button>
-          <SnackbarComponent
-            status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
-            open={snackbarOpen}
-            message={snackbarMessage}
-            onClose={handleSnackbarClose}
-          />
-        </Box>}
+            <Button
+              variant="contained"
+              endIcon={<SendIcon />}
+              onClick={handleSubmit}
+              disabled={isSending}
+            >
+              Send
+            </Button>
+            <SnackbarComponent
+              status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+              open={snackbarOpen}
+              message={snackbarMessage}
+              onClose={handleSnackbarClose}
+            />
+          </Box>}
       </Box>
 
     </Container>

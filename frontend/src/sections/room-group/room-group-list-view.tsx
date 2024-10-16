@@ -6,10 +6,16 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { useSettingsContext } from 'src/components/settings';
-import { Autocomplete, TextField, Paper, Table, TableCell, TableContainer, TableRow, TableHead, TableBody } from '@mui/material';
+import { Autocomplete, TextField, Paper, Table, TableCell, TableContainer, TableRow, TableHead, TableBody,
+  IconButton, Menu, MenuItem,
+  Link
+ } from '@mui/material';
 import  CampusService  from 'src/@core/service/campus';
 import { useEffect, useState } from 'react';
 import  GroupRoomService  from 'src/@core/service/grouproom';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 // ----------------------------------------------------------------------
 
@@ -18,8 +24,18 @@ export default function RoomGroupListView() {
   const [campus, setCampus] = useState<any[]>([]);
   const [groupRooms, setGroupRoooms] = useState<any[]>([]);
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
 
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, group: any) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedGroup(group.id); // Gán nhóm đang chọn
+  };
 
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedGroup(null);
+  };
 
 
 
@@ -84,6 +100,7 @@ export default function RoomGroupListView() {
                 <TableCell align="center">Nhóm phòng</TableCell>
                 <TableCell align="center">Mô tả </TableCell>
                 <TableCell align="center">Số lượng phòng</TableCell>
+                <TableCell align='center'></TableCell>
          
               </TableRow>
             </TableHead>
@@ -95,6 +112,62 @@ export default function RoomGroupListView() {
                 <TableCell align="center">{groupRoom.groupName}</TableCell>
                 <TableCell align="center">{groupRoom.description}</TableCell>
                 <TableCell align="center">{groupRoom.numberOfRoom}</TableCell>
+                <TableCell align="center">
+                    <IconButton onClick={(e) => handleMenuClick(e, groupRooms)}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    {/* Menu cho các lựa chọn */}
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleMenuClose}
+                    >
+                      <MenuItem
+                        onClick={handleMenuClose}
+                        disabled={!selectedGroup}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <EditIcon fontSize="small" />
+                          {selectedGroup ? (
+                            <Typography sx={{ marginLeft: 1 }}>
+                              <Link
+                                href={`/dashboard/responsible-group/edit/${selectedGroup}`}
+                                sx={{ display: 'flex', color: 'black' }}  // Đặt màu đen
+                                underline="none"
+                              >
+                                Chỉnh sửa
+                              </Link>
+                            </Typography>
+                          ) : (
+                            <Typography sx={{ marginLeft: 1, color: 'black' }}>Chỉnh sửa</Typography>
+                          )}
+                        </Box>
+                      </MenuItem>
+
+                      <MenuItem
+                        onClick={handleMenuClose}
+                        disabled={!selectedGroup}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <VisibilityIcon fontSize="small" />
+                          {selectedGroup ? (
+                            <Typography sx={{ marginLeft: 1 }}>
+                              <Link
+                                href={`/dashboard/responsible-group/detail/${selectedGroup}`}
+                                sx={{ display: 'flex', color: 'black' }}  // Đặt màu đen
+                                underline="none"
+                              >
+                                Xem chi tiết
+                              </Link>
+                            </Typography>
+                          ) : (
+                            <Typography sx={{ marginLeft: 1, color: 'black' }}>Xem chi tiết</Typography>
+                          )}
+                        </Box>
+                      </MenuItem>
+
+                    </Menu>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
