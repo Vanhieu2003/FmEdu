@@ -1703,19 +1703,19 @@
   },
   {
     "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "GetResponsibleUsers",
-    "RelativePath": "api/Schedules/GetResponsibleUsers",
+    "Method": "GetUserByShiftAndRoom",
+    "RelativePath": "api/Schedules/GetUserByShiftAndRoom",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "roomId",
+        "Name": "shiftId",
         "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "shiftId",
+        "Name": "roomId",
         "Type": "System.String",
         "IsRequired": false
       }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -75,8 +76,8 @@ namespace Project.Controllers
                 AllDay = s.AllDay,
                 ResponsibleGroupId = s.ResponsibleGroupId,
                 Index = s.Index ?? 0,
-                StartDate = s.StartDate ?? DateTime.Now,
-                EndDate = s.EndDate ?? DateTime.Now,
+                StartDate = s.StartDate,
+                EndDate = s.EndDate,
                 Users = s.Users,
                 Place = s.ScheduleDetails
                     .GroupBy(sd => sd.RoomType)
@@ -144,18 +145,92 @@ namespace Project.Controllers
             return schedule;
         }
 
-        // API để lấy danh sách người dùng chịu trách nhiệm cho roomId và shiftId
-        [HttpGet("GetResponsibleUsers")]
-        public async Task<IActionResult> GetResponsibleUsers([FromQuery] string roomId, [FromQuery] string shiftId)
-        {
-            var responsibleUsers = await _repo.GetResponsibleUsersForRoomAndShift(roomId, shiftId);
-            if (responsibleUsers == null || responsibleUsers.Count == 0)
-            {
-                return NotFound("No responsible users found for this room and shift.");
-            }
-            return Ok(responsibleUsers);
-        }
 
+        [HttpGet("GetUserByShiftAndRoom")]
+        public async Task<IActionResult> GetUserByShiftAndRoom(string shiftId, string roomId)
+        {
+            // Lấy thông tin shift dựa trên shiftId
+            var shift = await _context.Shifts.FirstOrDefaultAsync(s => s.Id == shiftId);
+            if (shift == null)
+            {
+                return NotFound("Shift not found");
+            }
+
+            // Lấy startTime và endTime từ Shift và chuyển sang kiểu TimeSpan
+            var shiftStartTime = shift.StartTime;
+            var shiftEndTime = shift.EndTime;
+
+            // Tìm các Schedule có Start và End nằm trong khoảng thời gian của Shift
+            var schedules = await _context.Schedules
+                .Where(s => s.Start.TimeOfDay >= shiftStartTime && s.End.TimeOfDay <= shiftEndTime)
+                .ToListAsync();
+
+            if (schedules.Count == 0)
+            {
+                return NotFound("No schedules found within the shift time range");
+            }
+
+            // Tìm các ScheduleDetail dựa trên ScheduleId và RoomId
+            var scheduleIds = schedules.Select(s => s.Id).ToList();
+            var scheduleDetails = await _context.ScheduleDetails
+                .Where(sd => scheduleIds.Contains(sd.ScheduleId) && sd.RoomId == roomId)
+                .ToListAsync();
+
+            if (scheduleDetails.Count == 0)
+            {
+                return NotFound("No schedule details found for the given room and shift");
+            }
+
+            // Lấy danh sách UserId từ ScheduleDetail
+            var userIds = scheduleDetails.Select(sd => sd.UserId).Distinct().ToList();
+
+            // Bước 4: Lấy danh sách TagId và UserId từ bảng UserPerTag theo userIds
+            var userPerTags = await _context.UserPerTags
+                .Where(upt => userIds.Contains(upt.UserId))
+                .ToListAsync();
+
+            // Bước 5: Lấy tất cả các TagId trong danh sách userPerTags
+            var tagIds = userPerTags.Select(upt => upt.TagId).Distinct().ToList();
+
+            // Bước 6: Lấy tên các Tag dựa trên tagIds
+            var tags = await _context.Tags
+                .Where(t => tagIds.Contains(t.Id))
+                .ToListAsync();
+
+            // Bước 7: Tạo một Dictionary để nhóm các User theo từng Tag
+            var result = new List<object>();
+
+            foreach (var tag in tags)
+            {
+                // Lấy tất cả các userId trong bảng UserPerTag tương ứng với tag.Id
+                var usersInTag = userPerTags
+                    .Where(upt => upt.TagId == tag.Id)
+                    .Select(upt => upt.UserId)
+                    .ToList();
+
+                // Lấy thông tin các User dựa trên danh sách userIds trong tag này
+                var users = await _context.Users
+                    .Where(u => usersInTag.Contains(u.Id))
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        UserName = u.UserName,
+                        Email = u.Email
+                    })
+                    .ToListAsync();
+
+                // Tạo đối tượng để lưu kết quả, với TagName là key và danh sách User là value
+                result.Add(new
+                {
+                    TagName = tag.TagName,
+                    Users = users
+                });
+            }
+
+            return Ok(result);
+        }
 
         // PUT: api/Schedules/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

@@ -91,7 +91,7 @@ namespace Project.Entities
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
         public virtual DbSet<TagGroupDto> TagGroupDtos { get; set; } = null!;
-
+        public virtual DbSet<UserDto> UserDto { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -116,6 +116,7 @@ namespace Project.Entities
             modelBuilder.Entity<CriteriaValueDto>().HasNoKey();
             modelBuilder.Entity<TagGroupDto>().HasNoKey();
             modelBuilder.Entity<ResponsibleTagDto>().HasNoKey();
+            modelBuilder.Entity<UserDto>().HasNoKey();
 
             modelBuilder.Entity<Block>(entity =>
             {
