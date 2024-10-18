@@ -83,7 +83,6 @@ export function useNavData() {
             children: [
               { title: 'Danh sách nhóm', path: paths.dashboard.roomgroup.list },
               { title: 'Tạo nhóm', path: paths.dashboard.roomgroup.create },
-              { title: 'Chính sửa nhóm', path: paths.dashboard.roomgroup.root },
             ],
           },
 
@@ -94,7 +93,6 @@ export function useNavData() {
             children: [
               { title: 'Danh sách nhóm', path: paths.dashboard.responsiblegroup.list },
               { title: 'Tạo nhóm', path: paths.dashboard.responsiblegroup.create },
-              { title: 'Chỉnh sửa nhóm', path: paths.dashboard.responsiblegroup.root },
               { title: 'Tạo tag cho người chịu trách nhiệm', path: paths.dashboard.responsiblegroup.createUserPerTag},
             ],
           },

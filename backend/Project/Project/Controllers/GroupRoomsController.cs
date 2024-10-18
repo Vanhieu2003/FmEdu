@@ -41,51 +41,69 @@ namespace Project.Controllers
 
         // GET: api/GroupRooms/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GroupRoom>> GetGroupRoom(string id)
+        public async Task<ActionResult<RoomGroupViewDto>> GetRoomGroupById(string id)
         {
-          if (_context.GroupRooms == null)
-          {
-              return NotFound();
-          }
-            var groupRoom = await _context.GroupRooms.FindAsync(id);
+            var result = await _roomRepository.GetRoomGroupById(id);
 
-            if (groupRoom == null)
+            if (result == null)
             {
-                return NotFound();
+                return NotFound();  // Trả về 404 nếu không tìm thấy nhóm chịu trách nhiệm với Id đó
             }
 
-            return groupRoom;
+            return Ok(result);  // Trả về thông tin nhóm chịu trách nhiệm và người dùng
         }
 
-        // PUT: api/GroupRooms/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroupRoom(string id, GroupRoom groupRoom)
+        public async Task<IActionResult> UpdateRoomGroup(string id, [FromBody] RoomGroupUpdateDto dto)
         {
-            if (id != groupRoom.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(groupRoom).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!GroupRoomExists(id))
+                // Kiểm tra sự tồn tại của nhóm chịu trách nhiệm
+                var group = await _context.GroupRooms.FindAsync(id);
+                if (group == null)
                 {
-                    return NotFound();
+                    return NotFound(new { success = false, message = "Không tìm thấy nhóm phòng với Id này." });
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                // Kiểm tra xem tên nhóm đã tồn tại (không phân biệt chữ hoa, chữ thường)
+                var existingGroupByName = await _context.GroupRooms
+                    .FirstOrDefaultAsync(g => g.GroupName.ToLower() == dto.GroupName.ToLower() && g.Id != id);
+                if (existingGroupByName != null)
+                {
+                    return BadRequest(new { success = false, message = "Tên nhóm đã tồn tại. Vui lòng chọn tên khác." });
+                }
+
+
+
+                // Cập nhật các trường thông tin
+                group.GroupName = dto.GroupName;
+                group.Description = dto.Description;
+       
+
+                // Xóa tất cả người dùng hiện tại khỏi nhóm
+                var existingRoomsInGroup = _context.RoomByGroups.Where(rbg => rbg.GroupRoomId == id);
+                _context.RoomByGroups.RemoveRange(existingRoomsInGroup);
+
+                // Thêm danh sách người dùng mới vào nhóm
+                foreach (var roomDto in dto.Rooms)
+                {
+                    var roomByGroup = new RoomByGroup
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        RoomId = roomDto.Id,
+                        GroupRoomId = group.Id
+                    };
+                    _context.RoomByGroups.Add(roomByGroup);
+                }
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true, message = "Cập nhật nhóm phòng thành công." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]

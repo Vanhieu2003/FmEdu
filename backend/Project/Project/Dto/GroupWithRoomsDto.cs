@@ -31,6 +31,7 @@
 
     public class GroupWithRoomsViewDto
     {
+        public string? Id { get; set; }
         public string? CampusName { get; set; }
         public string? GroupName { get; set; }
         public string? Description { get; set; }
@@ -47,4 +48,19 @@
     }
 
 
+    public class RoomGroupViewDto
+    {
+        public string? Id { get; set; }
+        public string GroupName { get; set; }
+        public string Description { get; set; }
+        public List<RoomViewDto> Rooms { get; set; }
+    }
+
+    public class RoomGroupUpdateDto
+    {
+        public string? Id { get; set; }
+        public string? GroupName { get; set; }
+        public string? Description { get; set; }
+        public List<RoomDto> Rooms { get; set; }
+    }
 }

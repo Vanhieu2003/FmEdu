@@ -159,7 +159,7 @@ namespace Project.Controllers
                     }
                 }
                 await _context.SaveChangesAsync();
-                return Ok(group);
+                return Ok(new { success = true, message = "Tạo nhóm người chịu trách nhiệm thành công." });
             }
             catch (Exception ex)
             {

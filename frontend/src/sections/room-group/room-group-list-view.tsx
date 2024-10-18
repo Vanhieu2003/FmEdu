@@ -113,7 +113,7 @@ export default function RoomGroupListView() {
                 <TableCell align="center">{groupRoom.description}</TableCell>
                 <TableCell align="center">{groupRoom.numberOfRoom}</TableCell>
                 <TableCell align="center">
-                    <IconButton onClick={(e) => handleMenuClick(e, groupRooms)}>
+                    <IconButton onClick={(e) => handleMenuClick(e, groupRoom)}>
                       <MoreVertIcon />
                     </IconButton>
                     {/* Menu cho các lựa chọn */}
@@ -131,7 +131,7 @@ export default function RoomGroupListView() {
                           {selectedGroup ? (
                             <Typography sx={{ marginLeft: 1 }}>
                               <Link
-                                href={`/dashboard/responsible-group/edit/${selectedGroup}`}
+                                href={`/dashboard/room-group/edit/${selectedGroup}`}
                                 sx={{ display: 'flex', color: 'black' }}  // Đặt màu đen
                                 underline="none"
                               >
@@ -153,7 +153,7 @@ export default function RoomGroupListView() {
                           {selectedGroup ? (
                             <Typography sx={{ marginLeft: 1 }}>
                               <Link
-                                href={`/dashboard/responsible-group/detail/${selectedGroup}`}
+                                href={`/dashboard/room-group/detail/${selectedGroup}`}
                                 sx={{ display: 'flex', color: 'black' }}  // Đặt màu đen
                                 underline="none"
                               >

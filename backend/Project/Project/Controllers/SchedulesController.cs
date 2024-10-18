@@ -241,47 +241,295 @@ namespace Project.Controllers
             var rooms = await _repo.GetListRoomByRoomType(RoomType);
             return Ok(rooms);
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchedule(string id, Schedule schedule)
+
+        [HttpGet]
+        [Route("get-users-by-shift-room-and-criteria")]
+        public async Task<IActionResult> GetUsersByShiftRoomAndCriteria(
+  [FromQuery] string shiftId,
+  [FromQuery] string roomId,
+  [FromQuery] List<string> criteriaIds)
         {
-            if (id != schedule.Id)
+            // Bước 1: Lấy thời gian startTime và endTime của Shift dựa vào shiftId
+            var shift = await _context.Shifts
+                .Where(s => s.Id == shiftId)
+                .Select(s => new { s.StartTime, s.EndTime })
+                .FirstOrDefaultAsync();
+
+            if (shift == null)
             {
-                return BadRequest();
+                return NotFound("Shift not found.");
             }
 
-            _context.Entry(schedule).State = EntityState.Modified;
+            // Bước 2: Lấy danh sách Schedule trong khoảng thời gian của shift
+            var schedules = await _context.Schedules
+                .Where(s => s.Start.TimeOfDay >= shift.StartTime && s.End.TimeOfDay <= shift.EndTime)
+                .Select(s => s.Id)
+                .ToListAsync();
 
+            if (schedules.Count == 0)
+            {
+                return NotFound("No schedules found for the given shift.");
+            }
+
+            // Bước 3: Tìm kiếm trong bảng ScheduleDetail các scheduleId và roomId trùng khớp
+            var userIds = await _context.ScheduleDetails
+                .Where(sd => schedules.Contains(sd.ScheduleId) && sd.RoomId == roomId)
+                .Select(sd => sd.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            if (userIds.Count == 0)
+            {
+                return NotFound("No users found for the given room in the selected shift.");
+            }
+
+            // Bước 4: Lấy danh sách TagId từ bảng TagsPerCriteria dựa trên danh sách criteriaIds
+            var tagIdsFromCriteria = await _context.TagsPerCriteria
+                .Where(tpc => criteriaIds.Contains(tpc.CriteriaId))
+                .Select(tpc => tpc.TagId)
+                .Distinct()
+                .ToListAsync();
+
+            if (tagIdsFromCriteria.Count == 0)
+            {
+                return NotFound("No tags found for the given criteria.");
+            }
+
+            // Bước 5: Lấy danh sách TagId và UserId từ bảng UserPerTag dựa vào userIds
+            var userPerTags = await _context.UserPerTags
+                .Where(upt => userIds.Contains(upt.UserId) && tagIdsFromCriteria.Contains(upt.TagId))
+                .ToListAsync();
+
+            // Bước 6: Lấy danh sách tất cả các Tag tương ứng với tagIds từ bảng Tags
+            var tags = await _context.Tags
+                .Where(t => tagIdsFromCriteria.Contains(t.Id))
+                .ToListAsync();
+
+            // Bước 7: Tạo một Dictionary để nhóm các User theo từng Tag
+            var result = new List<object>();
+
+            foreach (var tag in tags)
+            {
+                // Lấy tất cả các userId trong bảng UserPerTag tương ứng với tag.Id
+                var usersInTag = userPerTags
+                    .Where(upt => upt.TagId == tag.Id)
+                    .Select(upt => upt.UserId)
+                    .ToList();
+
+                // Lấy thông tin các User dựa trên danh sách userIds trong tag này
+                var users = await _context.Users
+                    .Where(u => usersInTag.Contains(u.Id))
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        UserName = u.UserName,
+                        Email = u.Email
+                    })
+                    .ToListAsync();
+
+                
+                result.Add(new
+                {
+                    TagName = tag.TagName,
+                    Users = users
+                });
+            }
+
+            // Bước 8: Đối với các TagId mà không có UserId nào, thêm vào một entry với danh sách Users trống
+            foreach (var tagId in tagIdsFromCriteria.Except(tags.Select(t => t.Id)))
+            {
+                var tagName = await _context.Tags
+                    .Where(t => t.Id == tagId)
+                    .Select(t => t.TagName)
+                    .FirstOrDefaultAsync();
+
+                if (!string.IsNullOrEmpty(tagName))
+                {
+                    result.Add(new
+                    {
+                        TagName = tagName,
+                        Users = new List<object>()
+                    });
+                }
+            }
+
+            return Ok(result);
+        }
+
+
+
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSchedule(string id, [FromBody] ScheduleUpdateDto scheduleUpdateDto)
+        {
             try
             {
+               
+                if (scheduleUpdateDto == null)
+                    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
+
+                
+                if (string.IsNullOrEmpty(id))
+                    return BadRequest(new { success = false, message = "ID lịch không hợp lệ." });
+
+                
+                var existingSchedule = await _context.Schedules.FindAsync(id);
+                if (existingSchedule == null)
+                    return NotFound(new { success = false, message = "Lịch không tồn tại." });
+
+                
+                existingSchedule.Title = scheduleUpdateDto.Title;
+                existingSchedule.Start = scheduleUpdateDto.StartDate;
+                existingSchedule.End = scheduleUpdateDto.EndDate;
+                existingSchedule.AllDay = scheduleUpdateDto.AllDay;
+                existingSchedule.RecurrenceRule = scheduleUpdateDto.RecurrenceRule;
+                existingSchedule.Description = scheduleUpdateDto.Description;
+                existingSchedule.ResponsibleGroupId = scheduleUpdateDto.ResponsibleGroupId;
+
+                
+                if (scheduleUpdateDto.Users != null || scheduleUpdateDto.Place != null)
+                {
+                    var existingDetails = _context.ScheduleDetails.Where(sd => sd.ScheduleId == existingSchedule.Id);
+                    _context.ScheduleDetails.RemoveRange(existingDetails); 
+
+                    
+                    if (scheduleUpdateDto.Users != null && scheduleUpdateDto.Place != null)
+                    {
+                        foreach (var userId in scheduleUpdateDto.Users)
+                        {
+                            foreach (var place in scheduleUpdateDto.Place)
+                            {
+                                foreach (var room in place.rooms)
+                                {
+                                    var scheduleDetail = new ScheduleDetail
+                                    {
+                                        Id = Guid.NewGuid().ToString(),
+                                        ScheduleId = existingSchedule.Id,
+                                        UserId = userId,
+                                        RoomId = room.Id,
+                                        RoomType = place.level,
+                                    };
+                                    _context.ScheduleDetails.Add(scheduleDetail);
+                                }
+                            }
+                        }
+                    }
+                }
+
+               
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ScheduleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+               
+                return Ok(new
+                {
+                    success = true,
+                    message = "Cập nhật lịch thành công.",
+                    schedule = new
+                    {
+                        existingSchedule.Id,
+                        existingSchedule.Title,
+                        existingSchedule.Start,
+                        existingSchedule.End,
+                        existingSchedule.AllDay,
+                        existingSchedule.RecurrenceRule,
+                        existingSchedule.Description,
+                        existingSchedule.ResponsibleGroupId
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi cập nhật lịch.", error = ex.Message });
+            }
         }
 
-        // POST: api/Schedules
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
         [HttpPost]
-        public async Task<IActionResult> PostSchedule(ScheduleDto schedule)
+        public async Task<IActionResult> CreateSchedule([FromBody] ScheduleCreateDto scheduleCreateDto)
         {
-            var scheduleObj = await _repo.CreateSchedule(schedule);
-            if(scheduleObj == null)
+            try
             {
-                return null;
+                
+                if (scheduleCreateDto == null)
+                    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
+
+                
+                if (string.IsNullOrEmpty(scheduleCreateDto.Title) || scheduleCreateDto.StartDate == null || scheduleCreateDto.EndDate == null)
+                    return BadRequest(new { success = false, message = "Tiêu đề, ngày bắt đầu và ngày kết thúc không được để trống." });
+
+                
+                var newSchedule = new Schedule
+                {
+                    Id = Guid.NewGuid().ToString(), 
+                    Title = scheduleCreateDto.Title,
+                    Start = scheduleCreateDto.StartDate,
+                    End = scheduleCreateDto.EndDate,
+                    AllDay = scheduleCreateDto.AllDay,
+                    RecurrenceRule = scheduleCreateDto.RecurrenceRule,
+                    Description = scheduleCreateDto.Description,
+                    ResponsibleGroupId = scheduleCreateDto.ResponsibleGroupId,
+                };
+
+                
+                _context.Schedules.Add(newSchedule);
+
+                
+                if (scheduleCreateDto.Users != null && scheduleCreateDto.Place != null)
+                {
+                    foreach (var userId in scheduleCreateDto.Users)
+                    {
+                        foreach (var place in scheduleCreateDto.Place)
+                        {
+                            foreach (var room in place.rooms)
+                            {
+                                var scheduleDetail = new ScheduleDetail
+                                {
+                                    Id = Guid.NewGuid().ToString(),
+                                    ScheduleId = newSchedule.Id,
+                                    UserId = userId,
+                                    RoomId = room.Id,
+                                    RoomType = place.level,
+                                };
+                                _context.ScheduleDetails.Add(scheduleDetail);
+                            }
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Tạo lịch thành công.",
+                    schedule = new
+                    {
+                        newSchedule.Id,
+                        newSchedule.Title,
+                        newSchedule.Start,
+                        newSchedule.End,
+                        newSchedule.AllDay,
+                        newSchedule.RecurrenceRule,
+                        newSchedule.Description,
+                        newSchedule.ResponsibleGroupId
+                    }
+                });
             }
-            return Ok(scheduleObj);
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi tạo lịch.", error = ex.Message });
+            }
         }
+
+
+
 
         // DELETE: api/Schedules/5
         [HttpDelete("{id}")]
