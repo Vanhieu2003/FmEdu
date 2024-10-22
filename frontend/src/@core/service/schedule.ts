@@ -10,7 +10,11 @@ export class ScheduleService {
   getAllSchedule = async ()=>{
     return axios.get(`${API_ENDPOINT}/api/Schedules`);
   }
-  
+  getTagAndUserByShiftAndRoom = async (shiftId:string, roomId:string, criteriaIds:string[]) => {
+    const criteriaParams = criteriaIds.map(id => `criteriaIds=${id}`).join('&');
+    const url = `${API_ENDPOINT}/api/Schedules/get-users-by-shift-room-and-criteria?shiftId=${shiftId}&roomId=${roomId}&${criteriaParams}`;
+    return axios.get(url);
+}
   
 }
 

@@ -26,8 +26,8 @@ import CalendarList from './list-UserGroup-view';
 import ScheduleService from 'src/@core/service/schedule';
 import ResponsibleGroupRoomService from 'src/@core/service/responsiblegroup';
 import { getResponsibleGroupText, userMapping } from 'src/utils/schedule/handle-schedule';
-import { Schedule, User,CalendarItem } from 'src/utils/type/Type';
-import  UserService  from 'src/@core/service/user';
+import { Schedule, User, CalendarItem } from 'src/utils/type/Type';
+import UserService from 'src/@core/service/user';
 
 L10n.load({
   vi: {
@@ -168,20 +168,17 @@ export default function Home() {
   const [calendars, setCalendars] = useState<CalendarItem[]>([]);
   const timeScale = { enable: true, slotCount: 4 };
   const [currentEventSettings, setCurrentEventSettings] = useState([]);
-  const [userList,setUserList] = useState<User[]>([])
-  const [filterData,setFilterData] = useState(currentEventSettings)
+  const [userList, setUserList] = useState<User[]>([])
+  const [filterData, setFilterData] = useState(currentEventSettings)
   const handleFilterChange = useCallback((checkedIds: string[]) => {
     const SelectedResponsibleGroup = calendars
       .filter(cal => checkedIds.includes(cal.id.toString()))
       .map(cal => cal.id);
 
-      console.log("SelectedResponsibleGroup",SelectedResponsibleGroup);
-      console.log(currentEventSettings);
+
     const filteredEvents = currentEventSettings.filter((event: any) =>
       SelectedResponsibleGroup.includes(event.responsibleGroupId)
     );
-    console.log("filteredEvents",filteredEvents);
-
     setFilterData(filteredEvents);
 
     setCalendars(prevCalendars =>
@@ -190,8 +187,14 @@ export default function Home() {
         isChecked: checkedIds.includes(cal.id)
       }))
     );
-  },  [calendars, currentEventSettings]);
-  
+  }, [calendars, currentEventSettings]);
+
+  const reloadScheduleData = async () => {
+    const ScheduleData = await ScheduleService.getAllSchedule();
+    setCurrentEventSettings(ScheduleData.data);
+    setFilterData(ScheduleData.data);
+  };
+
   const buttonClickActions = useCallback((action: string) => {
     let eventData: any = {};
     let actionType: CurrentAction = "Add";
@@ -214,7 +217,6 @@ export default function Home() {
       return addObj;
     };
 
-
     switch (action) {
       case "add":
         eventData = getSlotData();
@@ -222,23 +224,32 @@ export default function Home() {
         break;
       case "edit":
         eventData = scheduleObj.current?.activeEventData?.event;
-        scheduleObj.current?.saveEvent(eventData);
-      case "edit-series":
-        eventData = scheduleObj.current?.activeEventData?.event;
-        if (!eventData) break;
-        actionType = eventData.RecurrenceRule ? (action === "edit" ? "EditOccurrence" : "EditSeries") : "Save";
-        if (actionType === "EditSeries")
+        console.log("Action Button call");
+        console.log("eventData: ", eventData);
+        if (eventData && eventData.recurrenceRule !== null && eventData.recurrenceRule !== undefined) {
+          actionType = "EditSeries";
+          console.log(actionType);
           eventData = scheduleObj.current?.eventBase.getParentEvent(eventData, true);
-        scheduleObj.current?.openEditor(eventData, actionType);
+          scheduleObj.current?.openEditor(eventData, actionType);
+        }
+        else {
+          actionType = "Save";
+          console.log(actionType);
+          scheduleObj.current?.openEditor(eventData, actionType);
+        }
         break;
       case "delete":
-      case "delete-series":
         eventData = scheduleObj.current?.activeEventData?.event;
-        if (!eventData) break;
-        actionType = eventData.RecurrenceRule ? (action === "delete" ? "DeleteOccurrence" : "DeleteSeries") : "Delete";
-        if (actionType === "DeleteSeries")
+        if (eventData && eventData.recurrenceRule) {
+          actionType = "DeleteSeries";
           eventData = scheduleObj.current?.eventBase.getParentEvent(eventData, true);
-        scheduleObj.current?.deleteEvent(eventData, actionType);
+          scheduleObj.current?.deleteEvent(eventData, actionType);
+        }
+        else {
+          actionType = "Delete";
+          scheduleObj.current?.deleteEvent(eventData, actionType);
+        }
+        console.log(eventData);
         break;
       case "more-details":
         eventData = getSlotData();
@@ -249,7 +260,7 @@ export default function Home() {
     }
     scheduleObj.current?.closeQuickInfoPopup();
   }, []);
-  const onActionComplete = (args: ActionEventArgs) => {
+  const onActionComplete = async (args: ActionEventArgs) => {
     if (args.requestType === 'eventCreated' || args.requestType === 'eventChanged') {
       const eventData = args.data as any;
       if (Array.isArray(eventData)) {
@@ -258,7 +269,16 @@ export default function Home() {
         processEventData(eventData);
       }
       console.log(args.requestType);
-      console.log('Processed event data:', eventData);
+      console.log(eventData);
+      if (args.requestType === 'eventCreated') {
+        try {
+          const response = await ScheduleService.createSchedule(eventData[0]);
+          console.log(response);
+        }
+        catch (e) {
+          console.log(e);
+        }
+      }
     }
   };
 
@@ -283,8 +303,11 @@ export default function Home() {
     if (!event.responsibleGroupId) {
       event.responsibleGroupId = calendars[0].id;
     }
-    if(event.description===undefined){
-      event.description = null;
+    if (event.description === undefined) {
+      event.description = "";
+    }
+    if (event.recurrenceRule === null) {
+      event.recurrenceRule = '';
     }
     console.log('Processed event:', event);
   };
@@ -335,9 +358,9 @@ export default function Home() {
                 {props.startDate.toLocaleDateString('vi-VN', { weekday: 'long' })} - {props.startDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })},
                 {props.startDate.toLocaleTimeString({ hour: '2-digit', minute: '2-digit', hour12: true })} - {props.endDate.toLocaleTimeString({ hour: '2-digit', minute: '2-digit', hour12: true })}
               </div>
-                <div><b>Người dùng: </b> 
-                {props.users?.map((user:any) => `${user.firstName} ${user.lastName}`).join(', ')}
-                </div>
+              <div><b>Người dùng: </b>
+                {props.users?.map((user: any) => `${user.firstName} ${user.lastName}`).join(', ')}
+              </div>
               <div><b>Nhóm: </b>{getResponsibleGroupText(props.responsibleGroupId, calendars)}</div>
               {props.description !== undefined && <div><b>Mô tả: </b> {props.description}</div>}
             </div>
@@ -379,7 +402,7 @@ export default function Home() {
     );
   }
   const quickInfoTemplates = { header: header, content: content, footer: footer };
-  const editorWindowTemplate = (props: Schedule) => {
+  const editorWindowTemplate = (props: any) => {
     console.log(props);
     const [locations, setLocations] = useState(() => {
       if (props.place && typeof props.place === 'string') {
@@ -392,7 +415,7 @@ export default function Home() {
       }
       return props.place || [];
     });
-    const [recurrenceRule, setRecurrenceRule] = useState(props.recurrenceRule || '');
+    // const [recurrenceRule, setRecurrenceRule] = useState(props.recurrenceRule || '');
     const [isAllDay, setIsAllDay] = useState(props.allDay || false);
 
     const handleIsAllDayChange = (args: any) => {
@@ -400,8 +423,12 @@ export default function Home() {
     };
 
     const handleRecurrenceChange = (args: any) => {
-      const newRecurrenceRule = args.value;
-      setRecurrenceRule(newRecurrenceRule);
+      console.log("New recurrenceRule value from editor:", args.value);
+      // Thay vì sử dụng setState, chúng ta cập nhật trực tiếp giá trị của input ẩn
+      const recurrenceInput = document.querySelector('input[data-name="recurrenceRule"]') as HTMLInputElement;
+      if (recurrenceInput) {
+        recurrenceInput.value = args.value || '';
+      }
     };
 
 
@@ -476,10 +503,10 @@ export default function Home() {
           </TableRow>
           <TableRow>
             <TableCell>
-              <DateTimePickerComponent id="startDate" data-name="startDate" value={new Date(props.startDate || props.startDate)} format={isAllDay ? 'dd/MM/yy' : 'dd/MM/yy hh:mm a'} className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu'></DateTimePickerComponent >
+              <DateTimePickerComponent id="startDate" data-name="startDate" value={new Date(props.startDate)} className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu' locale='vi' ></DateTimePickerComponent >
             </TableCell>
             <TableCell>
-              <DateTimePickerComponent id="endDate" data-name="endDate" value={new Date(props.endDate || props.endDate)} format={isAllDay ? 'dd/MM/yy' : 'dd/MM/yy hh:mm a'} className='e-field' floatLabelType="Always" placeholder='Ngày kết thúc'></DateTimePickerComponent>
+              <DateTimePickerComponent id="endDate" data-name="endDate" value={new Date(props.endDate || props.endDate)} className='e-field' floatLabelType="Always" placeholder='Ngày kết thúc' locale='vi'></DateTimePickerComponent>
             </TableCell>
           </TableRow>
           <TableRow>
@@ -517,21 +544,23 @@ export default function Home() {
                 data-name="place"
                 value={JSON.stringify(locations)}
               />
+
             </TableCell>
           </TableRow>
+
           <TableRow>
             <TableCell colSpan={2}>
               <RecurrenceEditorComponent
                 id='recurrenceRule'
-                value={recurrenceRule}
+                value={props.recurrenceRule || ''}
                 change={handleRecurrenceChange}
                 locale='vi'
               />
-              <ButtonComponent onClick={() => console.log(recurrenceRule)}>Log Recurrence Rule</ButtonComponent>
               <input
+                id='recurrenceRule'
                 type="hidden"
                 data-name="recurrenceRule"
-                value={recurrenceRule}
+                defaultValue={props.recurrenceRule || ''}
                 className="e-field"
               />
             </TableCell>
@@ -548,6 +577,7 @@ export default function Home() {
                 style={{ width: '100%' }}
                 value={props.description || ''}
               />
+
             </TableCell>
           </TableRow>
         </TableBody>
@@ -649,30 +679,33 @@ export default function Home() {
     fetchData();
   }, [])
 
+  
   return (
     <>
       <div className='scheduler-container'>
         <div className='scheduler-container-left'>
           <div className='scheduler-component'>
-            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{dataSource: filterData, fields:{
-              id: 'index',
-              subject: { name: 'title' },
-              isAllDay: { name: 'allDay' },
-              startTime: { name: 'startDate' },
-              endTime: { name: 'endDate' },
-              recurrenceRule: { name: 'recurrenceRule' },
-              description: { name: 'description' },
-              Users: { name: 'users' },
-              ResponsibleGroupId: { name: 'responsibleGroupId' },
-              Place: { name: 'place' },
-              resourceFields: { name: 'responsibleGroupId' },
-              customId: { name: 'id' }
-            }
-, template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} enableAdaptiveUI={true}>
+            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{
+              dataSource: filterData, fields: {
+                id: 'index',
+                subject: { name: 'title' },
+                isAllDay: { name: 'allDay' },
+                startTime: { name: 'startDate' },
+                endTime: { name: 'endDate' },
+                recurrenceRule: { name: 'recurrenceRule' },
+                description: { name: 'description' },
+                Users: { name: 'users' },
+                ResponsibleGroupId: { name: 'responsibleGroupId' },
+                Place: { name: 'place' },
+                resourceFields: { name: 'responsibleGroupId' },
+                customId: { name: 'id' }
+              }
+              , template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate
+            }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} enableAdaptiveUI={true} timezone='UTC+07:00'>
               <ViewsDirective>
                 <ViewDirective option="Day" interval={5}></ViewDirective>
-                <ViewDirective option="Month" ></ViewDirective>
-                <ViewDirective option="Week" isSelected={true} timeScale={timeScale}></ViewDirective>
+                <ViewDirective option="Month" isSelected={true}></ViewDirective>
+                <ViewDirective option="Week" timeScale={timeScale}></ViewDirective>
                 <ViewDirective option="TimelineDay" ></ViewDirective>
                 <ViewDirective option="TimelineMonth"></ViewDirective>
                 <ViewDirective option="Agenda"></ViewDirective>

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import "src/global.css";
 import SendIcon from '@mui/icons-material/Send';
 import { useSettingsContext } from 'src/components/settings';
-import { Button, FormControl, FormControlLabel, IconButton, InputLabel, Link, MenuItem, Popover, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import { Avatar, Button, Chip, FormControl, FormControlLabel, IconButton, InputLabel, Link, MenuItem, PaletteColor, Popover, Radio, RadioGroup, Select, TextField, useTheme } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import dayjs from 'dayjs';
@@ -31,52 +31,7 @@ import CleaningFormService from 'src/@core/service/form';
 import Contact from 'src/sections/components/form/RichTextEditor';
 import Upload from '../components/files/Upload';
 import SnackbarComponent from '../components/snackBar';
-
-dayjs.locale('vi');
-interface Campus {
-  id: string;
-  campusCode: string;
-  campusName: string;
-  campusName2: string;
-  campusSymbol: string;
-  sortOrder: number;
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-}
-interface Blocks {
-  id: string,
-  blockCode: string,
-  blockName: string,
-  blockName2: string,
-  blockNo: string,
-  dvtcode: string,
-  dvtname: string,
-  assetTypeCode: string,
-  assetTypeName: string,
-  sortOrder: number,
-  useDepartmentCode: string,
-  useDepartmentName: string,
-  manageDepartmentCode: string,
-  manageDepartmentName: string,
-  floorArea: number,
-  contructionArea: number,
-  functionCode: string,
-  functionName: string,
-  valueSettlement: number,
-  originalPrice: number,
-  centralFunding: number,
-  localFunding: number,
-  otherFunding: number,
-  statusCode: string,
-  statusName: string,
-  campusCode: string,
-  campusName: string,
-  campusId: string,
-  createdAt: string,
-  updatedAt: string
-}
-
+import ScheduleService from 'src/@core/service/schedule';
 
 type Floor = {
   id: string,
@@ -144,53 +99,7 @@ type Criteria = {
   updateAt: string
 };
 
-const data = [
-  {
-    "Vệ sinh": [{
-      "id": "1",
-      "name": "Nguyễn Văn A",
-    },
-    {
-      "id": "2",
-      "name": "Nguyễn Văn B",
-    },
-    {
-      "id": "3",
-      "name": "Nguyễn Văn C",
-    },
-    ]
-  },
-  {
-    "Dọn dẹp": [{
-      "id": "1",
-      "name": "Nguyễn Văn D",
-    },
-    {
-      "id": "2",
-      "name": "Nguyễn Văn E",
-    },
-    {
-      "id": "3",
-      "name": "Nguyễn Văn F",
-    },
-    ]
-  },
-  {
-    "Tưới cây": [{
-      "id": "1",
-      "name": "Nguyễn Văn G",
-    },
-    {
-      "id": "2",
-      "name": "Nguyễn Văn H",
-    },
-    {
-      "id": "3",
-      "name": "Nguyễn Văn I",
-    },
-    ]
-  }
-]
+
 // ----------------------------------------------------------------------
 
 export default function OneView() {
@@ -199,6 +108,7 @@ export default function OneView() {
   const [selectedFloor, setSelectedFloor] = useState<any>(null);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
   const [selectedShift, setSelectedShift] = useState<any>(null);
+  const [data, setData] = useState<any>([]);
   const [criteriaEvaluations, setCriteriaEvaluations] = useState<Array<{ criteriaId: string, value: any, note: string }>>([]);
   const [form, setForm] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -215,6 +125,16 @@ export default function OneView() {
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
   const [isSending, setIsSending] = useState(false);
+  const theme = useTheme();
+
+
+  const getFirstLetter = (str: string) => str.charAt(0).toUpperCase();
+
+  // Hàm để chọn màu ngẫu nhiên từ danh sách
+  const getRandomColor = (colors: string[]) => {
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+  const colors = ['primary', 'secondary', 'info', 'success'];
 
   const handleImagesChange = (images: { [criteriaId: string]: string[] }) => {
     setCriteriaImages(prevImages => ({
@@ -337,12 +257,21 @@ export default function OneView() {
     setCriteria([]);
   }, [selectedRoom]);
   const handleShiftSelect = async (ShiftId: string) => {
-    setSelectedShift(ShiftId);
-    try {
-      const response = await CriteriaService.getCriteriaByRoomId(selectedRoom);
-      setCriteria(response.data);
-    } catch (error) {
-      console.error('Lỗi khi lấy danh sách tiêu chí:', error);
+    if (ShiftId === "") {
+      setSelectedShift(null);
+      setCriteria([]);
+    }
+    else {
+      setSelectedShift(ShiftId);
+      try {
+        const response = await CriteriaService.getCriteriaByRoomId(selectedRoom);
+        const crtIds = response.data.map((c: any) => c.id);
+        const userPerTagResponse = await ScheduleService.getTagAndUserByShiftAndRoom(ShiftId, selectedRoom, crtIds)
+        setCriteria(response.data);
+        setData(userPerTagResponse.data);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách tiêu chí:', error);
+      }
     }
   };
 
@@ -617,20 +546,54 @@ export default function OneView() {
                 {criteria.length > 0 && (
                   <TableRow>
                     <TableCell colSpan={3}>
-                      {data.map((group, groupIndex) => {
-                        const [groupName, groupMembers] = Object.entries(group)[0];
-                        return (
-                          <Box key={groupIndex} sx={{ mb: 1 }}>
-                            <Typography variant="subtitle1">
-                              {groupName}: {groupMembers.map((member: any) => member.name).join(', ')}
-                            </Typography>
-                          </Box>
-                        );
-                      })}
+                      <Paper
+                        elevation={3}
+                        sx={{
+                          p: 2,
+                          mb: 2,
+                          boxShadow: `0 0 2px ${alpha(theme.palette.grey[500], 0.12)}, 0 12px 24px -4px ${alpha(theme.palette.grey[500], 0.24)}`,
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Box sx ={{mb:'10px'}}>
+                          <Typography variant='h4'>Bộ phận chịu trách nhiệm</Typography>
+                        </Box>
+                        {data.map((group: { tagName: string, [key: string]: any }) => {
+                          const colorKey = getRandomColor(colors) as keyof typeof theme.palette;
+                          const groupColor = (theme.palette[colorKey] as PaletteColor).main;
+                          return (
+                            <Box
+                              key={group.tagName}
+                              sx={{
+                                mb: 2,
+                                p: 2,
+                                backgroundColor: alpha(groupColor, 0.1),
+                                borderRadius: 1,
+                              }}
+                            >
+                              <Typography variant="h6" sx={{ mb: 1, color: groupColor }}>
+                                {group.tagName}
+                              </Typography>
+                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                {group.users.map((user: any) => (
+                                  <Chip
+                                    key={user.id}
+                                    avatar={<Avatar sx={{ bgcolor: 'white', color: groupColor }}>{getFirstLetter(user.firstName)}</Avatar>}
+                                    label={`${user.firstName} ${user.lastName}`}
+                                    color={colorKey as 'primary' | 'secondary' | 'info' | 'success'}
+                                    sx={{
+                                      color: 'white',
+                                    }}
+                                  />
+                                ))}
+                              </Box>
+                            </Box>
+                          );
+                        })}
+                      </Paper>
                     </TableCell>
                   </TableRow>
                 )}
-
               </TableBody>
             </Table>
           </TableContainer>

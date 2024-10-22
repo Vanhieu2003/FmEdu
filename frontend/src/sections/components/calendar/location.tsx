@@ -29,11 +29,9 @@ const LocationSelector = React.memo(({ index, data, onChange, onRemove }: Props)
 
     const fetchLocationData = async (level: string) => {
         try {
-            const response = await RoomService.getRoomListByRoomType(level);
-            console.log(response.data);
+            const response = await RoomService.getRoomListByRoomType(level);        
             setLocationOptions(response.data);
         } catch (error) {
-            console.error('Lỗi khi lấy dữ liệu địa điểm:', error);
             setLocationOptions([]);
         }
     };
