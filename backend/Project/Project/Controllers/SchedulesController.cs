@@ -262,7 +262,7 @@ namespace Project.Controllers
 
             // Bước 2: Lấy danh sách Schedule trong khoảng thời gian của shift
             var schedules = await _context.Schedules
-                .Where(s => s.Start.TimeOfDay >= shift.StartTime && s.End.TimeOfDay <= shift.EndTime)
+                .Where(s => s.Start.TimeOfDay <= shift.StartTime && s.End.TimeOfDay >= shift.EndTime)
                 .Select(s => s.Id)
                 .ToListAsync();
 
@@ -473,6 +473,7 @@ namespace Project.Controllers
                     AllDay = scheduleCreateDto.AllDay,
                     RecurrenceRule = scheduleCreateDto.RecurrenceRule,
                     Description = scheduleCreateDto.Description,
+                    Index = scheduleCreateDto.Index,
                     ResponsibleGroupId = scheduleCreateDto.ResponsibleGroupId,
                 };
 

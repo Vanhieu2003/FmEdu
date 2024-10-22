@@ -1186,7 +1186,7 @@
   },
   {
     "ContainingType": "Project.Controllers.GroupRoomsController",
-    "Method": "GetGroupRoom",
+    "Method": "GetRoomGroupById",
     "RelativePath": "api/GroupRooms/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -1200,7 +1200,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Project.Entities.GroupRoom",
+        "Type": "Project.Dto.RoomGroupViewDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1212,7 +1212,7 @@
   },
   {
     "ContainingType": "Project.Controllers.GroupRoomsController",
-    "Method": "PutGroupRoom",
+    "Method": "UpdateRoomGroup",
     "RelativePath": "api/GroupRooms/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -1224,8 +1224,8 @@
         "IsRequired": true
       },
       {
-        "Name": "groupRoom",
-        "Type": "Project.Entities.GroupRoom",
+        "Name": "dto",
+        "Type": "Project.Dto.RoomGroupUpdateDto",
         "IsRequired": true
       }
     ],
@@ -1624,15 +1624,15 @@
   },
   {
     "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "PostSchedule",
+    "Method": "CreateSchedule",
     "RelativePath": "api/Schedules",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "schedule",
-        "Type": "Project.Dto.ScheduleDto",
+        "Name": "scheduleCreateDto",
+        "Type": "Project.Dto.ScheduleCreateDto",
         "IsRequired": true
       }
     ],
@@ -1666,7 +1666,7 @@
   },
   {
     "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "PutSchedule",
+    "Method": "UpdateSchedule",
     "RelativePath": "api/Schedules/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -1678,8 +1678,8 @@
         "IsRequired": true
       },
       {
-        "Name": "schedule",
-        "Type": "Project.Entities.Schedule",
+        "Name": "scheduleUpdateDto",
+        "Type": "Project.Dto.ScheduleUpdateDto",
         "IsRequired": true
       }
     ],
@@ -1697,6 +1697,32 @@
         "Name": "id",
         "Type": "System.String",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.SchedulesController",
+    "Method": "GetUsersByShiftRoomAndCriteria",
+    "RelativePath": "api/Schedules/get-users-by-shift-room-and-criteria",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "shiftId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "criteriaIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
