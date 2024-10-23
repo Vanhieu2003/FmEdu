@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Project.Dto;
@@ -115,6 +116,7 @@ namespace Project.Controllers
             {
                 return NotFound("Report không tồn tại");
             }
+
             // Tìm form dựa vào formId
             var formId = await _context.CleaningReports
                 .Where(r => r.Id == ReportId)
@@ -186,13 +188,103 @@ namespace Project.Controllers
                 });
             }
 
+            // Tìm danh sách người dùng dựa vào shiftId, roomId và criteriaIds
+            var criteriaIds = criteriaPerReport.Select(c => c.CriteriaId).ToList();
+
+            // Bước 1: Lấy thời gian startTime và endTime của Shift
+            var shiftTime = await _context.Shifts
+                .Where(s => s.Id == shift.Id)
+                .Select(s => new { s.StartTime, s.EndTime })
+                .FirstOrDefaultAsync();
+
+            // Bước 2: Lấy danh sách Schedule trong khoảng thời gian của shift
+            var schedules = await _context.Schedules
+                .Where(s => s.Start.TimeOfDay <= shiftTime.StartTime && s.End.TimeOfDay >= shiftTime.EndTime)
+                .Select(s => s.Id)
+                .ToListAsync();
+
+            // Bước 3: Tìm kiếm trong bảng ScheduleDetail các scheduleId và roomId trùng khớp
+            var userIds = await _context.ScheduleDetails
+                .Where(sd => schedules.Contains(sd.ScheduleId) && sd.RoomId == room.Id)
+                .Select(sd => sd.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            // Bước 4: Lấy danh sách TagId từ bảng TagsPerCriteria dựa trên danh sách criteriaIds
+            var tagIdsFromCriteria = await _context.TagsPerCriteria
+                .Where(tpc => criteriaIds.Contains(tpc.CriteriaId))
+                .Select(tpc => tpc.TagId)
+                .Distinct()
+                .ToListAsync();
+
+            // Bước 5: Lấy danh sách TagId và UserId từ bảng UserPerTag dựa vào userIds
+            var userPerTags = await _context.UserPerTags
+                .Where(upt => userIds.Contains(upt.UserId) && tagIdsFromCriteria.Contains(upt.TagId))
+                .ToListAsync();
+
+            // Bước 6: Lấy danh sách tất cả các Tag tương ứng với tagIds từ bảng Tags
+            var tags = await _context.Tags
+                .Where(t => tagIdsFromCriteria.Contains(t.Id))
+                .ToListAsync();
+
+            // Bước 7: Tạo một danh sách để trả về kết quả, gồm cả những Tag không có User nào
+            var userResult = new List<object>();
+
+            // Xử lý tất cả các tags lấy được từ criteria
+            foreach (var tag in tags)
+            {
+                // Lấy tất cả các userId trong bảng UserPerTag tương ứng với tag.Id
+                var usersInTag = userPerTags
+                    .Where(upt => upt.TagId == tag.Id)
+                    .Select(upt => upt.UserId)
+                    .ToList();
+
+                // Lấy thông tin các User dựa trên danh sách userIds trong tag này
+                var users = await _context.Users
+                    .Where(u => usersInTag.Contains(u.Id))
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        UserName = u.UserName,
+                        Email = u.Email
+                    })
+                    .ToListAsync();
+
+                // Thêm kết quả vào danh sách
+                userResult.Add(new
+                {
+                    TagName = tag.TagName,
+                    Users = users // Trả về danh sách Users, nếu không có sẽ là danh sách rỗng
+                });
+            }
+
+            // Bước 8: Đối với các TagId không có người dùng nào, thêm vào kết quả với danh sách Users rỗng
+            foreach (var tagId in tagIdsFromCriteria.Except(tags.Select(t => t.Id)))
+            {
+                var tagName = await _context.Tags
+                    .Where(t => t.Id == tagId)
+                    .Select(t => t.TagName)
+                    .FirstOrDefaultAsync();
+
+                if (!string.IsNullOrEmpty(tagName))
+                {
+                    userResult.Add(new
+                    {
+                        TagName = tagName,
+                        Users = new List<object>() // Trả về danh sách Users rỗng nếu không có
+                    });
+                }
+            }
+
             // Tạo object trả về
             var result = new
             {
                 Id = ReportId,
                 CampusName = campus?.CampusName,
                 BlockName = block?.BlockName,
-                FloorName = floor?.FloorName, // Lấy FloorName từ Floor
+                FloorName = floor?.FloorName,
                 RoomName = room?.RoomName,
                 CriteriaList = criteriaList,
                 createAt = report.CreateAt,
@@ -200,14 +292,15 @@ namespace Project.Controllers
                 shiftName = shift.ShiftName,
                 startTime = shift.StartTime.ToString(),
                 endTime = shift.EndTime.ToString(),
+                UsersByTags = userResult // Thêm danh sách Users theo tags
             };
 
             return Ok(result);
         }
 
-            // PUT: api/CleaningReports/5
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        // PUT: api/CleaningReports/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutCleaningReport(string id, CleaningReport cleaningReport)
         {
             if (id != cleaningReport.Id)

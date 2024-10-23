@@ -26,13 +26,17 @@ namespace Project.Controllers
 
         // GET: api/RoomCategories
         [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomCategory>>> GetRoomCategories()
         {
-          if (_context.RoomCategories == null)
-          {
-              return NotFound();
-          }
-            return await _context.RoomCategories.ToListAsync();
+            var category = from rc in _context.RoomCategories
+                           select new
+                           {
+                               rc.Id,
+                               rc.CategoryName
+                           };
+
+            return Ok(await category.ToListAsync());
         }
 
         // GET: api/RoomCategories/5

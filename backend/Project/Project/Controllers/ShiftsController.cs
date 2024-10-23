@@ -25,15 +25,39 @@ namespace Project.Controllers
             _repo = repo;
         }
 
-        // GET: api/Shifts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Shift>>> GetShifts()
+        public async Task<ActionResult> GetShifts(int pageNumber = 1, int pageSize = 10)
         {
-          if (_context.Shifts == null)
-          {
-              return NotFound();
-          }
-            return await _context.Shifts.ToListAsync();
+            var shifts = from s in _context.Shifts
+                         join roomCategory in _context.RoomCategories
+                         on s.RoomCategoryId equals roomCategory.Id
+                         select new ShiftViewDto
+                         {
+                             Id = s.Id,
+                             ShiftName = s.ShiftName,
+                             StartTime = s.StartTime,
+                             EndTime = s.EndTime,
+                             CategoryName = roomCategory.CategoryName
+                         };
+
+            // Đếm tổng số bản ghi
+            var totalRecords = await shifts.CountAsync();
+
+            // Lấy dữ liệu phân trang
+            var shiftDetails = await shifts
+                .OrderByDescending(s => s.ShiftName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Trả về dữ liệu với tổng số bản ghi
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Shifts = shiftDetails
+            });
         }
 
         // GET: api/Shifts/5
@@ -107,44 +131,76 @@ namespace Project.Controllers
         // POST: api/Shifts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Shift>> PostShift(ShiftDto shifdto)
+        public async Task<ActionResult<Shift>> PostShift(ShiftCreateDto shiftDto)
         {
-            if (_context.Shifts == null)
+
+            TimeSpan startTime;
+            TimeSpan endTime;
+
+            if (!TimeSpan.TryParse(shiftDto.StartTime, out startTime))
             {
-                return Problem("Entity set 'HcmUeQTTB_DevContext.Shifts' is null.");
+                return BadRequest(new { success = false, message = "StartTime không hợp lệ." });
             }
 
-            
-            var shift = new Shift {
-                Id = Guid.NewGuid().ToString(),
-                ShiftName = shifdto.ShiftName,
-                StartTime = TimeSpan.Parse(shifdto.StartTime),
-                EndTime = TimeSpan.Parse(shifdto.EndTime),
-                RoomCategoryId = shifdto.RoomCategoryId,
-                CreateAt = shifdto.CreateAt,
-                UpdateAt = shifdto.UpdateAt
-            };
+            if (!TimeSpan.TryParse(shiftDto.EndTime, out endTime))
+            {
+                return BadRequest(new { success = false, message = "EndTime không hợp lệ." });
+            }
 
-            _context.Shifts.Add(shift);
+            Console.WriteLine($"Start Time: {startTime}, End Time: {endTime}");
+
+
+            if (shiftDto.Category == null || !shiftDto.Category.Any())
+            {
+                return BadRequest(new { success = false, message = "Category không hợp lệ." });
+            }
+
+
+            var overlappingShift = await _context.Shifts
+                .Where(s => shiftDto.Category.Contains(s.RoomCategoryId))
+                .Where(s => (startTime < s.EndTime && endTime > s.StartTime))
+                .FirstOrDefaultAsync();
+
+
+            if (overlappingShift != null)
+            {
+                Console.WriteLine($"Conflicting Shift Found: {overlappingShift.ShiftName} - Start: {overlappingShift.StartTime}, End: {overlappingShift.EndTime}");
+                return Conflict(new { success = false, message = "Ca làm việc đã tồn tại trong khoảng thời gian này cho khu vực này." });
+            }
+
+
+            var shiftsToCreate = new List<Shift>();
+
+            foreach (var roomCategoryId in shiftDto.Category)
+            {
+                var shift = new Shift
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ShiftName = shiftDto.ShiftName,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    RoomCategoryId = roomCategoryId,
+                    CreateAt = DateTime.Now,
+                    UpdateAt = DateTime.Now
+                };
+
+                shiftsToCreate.Add(shift);
+            }
+
+            _context.Shifts.AddRange(shiftsToCreate);
+
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ShiftExists(shift.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict(new { success = false, message = "Có lỗi khi tạo ca." });
             }
 
-            return CreatedAtAction("GetShift", new { id = shift.Id }, shift);
-        }
 
+            return CreatedAtAction("GetShift", new { id = shiftsToCreate.First().Id }, new { success = true, message = "Tạo ca làm thành công.", shifts = shiftsToCreate });
+        }
         // DELETE: api/Shifts/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShift(string id)

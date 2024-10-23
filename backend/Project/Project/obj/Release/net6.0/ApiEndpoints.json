@@ -1688,13 +1688,13 @@
   {
     "ContainingType": "Project.Controllers.SchedulesController",
     "Method": "DeleteSchedule",
-    "RelativePath": "api/Schedules/{id}",
+    "RelativePath": "api/Schedules/{scheduleId}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "scheduleId",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -1755,18 +1755,19 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
+    "Parameters": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Project.Entities.Shift, Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
-    ]
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.ShiftsController",
@@ -1777,8 +1778,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "shifdto",
-        "Type": "Project.Dto.ShiftDto",
+        "Name": "shiftDto",
+        "Type": "Project.Dto.ShiftCreateDto",
         "IsRequired": true
       }
     ],

@@ -242,12 +242,13 @@ namespace Project.Controllers
             return Ok(rooms);
         }
 
+
         [HttpGet]
         [Route("get-users-by-shift-room-and-criteria")]
         public async Task<IActionResult> GetUsersByShiftRoomAndCriteria(
-  [FromQuery] string shiftId,
-  [FromQuery] string roomId,
-  [FromQuery] List<string> criteriaIds)
+     [FromQuery] string shiftId,
+     [FromQuery] string roomId,
+     [FromQuery] List<string> criteriaIds)
         {
             // Bước 1: Lấy thời gian startTime và endTime của Shift dựa vào shiftId
             var shift = await _context.Shifts
@@ -257,7 +258,8 @@ namespace Project.Controllers
 
             if (shift == null)
             {
-                return NotFound("Shift not found.");
+                // Nếu không tìm thấy shift, trả về kết quả rỗng
+                return Ok(new { Message = "Shift not found.", Data = new List<object>() });
             }
 
             // Bước 2: Lấy danh sách Schedule trong khoảng thời gian của shift
@@ -266,11 +268,6 @@ namespace Project.Controllers
                 .Select(s => s.Id)
                 .ToListAsync();
 
-            if (schedules.Count == 0)
-            {
-                return NotFound("No schedules found for the given shift.");
-            }
-
             // Bước 3: Tìm kiếm trong bảng ScheduleDetail các scheduleId và roomId trùng khớp
             var userIds = await _context.ScheduleDetails
                 .Where(sd => schedules.Contains(sd.ScheduleId) && sd.RoomId == roomId)
@@ -278,22 +275,12 @@ namespace Project.Controllers
                 .Distinct()
                 .ToListAsync();
 
-            if (userIds.Count == 0)
-            {
-                return NotFound("No users found for the given room in the selected shift.");
-            }
-
             // Bước 4: Lấy danh sách TagId từ bảng TagsPerCriteria dựa trên danh sách criteriaIds
             var tagIdsFromCriteria = await _context.TagsPerCriteria
                 .Where(tpc => criteriaIds.Contains(tpc.CriteriaId))
                 .Select(tpc => tpc.TagId)
                 .Distinct()
                 .ToListAsync();
-
-            if (tagIdsFromCriteria.Count == 0)
-            {
-                return NotFound("No tags found for the given criteria.");
-            }
 
             // Bước 5: Lấy danh sách TagId và UserId từ bảng UserPerTag dựa vào userIds
             var userPerTags = await _context.UserPerTags
@@ -305,9 +292,10 @@ namespace Project.Controllers
                 .Where(t => tagIdsFromCriteria.Contains(t.Id))
                 .ToListAsync();
 
-            // Bước 7: Tạo một Dictionary để nhóm các User theo từng Tag
+            // Bước 7: Tạo một danh sách để trả về kết quả, gồm cả những Tag không có User nào
             var result = new List<object>();
 
+            // Xử lý tất cả các tags lấy được từ criteria
             foreach (var tag in tags)
             {
                 // Lấy tất cả các userId trong bảng UserPerTag tương ứng với tag.Id
@@ -329,15 +317,15 @@ namespace Project.Controllers
                     })
                     .ToListAsync();
 
-                
+                // Thêm kết quả vào danh sách
                 result.Add(new
                 {
                     TagName = tag.TagName,
-                    Users = users
+                    Users = users // Trả về danh sách Users, nếu không có sẽ là danh sách rỗng
                 });
             }
 
-            // Bước 8: Đối với các TagId mà không có UserId nào, thêm vào một entry với danh sách Users trống
+            // Bước 8: Đối với các TagId không có người dùng nào, thêm vào kết quả với danh sách Users rỗng
             foreach (var tagId in tagIdsFromCriteria.Except(tags.Select(t => t.Id)))
             {
                 var tagName = await _context.Tags
@@ -350,15 +338,14 @@ namespace Project.Controllers
                     result.Add(new
                     {
                         TagName = tagName,
-                        Users = new List<object>()
+                        Users = new List<object>() // Trả về danh sách Users rỗng nếu không có
                     });
                 }
             }
 
+            // Trả về kết quả
             return Ok(result);
         }
-
-
 
 
 
@@ -532,24 +519,38 @@ namespace Project.Controllers
 
 
 
-        // DELETE: api/Schedules/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSchedule(string id)
+        [HttpDelete("{scheduleId}")]
+        public async Task<IActionResult> DeleteSchedule(string scheduleId)
         {
-            if (_context.Schedules == null)
+            try
             {
-                return NotFound();
+
+                if (string.IsNullOrEmpty(scheduleId))
+                    return BadRequest(new { success = false, message = "Schedule ID không hợp lệ." });
+
+
+                var schedule = await _context.Schedules.FirstOrDefaultAsync(s => s.Id == scheduleId);
+                if (schedule == null)
+                    return NotFound(new { success = false, message = "Lịch không tồn tại." });
+
+                var scheduleDetails = await _context.ScheduleDetails.Where(sd => sd.ScheduleId == scheduleId).ToListAsync();
+                if (scheduleDetails.Any())
+                {
+                    _context.ScheduleDetails.RemoveRange(scheduleDetails);
+                }
+
+
+                _context.Schedules.Remove(schedule);
+
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { success = true, message = "Xóa lịch thành công." });
             }
-            var schedule = await _context.Schedules.FindAsync(id);
-            if (schedule == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi xóa lịch.", error = ex.Message });
             }
-
-            _context.Schedules.Remove(schedule);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool ScheduleExists(string id)
