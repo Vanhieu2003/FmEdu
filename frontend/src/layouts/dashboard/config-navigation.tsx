@@ -54,7 +54,7 @@ export function useNavData() {
           { title: 'Đánh giá', path: paths.dashboard.root, icon: ICONS.dashboard },
           { title: 'Danh sách đánh giá', path: paths.dashboard.two, icon: ICONS.ecommerce },
           {
-            title: 'three',
+            title: 'Báo cáo thống kê',
             path: paths.dashboard.three,
             icon: ICONS.analytics,
           },
@@ -67,13 +67,13 @@ export function useNavData() {
         subheader: 'management',
         items: [
           {
-            title: 'Admin',
+            title: 'Quản trị viên',
             path: paths.dashboard.group.root,
             icon: ICONS.user,
             children: [
               { title: 'Form', path: paths.dashboard.group.root },
               { title: 'Tiêu chí', path: paths.dashboard.group.five },
-              { title: 'six', path: paths.dashboard.group.six },
+              { title: 'Lịch', path: paths.dashboard.group.six },
             ],
           },
           {
@@ -94,6 +94,16 @@ export function useNavData() {
               { title: 'Danh sách nhóm', path: paths.dashboard.responsiblegroup.list },
               { title: 'Tạo nhóm', path: paths.dashboard.responsiblegroup.create },
               { title: 'Tạo tag cho người chịu trách nhiệm', path: paths.dashboard.responsiblegroup.createUserPerTag},
+            ],
+          },
+
+          {
+            title: 'Quản lý ca làm việc',
+            path: paths.dashboard.shift.root,
+            icon: ICONS.menuItem,
+            children: [
+              { title: 'Danh sách ca', path: paths.dashboard.shift.list },
+              { title: 'Tạo ca', path: paths.dashboard.shift.create },
             ],
           },
         ],

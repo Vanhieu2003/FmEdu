@@ -28,6 +28,7 @@ import ResponsibleGroupRoomService from 'src/@core/service/responsiblegroup';
 import { getResponsibleGroupText, userMapping } from 'src/utils/schedule/handle-schedule';
 import { Schedule, User, CalendarItem } from 'src/utils/type/Type';
 import UserService from 'src/@core/service/user';
+import SnackbarComponent from '../snackBar';
 
 L10n.load({
   vi: {
@@ -188,14 +189,25 @@ export default function Home() {
       }))
     );
   }, [calendars, currentEventSettings]);
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarStatus, setSnackbarStatus] = useState('success');
   const reloadScheduleData = async () => {
     const ScheduleData = await ScheduleService.getAllSchedule();
     setCurrentEventSettings(ScheduleData.data);
     setFilterData(ScheduleData.data);
   };
 
-  const buttonClickActions = useCallback((action: string) => {
+
+  const handleSnackbarClose = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  }, [snackbarStatus]);
+
+
+  const buttonClickActions = useCallback(async (action: string) => {
     let eventData: any = {};
     let actionType: CurrentAction = "Add";
 
@@ -249,7 +261,13 @@ export default function Home() {
           actionType = "Delete";
           scheduleObj.current?.deleteEvent(eventData, actionType);
         }
-        console.log(eventData);
+        const response = await ScheduleService.deleteSchedule(eventData.id);
+        if (response.status === 200) {
+          setSnackbarMessage(response.data.message);
+          setSnackbarStatus("success");
+          setSnackbarOpen(true);
+          reloadScheduleData();
+        }
         break;
       case "more-details":
         eventData = getSlotData();
@@ -273,7 +291,12 @@ export default function Home() {
       if (args.requestType === 'eventCreated') {
         try {
           const response = await ScheduleService.createSchedule(eventData[0]);
-          console.log(response);
+          if(response.status ===200){
+            setSnackbarMessage(response.data.message);
+            setSnackbarStatus("success");
+            setSnackbarOpen(true);
+            reloadScheduleData();
+          }
         }
         catch (e) {
           console.log(e);
@@ -283,6 +306,12 @@ export default function Home() {
   };
 
   const processEventData = (event: any) => {
+    //Hàm chuyển đổi múi giờ thành UTC + 07:00
+    const adjustTimeZone = (date: Date) => {
+      const adjustedDate = new Date(date);
+      adjustedDate.setHours(adjustedDate.getHours() + 7); 
+      return adjustedDate;
+    };
     if (event.place) {
       if (typeof event.place === 'string') {
         try {
@@ -309,7 +338,12 @@ export default function Home() {
     if (event.recurrenceRule === null) {
       event.recurrenceRule = '';
     }
-    console.log('Processed event:', event);
+    if (event.startDate) {
+      event.startDate = adjustTimeZone(new Date(event.startDate));
+    }
+    if (event.endDate) {
+      event.endDate = adjustTimeZone(new Date(event.endDate));
+    }
   };
 
   const header = (props: any) => {
@@ -679,13 +713,13 @@ export default function Home() {
     fetchData();
   }, [])
 
-  
+
   return (
     <>
       <div className='scheduler-container'>
         <div className='scheduler-container-left'>
           <div className='scheduler-component'>
-            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' selectedDate={new Date(2024, 8, 26)} eventSettings={{
+            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' eventSettings={{
               dataSource: filterData, fields: {
                 id: 'index',
                 subject: { name: 'title' },
@@ -701,7 +735,7 @@ export default function Home() {
                 customId: { name: 'id' }
               }
               , template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate
-            }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} enableAdaptiveUI={true} timezone='UTC+07:00'>
+            }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} enableAdaptiveUI={true}>
               <ViewsDirective>
                 <ViewDirective option="Day" interval={5}></ViewDirective>
                 <ViewDirective option="Month" isSelected={true}></ViewDirective>
@@ -733,6 +767,12 @@ export default function Home() {
             onCalendarsChange={e => setCalendars(e)}
           />
         </div>
+        <SnackbarComponent
+          status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+          open={snackbarOpen}
+          message={snackbarMessage}
+          onClose={handleSnackbarClose}
+        />
       </div>
     </>
   )

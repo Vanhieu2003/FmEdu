@@ -43,5 +43,13 @@ export const paths = {
       createUserPerTag: `${ROOTS.DASHBOARD}/responsible-group/createUserPerTag`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/responsible-group/${id}/edit`,
     } ,
+
+    shift:{
+      root: `${ROOTS.DASHBOARD}/shift`,
+      list: `${ROOTS.DASHBOARD}/shift/list`,
+      details: (id: string) => `${ROOTS.DASHBOARD}/shift/${id}/detail`,
+      create: `${ROOTS.DASHBOARD}/shift/create`,
+      edit: (id: string) => `${ROOTS.DASHBOARD}/shift/${id}/edit`,
+    } ,
   },
 };

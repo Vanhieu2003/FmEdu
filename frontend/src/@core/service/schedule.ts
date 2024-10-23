@@ -14,8 +14,10 @@ export class ScheduleService {
     const criteriaParams = criteriaIds.map(id => `criteriaIds=${id}`).join('&');
     const url = `${API_ENDPOINT}/api/Schedules/get-users-by-shift-room-and-criteria?shiftId=${shiftId}&roomId=${roomId}&${criteriaParams}`;
     return axios.get(url);
-}
-  
+  }
+  deleteSchedule = async (id: string) => {
+    return axios.delete(`${API_ENDPOINT}/api/Schedules/${id}`);
+  }
 }
 
 export default new ScheduleService();

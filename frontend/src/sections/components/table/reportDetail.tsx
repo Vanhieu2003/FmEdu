@@ -44,7 +44,7 @@ const ReportDetail = ({ report }: Props) => {
         setSelectedImage(null);
     };
 
-    const renderRightContentInfo = ({ icon, title, content }: any) => (
+    const renderLeftContentInfo = ({ icon, title, content }: any) => (
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             {icon}
             <Box sx={{ ml: 2 }}>
@@ -56,7 +56,7 @@ const ReportDetail = ({ report }: Props) => {
         </Box>
     );
 
-    const renderLeftContent = (
+    const renderRightContent = (
         <Stack component={Card} spacing={3} sx={{ p: 3 }}>
             <TableContainer component={Paper}>
                 <Table>
@@ -124,41 +124,41 @@ const ReportDetail = ({ report }: Props) => {
     );
 
 
-    const renderRightContent = (
-        <Stack component={Card} spacing={2} sx={{ p: 3,marginLeft:'20px'}}>
+    const renderLeftContent = (
+        <Stack component={Card} spacing={2} sx={{ p: 3,marginRight:'20px'}}>
             <Typography variant='h6'>Thông tin báo cáo</Typography>
             <Stack spacing={1}>
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <CalendarMonthIcon />,
                     title: "Ngày đánh giá",
                     content: dayjs(report.createAt).format('DD/MM/YYYY')
                 })}
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <CalendarMonthIcon />,
                     title: "Ngày cập nhật",
                     content: dayjs(report.updateAt).format('DD/MM/YYYY')
                 })}
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <HouseIcon />,
                     title: "Cơ sở",
                     content: report.campusName
                 })}
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <HouseIcon />,
                     title: "Tòa nhà",
                     content: report.blockName
                 })}
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <HouseIcon />,
                     title: "Tầng",
                     content: report.floorName
                 })}
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <HouseIcon />,
                     title: "Phòng",
                     content: report.roomName
                 })}
-                {renderRightContentInfo({
+                {renderLeftContentInfo({
                     icon: <PersonIcon />,
                     title: "Người đánh giá",
                     content: "Nhân viên A"
@@ -169,14 +169,16 @@ const ReportDetail = ({ report }: Props) => {
 
 
     return (
-        <Grid container spacing={4}>
-            <Grid xs={12} md={9}>
+        <Grid container spacing={4} sx={{marginTop:'10px'}}>
+             <Grid xs={12} md={3}>
                 {renderLeftContent}
             </Grid>
 
-            <Grid xs={12} md={3}>
+            <Grid xs={12} md={9}>
                 {renderRightContent}
             </Grid>
+
+           
         </Grid>
     )
 }
