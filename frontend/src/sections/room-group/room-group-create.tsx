@@ -1,11 +1,10 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useSettingsContext } from 'src/components/settings';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import CampusService from 'src/@core/service/campus';
 import RoomService from 'src/@core/service/room';
 import { Button, Checkbox, Stack, Autocomplete, TextField, Alert } from '@mui/material';
@@ -14,6 +13,19 @@ import AlertTitle from '@mui/material/AlertTitle';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 // ----------------------------------------------------------------------
+
+function useDebounce(func: Function, delay: number) {
+  const debounceRef = useRef<NodeJS.Timeout>();
+
+  return useCallback((...args: any) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      func(...args);
+    }, delay);
+  }, [func, delay]);
+}
 
 export default function RoomGroupCreate() {
   const settings: any = useSettingsContext();
@@ -27,8 +39,31 @@ export default function RoomGroupCreate() {
   const [selectedRooms, setSelectedRooms] = useState<any[]>([]); // Danh sách các phòng được chọn
   const [groupName, setGroupName] = useState<string>(''); // Tên nhóm
   const [description, setDescription] = useState<string>(''); // Mô tả nhóm
-  const [searchQuery, setSearchQuery] = useState<string>(''); // Biến tìm kiếm
+  const [searchQuery, setSearchQuery] = useState(''); // Biến tìm kiếm
   const [alert, setAlert] = useState<{ severity: 'success' | 'error'; message: string } | null>(null);
+  const [filterRooms,setFilterRooms] = useState<any[]>([]);
+
+  const filterRoom = () => {
+    let filteredRooms = rooms;
+    if (searchQuery) {
+      filteredRooms = filteredRooms.filter((room) => 
+        room.roomName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    setFilterRooms(filteredRooms);
+  };
+
+  const debouncedFilterRoom = useDebounce(() => {
+    filterRoom();
+  }, 500);
+
+  useEffect(() => {
+    debouncedFilterRoom();
+  }, [searchQuery]);
+  useEffect(() => {
+    setFilterRooms(rooms);
+    console.log("Use effect call")
+  }, [rooms]);
 
   // Fetch tất cả campus khi component được render
   useEffect(() => {
@@ -43,14 +78,16 @@ export default function RoomGroupCreate() {
     fetchCampus();
   }, []);
 
-  // Khi chọn campus, fetch room tương ứng
+
   const handleCampusChange = async (event: any, value: any) => {
     if (value && value.id) {
       setSelectedCampus(value);
       try {
         const response: any = await RoomService.getRoomByCampus(value.id);
         if (response.data && Array.isArray(response.data)) {
+          console.log(response.data);
           setRooms(response.data);
+         
         } else {
           console.error('Unexpected response format:', response.data);
           setRooms([]);
@@ -61,52 +98,13 @@ export default function RoomGroupCreate() {
     }
   };
 
-  // Xử lý tìm kiếm phòng
-  // Xử lý tìm kiếm phòng
-const handleSearch = async (event: any) => {
-  const input = event.target.value;
-  setSearchQuery(input);
-
-  if (input.trim() === '') {
-    // Nếu ô tìm kiếm rỗng, fetch lại danh sách phòng theo campus đã chọn
-    if (selectedCampus && selectedCampus.id) {
-      try {
-        const response: any = await RoomService.getRoomByCampus(selectedCampus.id);
-        if (response.data && Array.isArray(response.data)) {
-          setRooms(response.data);
-        } else {
-          console.error('Unexpected response format:', response.data);
-          setRooms([]);
-        }
-      } catch (error: any) {
-        console.error('Error fetching rooms:', error);
-      }
-    } else {
-      setRooms([]); // Không có campus nào được chọn, clear danh sách phòng
-    }
-  } else {
-    // Nếu ô tìm kiếm có giá trị, thực hiện tìm kiếm
-    try {
-      const response: any = await RoomService.searchRooms(input);
-      if (response.data && Array.isArray(response.data)) {
-        setRooms(response.data);
-      } else {
-        console.error('Unexpected response format:', response.data);
-        setRooms([]);
-      }
-    } catch (error: any) {
-      console.error('Error searching rooms:', error);
-    }
-  }
-};
-
-  // Xử lý khi chọn phòng
   const handleRoomSelection = (event: any, room: any) => {
     if (event.target.checked) {
       setSelectedRooms((prev) => [...prev, room]); // Thêm phòng vào danh sách
     } else {
       setSelectedRooms((prev) => prev.filter((r: any) => r.id !== room.id)); // Xóa phòng khỏi danh sách
     }
+    
   };
 
   const handleSubmit = async () => {
@@ -149,8 +147,8 @@ const handleSearch = async (event: any) => {
       {/* Hiển thị thông báo nếu có */}
       {alert && (
         <Box sx={{ display: 'flex', gap: 2, marginBottom: 3 }}>
-          <Alert 
-            severity={alert.severity} 
+          <Alert
+            severity={alert.severity}
             onClose={() => setAlert(null)} // Đóng thông báo khi nhấn vào icon
           >
             <AlertTitle>{alert.severity === 'error' ? 'Error' : 'Success'}</AlertTitle>
@@ -199,34 +197,25 @@ const handleSearch = async (event: any) => {
 
 
       <TextField
-  label="Tìm kiếm phòng"
-  variant="outlined"
-  value={searchQuery}
-  onChange={handleSearch}
-  fullWidth
-  sx={{ width: 300, marginBottom: 3 }}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <SearchIcon />
-      </InputAdornment>
-    ),
-  }}
-/>
-   
-      <Box 
-        sx={{ 
-          padding: 2, 
-          border: '1px solid', 
-          borderColor: 'grey.300', 
-          borderRadius: 2, 
-          marginTop: 2, 
+        label="Tìm kiếm phòng"
+        variant="outlined"
+        value={searchQuery}
+        onChange={(e)=>{setSearchQuery(e.target.value)}}
+        fullWidth
+        sx={{ width: 300, marginBottom: 3 }}/>
+
+      <Box
+        sx={{
+          border: '1px solid',
+          borderColor: 'grey.300',
+          borderRadius: 2,
+          marginTop: 2,
           maxHeight: 450,
           overflowY: 'auto'
         }}
       >
-        <ul>
-          {rooms.length > 0 ? rooms.map((room: any) => (
+        <ul style={{listStyle:'none',padding:'0',marginLeft:'15px'}}>
+          {filterRooms.length > 0 ? filterRooms.map((room: any) => (
             <li key={room.id}>
               <Checkbox
                 onChange={(e) => handleRoomSelection(e, room)}

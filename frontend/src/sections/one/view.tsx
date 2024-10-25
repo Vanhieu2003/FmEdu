@@ -282,6 +282,7 @@ export default function OneView() {
           "images": imagesObject
         }
       }),
+      "userPerTags": data
     }
     console.log(reportData);
     if (criteriaEvaluations.length < criteria.length) {
@@ -291,13 +292,14 @@ export default function OneView() {
     }
     else {
     }
-    const response = await CleaningReportService.PostReport(reportData);
-    if (response.status === 200) {
-      setIsSending(true);
-      setSnackbarMessage("Đã gửi thành công");
-      setSnackbarStatus("success");
-      setSnackbarOpen(true);
-    }
+    // const response = await CleaningReportService.PostReport(reportData);
+    // if (response.status === 200) {
+    //   setIsSending(true);
+    //   setSnackbarMessage("Đã gửi thành công");
+    //   setSnackbarStatus("success");
+    //   setSnackbarOpen(true);
+    // }
+
   };
 
   const handleValueChange = (criteriaId: string, value: any) => {

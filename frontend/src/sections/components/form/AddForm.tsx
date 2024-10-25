@@ -115,18 +115,7 @@ type Criteria = {
   tags?: Tag[]
 };
 
-type Form = {
-  id?: string,
-  formName: string,
-  campusId: string,
-  blockId: string,
-  floorId: string,
-  roomId: string,
-  campusName?: string,
-  blockName?: string,
-  floorName?: string,
-  roomName?: string
-};
+
 
 
 

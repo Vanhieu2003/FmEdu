@@ -548,12 +548,12 @@ export default function TwoView() {
                     >
                       <MenuItem onClick={handleClose}>
                         <Link href={`/dashboard/two/detail/${currentReportID}`} sx={{ display: 'flex' }} underline='none'>
-                          <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> View
+                          <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> Xem chi tiết
                         </Link>
                       </MenuItem>
                       <MenuItem onClick={handleClose}>
                         <Link href={`/dashboard/two/edit/${currentReportID}`} sx={{ display: 'flex' }} underline='none' >
-                          <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> Edit
+                          <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> Chỉnh sửa
                         </Link>
                       </MenuItem>
                     </Menu>

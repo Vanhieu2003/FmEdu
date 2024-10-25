@@ -14,7 +14,7 @@ export const getResponsibleGroupText = (id: string,calendars:CalendarItem[]) => 
     return calendar ? calendar.groupName : 'Không xác định';
   };
 
-export const userMapping = (userList:any)=>{
+export const userMapping = (userList:User[])=>{
   const users = userList.map((user:User)=>({
     text: `${user.firstName} ${user.lastName}`,
     id: user.id

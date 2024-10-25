@@ -18,6 +18,10 @@ export class ScheduleService {
   deleteSchedule = async (id: string) => {
     return axios.delete(`${API_ENDPOINT}/api/Schedules/${id}`);
   }
+
+  editSchedule = async (id: string, data: object) => {
+    return axios.put(`${API_ENDPOINT}/api/Schedules/${id}`, data);
+  }
 }
 
 export default new ScheduleService();

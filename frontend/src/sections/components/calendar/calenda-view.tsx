@@ -18,7 +18,7 @@ import { DropDownListComponent, MultiSelectComponent } from '@syncfusion/ej2-rea
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { L10n, loadCldr } from '@syncfusion/ej2-base';
-import { Table, TableBody, TableCell, TableRow, Box, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableRow, Box, IconButton, Button } from '@mui/material';
 import LocationSelector from './location';
 import AddIcon from '@mui/icons-material/Add';
 import { CALENDAR_LICENSE_KEY } from 'src/config-global';
@@ -29,6 +29,9 @@ import { getResponsibleGroupText, userMapping } from 'src/utils/schedule/handle-
 import { Schedule, User, CalendarItem } from 'src/utils/type/Type';
 import UserService from 'src/@core/service/user';
 import SnackbarComponent from '../snackBar';
+import Popup from '../form/Popup'
+import AddCriteria from '../form/AddCriteria';
+import AddScheduleComponent from './add-Schedule';
 
 L10n.load({
   vi: {
@@ -76,7 +79,7 @@ L10n.load({
       "timezone": "Múi giờ",
       "startTimezone": "Bắt đầu múi giờ",
       "endTimezone": "Múi giờ kết thúc",
-      "repeat": "Nói lại",
+      "repeat": "Lặp lại",
       "saveButton": "Lưu",
       "cancelButton": "Hủy bỏ",
       "deleteButton": "Xóa bỏ",
@@ -130,7 +133,7 @@ L10n.load({
       "third": "Thứ ba",
       "fourth": "Thứ tư",
       "last": "Cuối cùng",
-      "repeat": "Nói lại",
+      "repeat": "Lặp lại",
       "repeatEvery": "Lặp lại mỗi",
       "on": "Lặp lại trên",
       "end": "Kết thúc",
@@ -169,8 +172,10 @@ export default function Home() {
   const [calendars, setCalendars] = useState<CalendarItem[]>([]);
   const timeScale = { enable: true, slotCount: 4 };
   const [currentEventSettings, setCurrentEventSettings] = useState([]);
+  const [scheduleData,setScheduleData] = useState<any>();
   const [userList, setUserList] = useState<User[]>([])
   const [filterData, setFilterData] = useState(currentEventSettings)
+  const [isNewSchedule,setIsNewSchedule] = useState<boolean>(true);
   const handleFilterChange = useCallback((checkedIds: string[]) => {
     const SelectedResponsibleGroup = calendars
       .filter(cal => checkedIds.includes(cal.id.toString()))
@@ -192,12 +197,20 @@ export default function Home() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
+  const [openPopup, setOpenPopup] = useState(false);
   const reloadScheduleData = async () => {
     const ScheduleData = await ScheduleService.getAllSchedule();
     setCurrentEventSettings(ScheduleData.data);
     setFilterData(ScheduleData.data);
   };
 
+  const handleAddScheduleSuccess = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarStatus('success');
+    setSnackbarOpen(true);
+    setOpenPopup(false); 
+    reloadScheduleData(); 
+  };
 
   const handleSnackbarClose = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -206,6 +219,36 @@ export default function Home() {
     setSnackbarOpen(false);
   }, [snackbarStatus]);
 
+  const handleAddSchedule = async()=>{
+    const getSlotData = () => {
+      const selectedElements = scheduleObj.current?.getSelectedElements();
+      if (!selectedElements) return null;
+
+      const cellDetails = scheduleObj.current?.getCellDetails(selectedElements);
+      if (!cellDetails) return null;
+
+      const formData = scheduleObj.current?.eventWindow.getObjectFromFormData("e-quick-popup-wrapper");
+      if (!formData) return null;
+
+      const addObj: any = {};
+      addObj.Id = scheduleObj.current?.getEventMaxID();
+      addObj.Subject = formData.Subject && formData.Subject.length > 0 ? formData.Subject : "Add title";
+      addObj.StartTime = new Date(cellDetails.startTime);
+      addObj.EndTime = new Date(cellDetails.endTime);
+      return addObj;
+    };
+    const eventData = getSlotData();
+    setScheduleData(eventData);
+    setIsNewSchedule(true);
+    setOpenPopup(true);
+  }
+
+  const handleEditSchedule = async()=>{
+    const eventData = scheduleObj.current?.activeEventData?.event;
+    setScheduleData(eventData);
+    setIsNewSchedule(false);
+    setOpenPopup(true);
+  }
 
   const buttonClickActions = useCallback(async (action: string) => {
     let eventData: any = {};
@@ -233,6 +276,7 @@ export default function Home() {
       case "add":
         eventData = getSlotData();
         if (eventData) scheduleObj.current?.addEvent(eventData);
+        
         break;
       case "edit":
         eventData = scheduleObj.current?.activeEventData?.event;
@@ -291,7 +335,7 @@ export default function Home() {
       if (args.requestType === 'eventCreated') {
         try {
           const response = await ScheduleService.createSchedule(eventData[0]);
-          if(response.status ===200){
+          if (response.status === 200) {
             setSnackbarMessage(response.data.message);
             setSnackbarStatus("success");
             setSnackbarOpen(true);
@@ -309,7 +353,7 @@ export default function Home() {
     //Hàm chuyển đổi múi giờ thành UTC + 07:00
     const adjustTimeZone = (date: Date) => {
       const adjustedDate = new Date(date);
-      adjustedDate.setHours(adjustedDate.getHours() + 7); 
+      adjustedDate.setHours(adjustedDate.getHours() + 7);
       return adjustedDate;
     };
     if (event.place) {
@@ -419,7 +463,7 @@ export default function Home() {
         ) : (
           <div className="e-event-footer" >
             <div className="left-button">
-              <button id="edit" className="e-event-edit" title="Edit" onClick={() => buttonClickActions("edit")}> Chỉnh sửa </button>
+              <button id="edit" className="e-event-edit" title="Edit" onClick={handleEditSchedule}> Chỉnh sửa </button>
               {props.recurrenceRule && props.recurrenceRule !== "" && (
                 <button id="edit-series" className="e-edit-series" title="Edit Series" onClick={() => buttonClickActions("edit-series")}> Chỉnh sửa chuỗi </button>
               )}
@@ -718,6 +762,10 @@ export default function Home() {
     <>
       <div className='scheduler-container'>
         <div className='scheduler-container-left'>
+          <Button variant='contained' onClick={handleAddSchedule}>Tạo mới</Button>
+          <Popup title='Form đánh giá' openPopup={openPopup} setOpenPopup={setOpenPopup}>
+            <AddScheduleComponent scheduleData={scheduleData} userList={userList} calendars={calendars} setOpenPopup={setOpenPopup} isNewSchedule={isNewSchedule} onSuccess={handleAddScheduleSuccess}/>
+          </Popup>
           <div className='scheduler-component'>
             <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' eventSettings={{
               dataSource: filterData, fields: {
@@ -734,7 +782,7 @@ export default function Home() {
                 resourceFields: { name: 'responsibleGroupId' },
                 customId: { name: 'id' }
               }
-              , template: eventTemplate, enableTooltip: true, tooltipTemplate: toolTipTemplate
+              , template: eventTemplate
             }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} enableAdaptiveUI={true}>
               <ViewsDirective>
                 <ViewDirective option="Day" interval={5}></ViewDirective>
