@@ -191,7 +191,7 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
                             multiple
                             options={userMapping(userList)}
                             getOptionLabel={(option) => option.text}
-                            value = {users}
+                            defaultValue={!isNewSchedule?users:[]}
                             onChange={(event, newValue) => handleMultiSelectChange('users', newValue.map(v => v.id))}
                             renderInput={(params) => <TextField {...params} label="Chọn người dùng" />}
                             noOptionsText="Không có dữ liệu người dùng"

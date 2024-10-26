@@ -15,7 +15,7 @@ const renderRatingInput = (RatingType: string, RatingValue: any) => {
         case "BINARY":
             return (
                 <Box>
-                    <Typography>{RatingValue === 2 ? "Đạt" : RatingValue === 1 ? "Không Đạt" : "Chưa đánh giá"}</Typography>
+                    <Typography>{RatingValue === 1 ? "Đạt" : RatingValue === 0 ? "Không Đạt" : "Chưa đánh giá"}</Typography>
                 </Box>
             );
         case "RATING":

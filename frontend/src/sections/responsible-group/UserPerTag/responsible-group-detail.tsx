@@ -11,35 +11,6 @@ import  TagService  from 'src/@core/service/tag';
 
 // ----------------------------------------------------------------------
 
-const initialData =
-{
-    id: 1,
-    tagName: 'Vệ sinh',
-    users: [
-        {
-            id: 1,
-            firstName: 'Phan',
-            lastName: 'Hùng',
-            userName:'hungphn@fmedu.vn',
-            groupName: 'Vệ sinh'
-        },
-        {
-            id: 2,
-            firstName: 'Phạm',
-            lastName: 'Hiếu',
-            userName:'hieupv@fmedu.vn',
-            groupName: 'Điện'
-        },
-        {
-            id: 3,
-            firstName: 'Nguyễn',
-            lastName: 'Hoàng',
-            userName:'hoangbox@fmedu.vn',
-            groupName: 'Vệ sinh'
-        }
-    ]
-}
-
 
 export default function UserPerTagDetail({ id }: { id: string }) {
     const settings: any = useSettingsContext();

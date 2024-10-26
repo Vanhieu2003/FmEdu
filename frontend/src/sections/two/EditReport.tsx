@@ -22,6 +22,7 @@ import RenderRatingInput from 'src/sections/components/rating/renderRatingInput'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CleaningReportService from 'src/@core/service/cleaningReport';
 import React from 'react';
+import ResponsibleUserView from '../components/table/responsibleUserView';
 dayjs.locale('vi');
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ export default function OneView({ reportId }: { reportId: string }) {
   const [criteriaEvaluations, setCriteriaEvaluations] = useState<Array<{ criteriaId: string, value: any, note: string }>>([]);
   const [criteria, setCriteria] = useState<any[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [userPerTags, SetUserPerTags] = useState<any[]>([]);
   const settings = useSettingsContext();
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -41,6 +43,7 @@ export default function OneView({ reportId }: { reportId: string }) {
       const response = await CleaningReportService.getCleaningReportById(reportId);
       setReport(response.data);
       setCriteria(response.data.criteriaList);
+      SetUserPerTags(response.data.usersByTags)
       const initialEvaluations = response.data.criteriaList.map((criteria: any) => ({
         criteriaId: criteria.id,
         value: criteria.value || '',
@@ -83,13 +86,14 @@ export default function OneView({ reportId }: { reportId: string }) {
           "note": criteria.note,
         }
       }),
+      "userPerTags":userPerTags,
     }
     console.log("reportData:", reportData);
-    const response = await CleaningReportService.updateCleaningReport(reportData);
-    if (response.status === 200) {
-      alert("Chỉnh sửa thành công");
-      window.location.href = `/dashboard/two/detail/${reportId}`;
-    }
+    // const response = await CleaningReportService.updateCleaningReport(reportData);
+    // if (response.status === 200) {
+    //   alert("Chỉnh sửa thành công");
+    //   window.location.href = `/dashboard/two/detail/${reportId}`;
+    // }
 
   };
 
@@ -105,7 +109,7 @@ export default function OneView({ reportId }: { reportId: string }) {
   //UI of the website
   return (
     <Container maxWidth={false ? false : 'xl'}>
-      <Box sx={{ display: 'flex', alignItems: 'center'}}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Button
           startIcon={<ArrowBackIcon fontSize='large' />}
           onClick={() => window.history.back()}
@@ -266,8 +270,14 @@ export default function OneView({ reportId }: { reportId: string }) {
                         />
                       </TableCell>
                     </TableRow>
+
                   )
                 })}
+                <TableRow>
+                  <TableCell colSpan={3}>
+                    <ResponsibleUserView data={userPerTags} />
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>

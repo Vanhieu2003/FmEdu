@@ -5,7 +5,6 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import "src/global.css";
 import SendIcon from '@mui/icons-material/Send';
-import { useSettingsContext } from 'src/components/settings';
 import { Avatar, Button, Chip, FormControl, FormControlLabel, IconButton, InputLabel, Link, MenuItem, PaletteColor, Popover, Radio, RadioGroup, Select, TextField, useTheme } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -291,18 +290,34 @@ export default function OneView() {
       setSnackbarOpen(true);
     }
     else {
+      try {
+        const response = await CleaningReportService.PostReport(reportData);
+        if (response.status === 200) {
+          const reportId = response.data.id;
+          try {
+            const response = await CleaningReportService.AddUserScore({ ...reportData, reportId });
+            if (response.status === 200) {
+              setIsSending(true);
+              setSnackbarMessage("Đã gửi thành công");
+              setSnackbarStatus("success");
+              setSnackbarOpen(true);
+            }
+          }
+          catch (e) {
+            console.log(e);
+          }
+        }
+      }
+      catch (e) {
+        setIsSending(false);
+        setSnackbarMessage(e.response.data);
+        setSnackbarStatus("error");
+        setSnackbarOpen(true);
+      }
     }
-    // const response = await CleaningReportService.PostReport(reportData);
-    // if (response.status === 200) {
-    //   setIsSending(true);
-    //   setSnackbarMessage("Đã gửi thành công");
-    //   setSnackbarStatus("success");
-    //   setSnackbarOpen(true);
-    // }
-
   };
 
-  const handleValueChange = (criteriaId: string, value: any) => {
+  const handleValueChange = (criteriaId: string, value: number | null) => {
     const existingEvaluation = criteriaEvaluations.find(evaluation => evaluation.criteriaId === criteriaId);
     updateCriteriaEvaluation(criteriaId, value, existingEvaluation?.note || '');
   };

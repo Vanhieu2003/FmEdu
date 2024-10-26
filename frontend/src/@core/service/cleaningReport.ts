@@ -16,6 +16,9 @@ export class CleaningReportService {
   updateCleaningReport = async (data: object) => {
     return axios.put(`${API_ENDPOINT}/api/CleaningReports/update`, data);
   }
+  AddUserScore = async (data:object) =>{
+    return axios.post(`${API_ENDPOINT}/api/CleaningReports/user-score`, data);
+  }
 }
 
 export default new CleaningReportService();
