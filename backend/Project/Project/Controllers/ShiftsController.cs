@@ -26,8 +26,9 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetShifts(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult> GetShifts(int pageNumber = 1, int pageSize = 10, string? shiftName = null, string? categoryName = null)
         {
+            // Khởi tạo query cơ bản
             var shifts = from s in _context.Shifts
                          join roomCategory in _context.RoomCategories
                          on s.RoomCategoryId equals roomCategory.Id
@@ -40,17 +41,29 @@ namespace Project.Controllers
                              CategoryName = roomCategory.CategoryName
                          };
 
-            // Đếm tổng số bản ghi
+            // Nếu có tham số tìm kiếm theo tên ca, thực hiện lọc theo tên ca
+            if (!string.IsNullOrEmpty(shiftName))
+            {
+                shifts = shifts.Where(s => s.ShiftName.Contains(shiftName));
+            }
+
+            // Nếu có tham số tìm kiếm theo tên khu vực, thực hiện lọc theo tên khu vực
+            if (!string.IsNullOrEmpty(categoryName))
+            {
+                shifts = shifts.Where(s => s.CategoryName.Contains(categoryName));
+            }
+
+            // Đếm tổng số bản ghi sau khi lọc
             var totalRecords = await shifts.CountAsync();
 
-            // Lấy dữ liệu phân trang
+            // Lấy dữ liệu phân trang sau khi lọc
             var shiftDetails = await shifts
-                .OrderByDescending(s => s.ShiftName)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .OrderByDescending(s => s.ShiftName) // Sắp xếp theo tên ca
+                .Skip((pageNumber - 1) * pageSize)   // Phân trang
+                .Take(pageSize)                      // Giới hạn theo pageSize
                 .ToListAsync();
 
-            // Trả về dữ liệu với tổng số bản ghi
+            // Trả về dữ liệu với tổng số bản ghi, số trang, và dữ liệu ca
             return Ok(new
             {
                 TotalRecords = totalRecords,
@@ -59,6 +72,7 @@ namespace Project.Controllers
                 Shifts = shiftDetails
             });
         }
+
 
         // GET: api/Shifts/5
         [HttpGet("{id}")]

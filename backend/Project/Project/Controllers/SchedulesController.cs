@@ -320,6 +320,7 @@ namespace Project.Controllers
                 // Thêm kết quả vào danh sách
                 result.Add(new
                 {
+                    TagId=tag.Id,
                     TagName = tag.TagName,
                     Users = users // Trả về danh sách Users, nếu không có sẽ là danh sách rỗng
                 });
@@ -381,11 +382,8 @@ namespace Project.Controllers
                 {
                     var existingDetails = _context.ScheduleDetails.Where(sd => sd.ScheduleId == existingSchedule.Id);
                     _context.ScheduleDetails.RemoveRange(existingDetails); 
-
-                    
-                    if (scheduleUpdateDto.Users != null && scheduleUpdateDto.Place != null)
-                    {
-                        foreach (var userId in scheduleUpdateDto.Users)
+    
+                        foreach (var user in scheduleUpdateDto.Users)
                         {
                             foreach (var place in scheduleUpdateDto.Place)
                             {
@@ -395,7 +393,7 @@ namespace Project.Controllers
                                     {
                                         Id = Guid.NewGuid().ToString(),
                                         ScheduleId = existingSchedule.Id,
-                                        UserId = userId,
+                                        UserId = user.Id,
                                         RoomId = room.Id,
                                         RoomType = place.level,
                                     };
@@ -403,7 +401,6 @@ namespace Project.Controllers
                                 }
                             }
                         }
-                    }
                 }
 
                
@@ -442,32 +439,34 @@ namespace Project.Controllers
         {
             try
             {
-                
                 if (scheduleCreateDto == null)
                     return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
 
-                
                 if (string.IsNullOrEmpty(scheduleCreateDto.Title) || scheduleCreateDto.StartDate == null || scheduleCreateDto.EndDate == null)
                     return BadRequest(new { success = false, message = "Tiêu đề, ngày bắt đầu và ngày kết thúc không được để trống." });
 
-                
+
+                var indices = await _context.Schedules
+                    .Select(s => s.Index)
+                    .ToListAsync();
+
+                var maxIndex = indices.DefaultIfEmpty(0).Max();
+
                 var newSchedule = new Schedule
                 {
-                    Id = Guid.NewGuid().ToString(), 
+                    Id = Guid.NewGuid().ToString(),
                     Title = scheduleCreateDto.Title,
                     Start = scheduleCreateDto.StartDate,
                     End = scheduleCreateDto.EndDate,
                     AllDay = scheduleCreateDto.AllDay,
                     RecurrenceRule = scheduleCreateDto.RecurrenceRule,
                     Description = scheduleCreateDto.Description,
-                    Index = scheduleCreateDto.Index,
+                    Index = maxIndex + 1,
                     ResponsibleGroupId = scheduleCreateDto.ResponsibleGroupId,
                 };
 
-                
                 _context.Schedules.Add(newSchedule);
 
-                
                 if (scheduleCreateDto.Users != null && scheduleCreateDto.Place != null)
                 {
                     foreach (var userId in scheduleCreateDto.Users)
@@ -505,17 +504,16 @@ namespace Project.Controllers
                         newSchedule.AllDay,
                         newSchedule.RecurrenceRule,
                         newSchedule.Description,
-                        newSchedule.ResponsibleGroupId
+                        newSchedule.ResponsibleGroupId,
+                        newSchedule.Index // Trả về chỉ số của lịch mới
                     }
                 });
             }
             catch (Exception ex)
             {
-                
                 return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi tạo lịch.", error = ex.Message });
             }
         }
-
 
 
 
@@ -552,6 +550,13 @@ namespace Project.Controllers
                 return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi xóa lịch.", error = ex.Message });
             }
         }
+
+
+
+
+
+       
+
 
         private bool ScheduleExists(string id)
         {

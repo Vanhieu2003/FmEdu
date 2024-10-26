@@ -89,9 +89,10 @@ namespace Project.Entities
         public virtual DbSet<UserPerTag> UserPerTags { get; set; } = null!;
         public virtual DbSet<UserRequestBasis> UserRequestBases { get; set; } = null!;
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
+        public virtual DbSet<UserScore> UserScores { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
         public virtual DbSet<TagGroupDto> TagGroupDtos { get; set; } = null!;
-        public virtual DbSet<UserDto> UserDto { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -104,7 +105,6 @@ namespace Project.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
-
             modelBuilder.Entity<GroupWithRoomsViewDto>().HasNoKey();
             modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
             modelBuilder.Entity<BlockReportDto>().HasNoKey();
@@ -116,7 +116,6 @@ namespace Project.Entities
             modelBuilder.Entity<CriteriaValueDto>().HasNoKey();
             modelBuilder.Entity<TagGroupDto>().HasNoKey();
             modelBuilder.Entity<ResponsibleTagDto>().HasNoKey();
-            modelBuilder.Entity<UserDto>().HasNoKey();
 
             modelBuilder.Entity<Block>(entity =>
             {
@@ -1716,6 +1715,35 @@ namespace Project.Entities
             modelBuilder.Entity<UserRole>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.RoleId });
+            });
+
+            modelBuilder.Entity<UserScore>(entity =>
+            {
+                entity.ToTable("UserScore");
+
+                entity.HasIndex(e => e.Id, "UQ__UserScor__3214EC064E5EE63A")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(450)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReportId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false)
+                    .HasColumnName("reportId");
+
+                entity.Property(e => e.Score).HasColumnName("score");
+
+                entity.Property(e => e.TagId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false)
+                    .HasColumnName("tagId");
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(450)
+                    .IsUnicode(false)
+                    .HasColumnName("userId");
             });
 
             modelBuilder.Entity<Visitor>(entity =>

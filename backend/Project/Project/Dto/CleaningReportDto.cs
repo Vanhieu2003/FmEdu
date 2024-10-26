@@ -37,6 +37,7 @@
     {
         public string ReportId { get; set; }
         public List<UpdateCriteriaDto> CriteriaList { get; set; }
+        public List<UserPerTagRequest> UserPerTags { get; set; }
     }
 
     public class UpdateCriteriaDto

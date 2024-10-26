@@ -457,27 +457,6 @@
   },
   {
     "ContainingType": "Project.Controllers.CleaningReportsController",
-    "Method": "PutCleaningReport",
-    "RelativePath": "api/CleaningReports/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "cleaningReport",
-        "Type": "Project.Entities.CleaningReport",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CleaningReportsController",
     "Method": "DeleteCleaningReport",
     "RelativePath": "api/CleaningReports/{id}",
     "HttpMethod": "DELETE",
@@ -598,6 +577,22 @@
       {
         "Name": "request",
         "Type": "Project.Dto.UpdateCleaningReportRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CleaningReportsController",
+    "Method": "Evaluate",
+    "RelativePath": "api/CleaningReports/user-score",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Project.Dto.EvaluationRequest",
         "IsRequired": true
       }
     ],
@@ -1764,6 +1759,16 @@
       {
         "Name": "pageSize",
         "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "shiftName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "categoryName",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],

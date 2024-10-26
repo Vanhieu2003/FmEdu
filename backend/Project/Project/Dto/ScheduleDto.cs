@@ -65,7 +65,7 @@
         public string? RecurrenceRule { get; set; }
         public string? ResponsibleGroupId { get; set; }
         public bool? AllDay { get; set; }
-        public List<string>? Users { get; set; } 
+        public List<UserDto>? Users { get; set; } 
         public List<PlaceDTO>? Place { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

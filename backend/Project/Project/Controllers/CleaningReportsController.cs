@@ -255,6 +255,7 @@ namespace Project.Controllers
                 // Thêm kết quả vào danh sách
                 userResult.Add(new
                 {
+                    TagId = tag.Id,
                     TagName = tag.TagName,
                     Users = users // Trả về danh sách Users, nếu không có sẽ là danh sách rỗng
                 });
@@ -272,6 +273,7 @@ namespace Project.Controllers
                 {
                     userResult.Add(new
                     {
+                        TagId = tagId,
                         TagName = tagName,
                         Users = new List<object>() // Trả về danh sách Users rỗng nếu không có
                     });
@@ -298,36 +300,34 @@ namespace Project.Controllers
             return Ok(result);
         }
 
-        // PUT: api/CleaningReports/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCleaningReport(string id, CleaningReport cleaningReport)
-        {
-            if (id != cleaningReport.Id)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutCleaningReport(string id, CleaningReport cleaningReport)
+        //{
+        //    if (id != cleaningReport.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(cleaningReport).State = EntityState.Modified;
+        //    _context.Entry(cleaningReport).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CleaningReportExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!CleaningReportExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateCriteriaAndCleaningReport([FromBody] UpdateCleaningReportRequest request)
@@ -376,7 +376,7 @@ namespace Project.Controllers
                 .ToListAsync();
 
             // Tính tổng giá trị tối đa dựa trên loại tiêu chí (BINARY hoặc dạng khác)
-            var totalMaxValue = criteriaList.Sum(c => c.CriteriaType == "BINARY" ? 2 : 5);
+            var totalMaxValue = criteriaList.Sum(c => c.CriteriaType == "BINARY" ? 1 : 5);
             var totalValue = criteriaReports.Sum(cr => cr.Value ?? 0);
 
             // Tính tỷ lệ phần trăm dựa trên giá trị tối đa và giá trị thực tế
@@ -391,6 +391,58 @@ namespace Project.Controllers
 
             // Lưu thay đổi vào CleaningReport
             _context.CleaningReports.Update(cleaningReport);
+
+
+            foreach (var userPerTag in request.UserPerTags)
+            {
+                var tagId = userPerTag.TagId;
+
+                // Lấy tất cả các tiêu chí liên quan đến tagId
+                var criteriaIdsForTag = await _context.TagsPerCriteria
+                    .Where(tp => tp.TagId == tagId)
+                    .Select(tp => tp.CriteriaId)
+                    .ToListAsync();
+
+                // Lấy danh sách các tiêu chí từ request mà trùng với tag đó
+                var relatedCriteriaList = request.CriteriaList
+                    .Where(c => criteriaIdsForTag.Contains(c.Id))
+                    .ToList();
+
+                // Nếu không có tiêu chí liên quan, bỏ qua
+                if (!relatedCriteriaList.Any()) continue;
+
+                // Tính điểm cho từng tiêu chí dựa trên loại (Binary hay Rating)
+                double totalScore = 0;
+                int totalCriteriaTypeScore = 0;
+                foreach (var criteria in relatedCriteriaList)
+                {
+                    var criteriaEntity = await _context.Criteria.FindAsync(criteria.Id);
+                    var multiplier = criteriaEntity.CriteriaType == "BINARY" ? 1 : 5;
+                    totalCriteriaTypeScore += multiplier;
+                    totalScore += (double)criteria.Value;
+                }
+
+                // Tính điểm trung bình nếu có nhiều tiêu chí
+                var finalScore = Math.Round((double)(totalScore / totalCriteriaTypeScore), 2) * 100;
+
+                // Lưu điểm cho từng người dùng trong tag này
+
+                foreach (var user in userPerTag.Users)
+                {
+                    var existingUserScore = await _context.UserScores
+                        .FirstOrDefaultAsync(us => us.ReportId == request.ReportId && us.TagId == tagId && us.UserId == user.Id);
+
+                    if (existingUserScore != null)
+                    {
+                        // Nếu UserScore đã tồn tại, cập nhật Score
+                        existingUserScore.Score = (int)finalScore;
+                        _context.UserScores.Update(existingUserScore);
+                    }
+                }
+                _context.CleaningReports.Update(cleaningReport);
+            }
+
+
             await _context.SaveChangesAsync();
 
             return Ok(cleaningReport);
@@ -420,6 +472,16 @@ namespace Project.Controllers
                 CreateAt = DateTime.UtcNow,
                 UpdateAt = DateTime.UtcNow
             };
+                    var existingReport = await _context.CleaningReports
+            .Where(cr => cr.FormId == request.FormId
+                         && cr.ShiftId == request.ShiftId
+                         && EF.Functions.DateDiffDay(cr.CreateAt, DateTime.UtcNow) == 0)
+            .FirstOrDefaultAsync();
+
+                    if (existingReport != null)
+                    {
+                        return BadRequest("Form đã được đánh giá hôm nay.");
+                    }
 
             // 2. Lưu CleaningReport vào database
             _context.CleaningReports.Add(cleaningReport);
@@ -463,7 +525,7 @@ namespace Project.Controllers
                 .ToListAsync();
 
             // Tính tổng giá trị tối đa và tổng giá trị thực tế
-            var totalMaxValue = criteriaList.Sum(c => c.CriteriaType == "BINARY" ? 2 : 5);
+            var totalMaxValue = criteriaList.Sum(c => c.CriteriaType == "BINARY" ? 1 : 5);
             var totalValue = criteriaReports.Sum(cr => cr.Value ?? 0);
 
             // Tính tỷ lệ phần trăm
@@ -477,9 +539,9 @@ namespace Project.Controllers
             cleaningReport.UpdateAt = DateTime.UtcNow;
             _context.CleaningReports.Update(cleaningReport);
 
-            await _context.SaveChangesAsync(); // Lưu vào database
+            await _context.SaveChangesAsync();
 
-            // Trả về CleaningReport đã được cập nhật
+            
             return Ok(cleaningReport);
         }
 
@@ -501,6 +563,68 @@ namespace Project.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+
+        [HttpPost("user-score")]
+        public async Task<IActionResult> Evaluate([FromBody] EvaluationRequest request)
+        {
+            var userArray = new List<UserScore>();
+            foreach (var userPerTag in request.UserPerTags)
+            {
+                var tagId = userPerTag.TagId;
+
+                // Lấy tất cả các tiêu chí liên quan đến tagId
+                var criteriaIdsForTag = await _context.TagsPerCriteria
+                    .Where(tp => tp.TagId == tagId)
+                    .Select(tp => tp.CriteriaId)
+                    .ToListAsync();
+
+                // Lấy danh sách các tiêu chí từ request mà trùng với tag đó
+                var relatedCriteriaList = request.CriteriaList
+                    .Where(c => criteriaIdsForTag.Contains(c.CriteriaId))
+                    .ToList();
+
+                // Nếu không có tiêu chí liên quan, bỏ qua
+                if (!relatedCriteriaList.Any()) continue;
+
+                // Tính điểm cho từng tiêu chí dựa trên loại (Binary hay Rating)
+                double totalScore = 0;
+                int totalCriteriaTypeScore = 0;
+                foreach (var criteria in relatedCriteriaList)
+                {
+                    var criteriaEntity = await _context.Criteria.FindAsync(criteria.CriteriaId);
+                    var multiplier = criteriaEntity.CriteriaType == "BINARY" ? 1 : 5;
+                    totalCriteriaTypeScore += multiplier;
+                    totalScore += (double)criteria.Value;
+                }
+
+                // Tính điểm trung bình nếu có nhiều tiêu chí
+                var finalScore = Math.Round((double)(totalScore / totalCriteriaTypeScore), 2) * 100;
+
+                // Lưu điểm cho từng người dùng trong tag này
+
+                foreach (var user in userPerTag.Users)
+                {
+                    var userScore = new UserScore
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ReportId = request.ReportId,
+                        TagId = tagId,
+                        UserId = user.Id,
+                        Score = (int)finalScore
+                    };
+
+                    _context.UserScores.Add(userScore);
+                    userArray.Add(userScore);
+
+                }
+            }
+
+            // Lưu các thay đổi vào DB
+            await _context.SaveChangesAsync();
+
+            return Ok(userArray);
         }
 
         private bool CleaningReportExists(string id)

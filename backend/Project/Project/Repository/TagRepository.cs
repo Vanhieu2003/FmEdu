@@ -40,25 +40,27 @@ namespace Project.Repository
         {
             var result = await _context.Set<ResponsibleTagDto>()
                .FromSqlRaw(@"
-           SELECT 
-               u.UserName,
-               u.FirstName,
-               u.LastName,
-               u.Email,
-               t.TagName,
-              ISNULL(rg.GroupName, 'Không có nhóm phòng') AS GroupName
-           FROM 
-               UserPerTag upt
-           LEFT JOIN 
-               [User] u ON upt.UserId = u.Id
-           LEFT JOIN 
-               [Tag] t ON upt.TagId = t.Id
-           LEFT JOIN 
-               UserPerResGroup uprg ON u.Id = uprg.UserId
-           LEFT JOIN 
-               ResponsibleGroup rg ON uprg.ResponsiableGroupId = rg.Id
-           WHERE 
-               upt.TagId = {0}", tagId)
+  SELECT 
+    u.UserName,
+    u.FirstName,
+    u.LastName,
+    u.Email,
+    t.TagName,
+    ISNULL(STRING_AGG(rg.GroupName, ', '), 'Không có nhóm phòng') AS GroupName
+FROM 
+    UserPerTag upt
+LEFT JOIN 
+    [User] u ON upt.UserId = u.Id
+LEFT JOIN 
+    [Tag] t ON upt.TagId = t.Id
+LEFT JOIN 
+    UserPerResGroup uprg ON u.Id = uprg.UserId
+LEFT JOIN 
+    ResponsibleGroup rg ON uprg.ResponsiableGroupId = rg.Id
+WHERE 
+    upt.TagId = {0}
+GROUP BY 
+    u.UserName, u.FirstName, u.LastName, u.Email, t.TagName;", tagId)
                .ToListAsync();
 
             return result;
