@@ -105,6 +105,7 @@ namespace Project.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
+
             modelBuilder.Entity<GroupWithRoomsViewDto>().HasNoKey();
             modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
             modelBuilder.Entity<BlockReportDto>().HasNoKey();
@@ -1499,6 +1500,10 @@ namespace Project.Entities
                 entity.Property(e => e.RoomCategoryId).HasMaxLength(450);
 
                 entity.Property(e => e.ShiftName).HasMaxLength(250);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("('ENABLE')");
             });
 
             modelBuilder.Entity<Specialization>(entity =>
@@ -1728,6 +1733,10 @@ namespace Project.Entities
                     .HasMaxLength(450)
                     .IsUnicode(false);
 
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
                 entity.Property(e => e.ReportId)
                     .HasMaxLength(450)
                     .IsUnicode(false)
@@ -1739,6 +1748,10 @@ namespace Project.Entities
                     .HasMaxLength(450)
                     .IsUnicode(false)
                     .HasColumnName("tagId");
+
+                entity.Property(e => e.UpdateAt)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.UserId)
                     .HasMaxLength(450)

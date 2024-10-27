@@ -12,5 +12,6 @@ namespace Project.Entities
         public string? RoomCategoryId { get; set; }
         public DateTime? CreateAt { get; set; }
         public DateTime? UpdateAt { get; set; }
+        public string? Status { get; set; }
     }
 }

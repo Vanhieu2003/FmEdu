@@ -19,7 +19,7 @@ namespace Project.Controllers
         private readonly HcmUeQTTB_DevContext _context;
         private readonly IShiftRepository _repo;
 
-        public ShiftsController(HcmUeQTTB_DevContext context,IShiftRepository repo)
+        public ShiftsController(HcmUeQTTB_DevContext context, IShiftRepository repo)
         {
             _context = context;
             _repo = repo;
@@ -28,7 +28,7 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<ActionResult> GetShifts(int pageNumber = 1, int pageSize = 10, string? shiftName = null, string? categoryName = null)
         {
-            // Khởi tạo query cơ bản
+
             var shifts = from s in _context.Shifts
                          join roomCategory in _context.RoomCategories
                          on s.RoomCategoryId equals roomCategory.Id
@@ -38,32 +38,33 @@ namespace Project.Controllers
                              ShiftName = s.ShiftName,
                              StartTime = s.StartTime,
                              EndTime = s.EndTime,
-                             CategoryName = roomCategory.CategoryName
+                             CategoryName = roomCategory.CategoryName,
+                             roomCategoryId = roomCategory.Id,
+                             Status = s.Status,
                          };
 
-            // Nếu có tham số tìm kiếm theo tên ca, thực hiện lọc theo tên ca
+
             if (!string.IsNullOrEmpty(shiftName))
             {
                 shifts = shifts.Where(s => s.ShiftName.Contains(shiftName));
             }
 
-            // Nếu có tham số tìm kiếm theo tên khu vực, thực hiện lọc theo tên khu vực
+
             if (!string.IsNullOrEmpty(categoryName))
             {
                 shifts = shifts.Where(s => s.CategoryName.Contains(categoryName));
             }
 
-            // Đếm tổng số bản ghi sau khi lọc
+
             var totalRecords = await shifts.CountAsync();
 
-            // Lấy dữ liệu phân trang sau khi lọc
             var shiftDetails = await shifts
-                .OrderByDescending(s => s.ShiftName) // Sắp xếp theo tên ca
-                .Skip((pageNumber - 1) * pageSize)   // Phân trang
-                .Take(pageSize)                      // Giới hạn theo pageSize
+                .OrderByDescending(s => s.ShiftName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
-            // Trả về dữ liệu với tổng số bản ghi, số trang, và dữ liệu ca
+
             return Ok(new
             {
                 TotalRecords = totalRecords,
@@ -74,14 +75,15 @@ namespace Project.Controllers
         }
 
 
+
         // GET: api/Shifts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Shift>> GetShift(string id)
         {
-          if (_context.Shifts == null)
-          {
-              return NotFound();
-          }
+            if (_context.Shifts == null)
+            {
+                return NotFound();
+            }
             var shift = await _context.Shifts.FindAsync(id);
 
             if (shift == null)
@@ -95,58 +97,23 @@ namespace Project.Controllers
         public async Task<IActionResult> GetShiftsByRoomId(string RoomId)
         {
             var shifts = await _repo.GetShiftsByRoomId(RoomId);
-            if(shifts == null)
+            if (shifts == null)
             {
                 return NotFound();
             }
             return Ok(shifts);
         }
-        // PUT: api/Shifts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShift(string id, ShiftDto shifdto)
+        public async Task<IActionResult> PutShift(string id, ShiftUpdateDto shiftDto)
         {
-            if (id != shifdto.Id)
+            var shift = await _context.Shifts.FindAsync(id);
+            if (shift == null)
             {
-                return BadRequest();
+                return NotFound(new { success = false, message = "Không tìm thấy ca làm việc." });
             }
-
-            var shift = new Shift
-            {
-                Id = shifdto.Id,
-                ShiftName = shifdto.ShiftName,
-                StartTime = TimeSpan.Parse(shifdto.StartTime),
-                EndTime = TimeSpan.Parse(shifdto.EndTime),
-                RoomCategoryId = shifdto.RoomCategoryId,
-                CreateAt = shifdto.CreateAt,
-                UpdateAt = shifdto.UpdateAt
-            };
-            _context.Entry(shift).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShiftExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Shifts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Shift>> PostShift(ShiftCreateDto shiftDto)
-        {
 
             TimeSpan startTime;
             TimeSpan endTime;
@@ -161,8 +128,79 @@ namespace Project.Controllers
                 return BadRequest(new { success = false, message = "EndTime không hợp lệ." });
             }
 
-            Console.WriteLine($"Start Time: {startTime}, End Time: {endTime}");
 
+            var duplicateShiftName = await _context.Shifts
+                .Where(s => s.RoomCategoryId == shift.RoomCategoryId && s.ShiftName == shiftDto.ShiftName && s.Id != id)
+                .FirstOrDefaultAsync();
+
+            if (duplicateShiftName != null)
+            {
+                return Conflict(new { success = false, message = "Tên ca đã tồn tại trong khu vực này." });
+            }
+
+
+            var overlappingShift = await _context.Shifts
+                .Where(s => s.RoomCategoryId == shift.RoomCategoryId && s.Id != id)
+                .Where(s => startTime < s.EndTime && endTime > s.StartTime)
+                .FirstOrDefaultAsync();
+
+            if (overlappingShift != null)
+            {
+                return Conflict(new { success = false, message = "Ca làm việc đã tồn tại trong khoảng thời gian này cho khu vực này." });
+            }
+
+
+            shift.ShiftName = shiftDto.ShiftName;
+            shift.StartTime = startTime;
+            shift.EndTime = endTime;
+            shift.UpdateAt = DateTime.Now;
+
+
+            shift.Status = !string.IsNullOrEmpty(shiftDto.Status) ? shiftDto.Status : "ENABLE";
+
+            _context.Entry(shift).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ShiftExists(id))
+                {
+                    return NotFound(new { success = false, message = "Không tìm thấy ca làm việc." });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(new { success = true, message = "Cập nhật ca làm thành công.", shift });
+        }
+
+
+
+
+
+
+
+
+        [HttpPost]
+        public async Task<ActionResult<Shift>> PostShift(ShiftCreateDto shiftDto)
+        {
+            TimeSpan startTime;
+            TimeSpan endTime;
+
+            if (!TimeSpan.TryParse(shiftDto.StartTime, out startTime))
+            {
+                return BadRequest(new { success = false, message = "StartTime không hợp lệ." });
+            }
+
+            if (!TimeSpan.TryParse(shiftDto.EndTime, out endTime))
+            {
+                return BadRequest(new { success = false, message = "EndTime không hợp lệ." });
+            }
 
             if (shiftDto.Category == null || !shiftDto.Category.Any())
             {
@@ -170,18 +208,26 @@ namespace Project.Controllers
             }
 
 
-            var overlappingShift = await _context.Shifts
+            var duplicateShiftName = await _context.Shifts
                 .Where(s => shiftDto.Category.Contains(s.RoomCategoryId))
-                .Where(s => (startTime < s.EndTime && endTime > s.StartTime))
+                .Where(s => s.ShiftName == shiftDto.ShiftName)
                 .FirstOrDefaultAsync();
 
+            if (duplicateShiftName != null)
+            {
+                return Conflict(new { success = false, message = "Tên ca đã tồn tại trong khu vực này." });
+            }
+
+
+            var overlappingShift = await _context.Shifts
+                .Where(s => shiftDto.Category.Contains(s.RoomCategoryId))
+                .Where(s => startTime < s.EndTime && endTime > s.StartTime)
+                .FirstOrDefaultAsync();
 
             if (overlappingShift != null)
             {
-                Console.WriteLine($"Conflicting Shift Found: {overlappingShift.ShiftName} - Start: {overlappingShift.StartTime}, End: {overlappingShift.EndTime}");
                 return Conflict(new { success = false, message = "Ca làm việc đã tồn tại trong khoảng thời gian này cho khu vực này." });
             }
-
 
             var shiftsToCreate = new List<Shift>();
 
@@ -194,6 +240,7 @@ namespace Project.Controllers
                     StartTime = startTime,
                     EndTime = endTime,
                     RoomCategoryId = roomCategoryId,
+                    Status = "ENABLE",
                     CreateAt = DateTime.Now,
                     UpdateAt = DateTime.Now
                 };
@@ -212,9 +259,14 @@ namespace Project.Controllers
                 return Conflict(new { success = false, message = "Có lỗi khi tạo ca." });
             }
 
-
             return CreatedAtAction("GetShift", new { id = shiftsToCreate.First().Id }, new { success = true, message = "Tạo ca làm thành công.", shifts = shiftsToCreate });
         }
+
+
+
+
+
+
         // DELETE: api/Shifts/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShift(string id)

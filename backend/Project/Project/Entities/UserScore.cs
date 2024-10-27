@@ -10,5 +10,7 @@ namespace Project.Entities
         public string? TagId { get; set; }
         public string? UserId { get; set; }
         public int? Score { get; set; }
+        public DateTime? CreateAt { get; set; }
+        public DateTime? UpdateAt { get; set; }
     }
 }
