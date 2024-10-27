@@ -7,7 +7,10 @@ import { useSettingsContext } from 'src/components/settings';
 import {
   Paper, Table, TableCell, TableContainer, TableRow, TableHead, TableBody,
   IconButton, Menu, MenuItem, Link, Pagination, TableFooter, Select, MenuItem as MuiMenuItem, TextField,
-  Autocomplete
+  Autocomplete, Dialog, DialogActions,
+  DialogContent, DialogTitle, Button, Checkbox,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -19,23 +22,24 @@ import RoomCategoryService from 'src/@core/service/RoomCategory';
 export default function ShiftListView() {
   const settings = useSettingsContext();
   const [shifts, setShifts] = useState<any>([]);
-  const [filteredShifts, setFilteredShifts] = useState<any>([]); 
+  const [filteredShifts, setFilteredShifts] = useState<any>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [pageSize] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState(false);
-  
-  const [selectedArea, setSelectedArea] = useState<any>(''); 
-  const [areas, setAreas] = useState<any[]>([]); 
+  const [selectedShift, setSelectedShift] = useState<any>(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedArea, setSelectedArea] = useState<any>('');
+  const [areas, setAreas] = useState<any[]>([]);
   const [searchShiftName, setSearchShiftName] = useState<string>('');
-  const [debounceTimeout, setDebounceTimeout] = useState<any>(null); 
+  const [debounceTimeout, setDebounceTimeout] = useState<any>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, group: any) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedGroup(group.id);
-  };
+
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -45,8 +49,8 @@ export default function ShiftListView() {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await RoomCategoryService.getAllRoomCategory(); 
-        setAreas(response.data); 
+        const response = await RoomCategoryService.getAllRoomCategory();
+        setAreas(response.data);
       } catch (error: any) {
         console.error('Lỗi khi tải danh sách khu vực:', error);
       }
@@ -54,10 +58,10 @@ export default function ShiftListView() {
     fetchAreas();
   }, []);
 
-  
+
   useEffect(() => {
     if (debounceTimeout) {
-      clearTimeout(debounceTimeout); 
+      clearTimeout(debounceTimeout);
     }
 
     const timeout = setTimeout(async () => {
@@ -71,15 +75,15 @@ export default function ShiftListView() {
       } finally {
         setLoading(false);
       }
-    }, 500); 
+    }, 500);
 
-    setDebounceTimeout(timeout); 
+    setDebounceTimeout(timeout);
 
-    return () => clearTimeout(timeout); 
+    return () => clearTimeout(timeout);
   }, [searchShiftName, selectedArea, pageNumber]);
 
   useEffect(() => {
-    const filtered = shifts.filter((shift: any) => 
+    const filtered = shifts.filter((shift: any) =>
       shift.shiftName.toLowerCase().includes(searchShiftName.toLowerCase())
     );
     setFilteredShifts(filtered);
@@ -89,33 +93,95 @@ export default function ShiftListView() {
     setPageNumber(newPage);
   };
 
+  const handleOpenEditDialog = (shift: any) => {
+    setSelectedShift(shift);
+    setOpenEditDialog(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+    setSelectedShift(null);
+  };
+
+  const handleSaveEdit = async () => {
+    const data = {
+      id: selectedShift.id,
+      shiftName: selectedShift.shiftName,
+      category: [selectedShift.roomCategoryId],
+      startTime: selectedShift.startTime,
+      endTime: selectedShift.endTime,
+      status: selectedShift.status,
+
+    }
+    console.log(data)
+    if (selectedShift) {
+      try {
+        // Gọi API chỉnh sửa ca làm việc
+        const response = await ShiftService.editShifts(selectedShift.id, {
+          shiftName: selectedShift.shiftName,
+          category: [selectedShift.roomCategoryId],
+          startTime: selectedShift.startTime,
+          endTime: selectedShift.endTime,
+          status: selectedShift.status,
+        });
+
+        setSnackbarMessage(response.data.message || 'Sửa ca làm việc thành công!');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+        const updatedShifts = await ShiftService.getAllShifts();
+        setShifts(updatedShifts.data.shifts);
+
+      } catch (error) {
+        const errorMessage = error.response && error.response.data ? error.response.data.message : 'Có lỗi xảy ra khi sửa ca làm việc.';
+        setSnackbarMessage(errorMessage);
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
+      } finally {
+        handleCloseEditDialog();
+      }
+    }
+  };
+
+
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <Typography variant="h4">Danh sách ca làm việc</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-  <Autocomplete
-    value={selectedArea}
-    onChange={(event, newValue) => {
-      setSelectedArea(newValue);
-    }}
-    options={areas
-      .filter((area) => area.categoryName.trim() !== '') 
-      .map((area) => area.categoryName.trim() || 'Khu vực không tên')} 
-    renderInput={(params) => (
-      <TextField {...params} label="Chọn khu vực" variant="outlined" />
-    )}
-    sx={{ minWidth: 200 }}
-  />
+        <Autocomplete
+          value={selectedArea}
+          onChange={(event, newValue) => {
+            setSelectedArea(newValue);
+          }}
+          options={areas
+            .filter((area) => area.categoryName.trim() !== '')
+            .map((area) => area.categoryName.trim() || 'Khu vực không tên')}
+          renderInput={(params) => (
+            <TextField {...params} label="Chọn khu vực" variant="outlined" />
+          )}
+          sx={{ minWidth: 200 }}
+        />
 
-  <TextField
-    variant="outlined"
-    placeholder="Tìm kiếm theo tên ca"
-    size="small"
-    value={searchShiftName}
-    onChange={(e) => setSearchShiftName(e.target.value)}
-    sx={{ minWidth: 300 }} 
-  />
-</Box>
+        <TextField
+          variant="outlined"
+          placeholder="Tìm kiếm theo tên ca"
+          size="small"
+          value={searchShiftName}
+          onChange={(e) => setSearchShiftName(e.target.value)}
+          sx={{ minWidth: 300 }}
+        />
+      </Box>
 
       {loading ? (
         <Typography>Đang tải dữ liệu...</Typography>
@@ -129,6 +195,7 @@ export default function ShiftListView() {
                 <TableCell align="center">Thời gian bắt đầu</TableCell>
                 <TableCell align="center">Thời gian kết thúc</TableCell>
                 <TableCell align="center">Khu vực</TableCell>
+                <TableCell align="center">Trạng thái</TableCell>
                 <TableCell align="center"></TableCell>
               </TableRow>
             </TableHead>
@@ -140,56 +207,92 @@ export default function ShiftListView() {
                   <TableCell align="center">{shift.startTime}</TableCell>
                   <TableCell align="center">{shift.endTime}</TableCell>
                   <TableCell align="center">{shift.categoryName}</TableCell>
+                  <TableCell align="center">{shift.status === 'ENABLE' ? '✔️' : '❌'}</TableCell>
                   <TableCell align="center">
-                    <IconButton onClick={(e) => handleMenuClick(e, shift)}>
-                      <MoreVertIcon />
+                    <IconButton onClick={() => handleOpenEditDialog(shift)}>
+                      <EditIcon />
                     </IconButton>
-                    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                      <MenuItem onClick={handleMenuClose} disabled={!selectedGroup}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <EditIcon fontSize="small" />
-                          <Typography sx={{ marginLeft: 1 }}>
-                            <Link href={`/dashboard/room-group/edit/${selectedGroup}`} sx={{ display: 'flex', color: 'black' }} underline="none">
-                              Chỉnh sửa
-                            </Link>
-                          </Typography>
-                        </Box>
-                      </MenuItem>
-                      <MenuItem onClick={handleMenuClose} disabled={!selectedGroup}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <VisibilityIcon fontSize="small" />
-                          <Typography sx={{ marginLeft: 1 }}>
-                            <Link href={`/dashboard/room-group/detail/${selectedGroup}`} sx={{ display: 'flex', color: 'black' }} underline="none">
-                              Xem chi tiết
-                            </Link>
-                          </Typography>
-                        </Box>
-                      </MenuItem>
-                    </Menu>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
             <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                      <Pagination
-                        count={totalPages}  
-                        page={pageNumber} 
-                        onChange={handlePageChange}  
-                        color="primary"
-                        variant="outlined"
-                      />
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination
+                      count={totalPages}
+                      page={pageNumber}
+                      onChange={handlePageChange}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       ) : (
         <Typography>Không có dữ liệu nào.</Typography>
       )}
+
+
+      <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="sm">
+        <DialogTitle>Chỉnh sửa ca làm việc</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Tên Ca"
+            value={selectedShift?.shiftName || ''}
+            onChange={(e) => setSelectedShift({ ...selectedShift, shiftName: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <Autocomplete
+            value={selectedShift?.categoryName || ''}
+            onChange={(event, newValue) => setSelectedShift({ ...selectedShift, categoryName: newValue })}
+            options={areas.map((area) => area.categoryName)}
+            renderInput={(params) => <TextField {...params} label="Khu vực" margin="dense" />}
+            fullWidth
+          />
+          <TextField
+            label="Thời gian bắt đầu"
+            type="time"
+            value={selectedShift?.startTime || ''}
+            onChange={(e) => setSelectedShift({ ...selectedShift, startTime: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Thời gian kết thúc"
+            type="time"
+            value={selectedShift?.endTime || ''}
+            onChange={(e) => setSelectedShift({ ...selectedShift, endTime: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+            <Typography>Trạng thái: </Typography>
+            <Checkbox
+              checked={selectedShift?.status === 'ENABLE'}
+              onChange={(e) =>
+                setSelectedShift({ ...selectedShift, status: e.target.checked ? 'ENABLE' : 'DISABLE' })
+              }
+              sx={{ ml: 1 }}
+            />
+            {selectedShift?.status === 'ENABLE' ? '✔️' : '❌'}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditDialog} color="error">
+            Hủy
+          </Button>
+          <Button onClick={handleSaveEdit} color="primary">
+            Lưu
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Container>
   );
 }

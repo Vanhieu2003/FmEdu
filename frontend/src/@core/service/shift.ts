@@ -21,6 +21,9 @@ export class ShiftService{
    return axios.post(`${API_ENDPOINT}/api/Shifts`, data); 
  };
  
+ editShifts = async (id:string,data: object) => {
+  return axios.put(`${API_ENDPOINT}/api/Shifts/${id}`, data); 
+};
  
 }
 export default new ShiftService();
