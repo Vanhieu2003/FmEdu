@@ -25,19 +25,18 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupWithRoomsViewDto>>> GetGroupRooms()
+        public async Task<ActionResult<GroupWithRoomsResponse>> GetGroupRooms(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var result = await _roomRepository.GetAllGroupWithRooms();
+                var result = await _roomRepository.GetAllGroupWithRooms(pageNumber, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
             }
         }
-
 
         // GET: api/GroupRooms/5
         [HttpGet("{id}")]

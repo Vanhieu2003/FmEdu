@@ -34,11 +34,12 @@ namespace Project.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
         {
-            var result = await _repo.GetAll();
+            var result = await _repo.GetAll(pageNumber, pageSize);
             return Ok(result);
         }
+
 
 
         // GET: api/ResponsibleGroups/5

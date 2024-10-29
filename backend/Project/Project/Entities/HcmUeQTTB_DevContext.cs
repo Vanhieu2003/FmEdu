@@ -117,6 +117,7 @@ namespace Project.Entities
             modelBuilder.Entity<CriteriaValueDto>().HasNoKey();
             modelBuilder.Entity<TagGroupDto>().HasNoKey();
             modelBuilder.Entity<ResponsibleTagDto>().HasNoKey();
+            modelBuilder.Entity<UserScoreDto>().HasNoKey();
 
             modelBuilder.Entity<Block>(entity =>
             {

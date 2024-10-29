@@ -42,6 +42,13 @@
         public int CompletionPercentage { get; set; }
     }
 
+    public class UserScoreDto
+    {
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public double AverageScore { get; set; }
+    }
+
 
 
 }

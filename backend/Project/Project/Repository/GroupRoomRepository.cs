@@ -1,13 +1,14 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
 using Project.Interface;
-using System.Data.Entity;
+using System.Drawing.Printing;
 
 namespace Project.Repository
 {
-    public class GroupRoomRepository:IGroupRoomRepository
+    public class GroupRoomRepository : IGroupRoomRepository
     {
 
         private readonly HcmUeQTTB_DevContext _context;
@@ -17,136 +18,108 @@ namespace Project.Repository
             _context = context;
         }
 
-        public async Task<List<GroupWithRoomsViewDto>> GetAllGroupWithRooms()
+        public async Task<GroupWithRoomsResponse> GetAllGroupWithRooms(int pageNumber = 1, int pageSize = 10)
         {
-            // Câu truy vấn SQL thuần túy
-            var sqlQuery = @"
-            SELECT 
-                gr.Id,
-                b.CampusName,
-                gr.GroupName,
-                gr.Description,
-                COUNT(r.Id) AS NumberOfRoom
-            FROM 
-                RoomByGroup gwr
-            JOIN 
-                Rooms r ON gwr.RoomId = r.Id
-            JOIN 
-                Blocks b ON r.BlockId = b.Id
-            JOIN 
-                GroupRoom gr ON gwr.GroupRoomId = gr.Id
-            GROUP BY 
-                b.CampusName, gr.GroupName, gr.Description,gr.Id;";
 
-            // Thực hiện truy vấn SQL
-            var groupWithRooms = new List<GroupWithRoomsViewDto>();
+            var totalRecords = await (from rg in _context.RoomByGroups
+                                      join grouproom in _context.GroupRooms on rg.GroupRoomId equals grouproom.Id
+                                      select grouproom.Id)
+                                     .Distinct()
+                                     .CountAsync();
 
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            var roomGroupDetails = await (from rg in _context.RoomByGroups
+                                          join room in _context.Rooms on rg.RoomId equals room.Id
+                                          join block in _context.Blocks on room.BlockId equals block.Id
+                                          join grouproom in _context.GroupRooms on rg.GroupRoomId equals grouproom.Id
+                                          group room by new
+                                          {
+                                              grouproom.Id,
+                                              block.CampusName,
+                                              grouproom.GroupName,
+                                              grouproom.Description
+                                          } into g
+                                          select new GroupWithRoomsViewDto
+                                          {
+                                              Id = g.Key.Id,
+                                              CampusName = g.Key.CampusName,
+                                              GroupName = g.Key.GroupName,
+                                              Description = g.Key.Description,
+                                              NumberOfRoom = g.Count()
+                                          })
+                                         .OrderByDescending(s => s.CampusName)
+                                         .Skip((pageNumber - 1) * pageSize)
+                                         .Take(pageSize)
+                                         .ToListAsync();
+
+            return new GroupWithRoomsResponse
             {
-                command.CommandText = sqlQuery;
-                _context.Database.OpenConnection();
-
-                using (var result = await command.ExecuteReaderAsync())
-                {
-                    while (await result.ReadAsync())
-                    {
-                        var groupWithRoom = new GroupWithRoomsViewDto
-                        {
-                            Id = result["Id"].ToString(),
-                            CampusName = result["CampusName"].ToString(),
-                            GroupName = result["GroupName"].ToString(),
-                            Description = result["Description"].ToString(),
-                            NumberOfRoom = (int)result["NumberOfRoom"]
-                        };
-                        groupWithRooms.Add(groupWithRoom);
-                    }
-                }
-            }
-
-            return groupWithRooms;
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                RoomGroups = roomGroupDetails
+            };
         }
 
         public async Task<RoomGroupViewDto> GetRoomGroupById(string id)
         {
-            // Câu truy vấn SQL để lấy thông tin nhóm và danh sách người dùng liên quan
-            var sqlQuery = @"
-        SELECT 
-     gr.GroupName,
-     gr.Id,
-	 fl.FloorName,
-	 bl.BlockName,
-	 bl.CampusName,
-	 bl.CampusId,
-	 rct.CategoryName,
-	 gr.[Description], 
-	r.Id AS RoomId,
-	r.RoomName
 
- FROM 
-     GroupRoom gr
- LEFT JOIN 
-     RoomByGroup rbg ON rbg.GroupRoomId = gr.Id
- LEFT JOIN 
-     [Rooms] r ON rbg.RoomId = r.Id
- LEFT JOIN 
-     [Blocks] bl ON r.BlockId = bl.Id
- LEFT JOIN 
-     [Floors] fl ON r.FloorId = fl.Id
- LEFT JOIN 
-     [RoomCategories] rct ON r.RoomCategoryId = rct.Id
- WHERE 
-     gr.Id = @Id";
+            var roomGroupData = await (from gr in _context.GroupRooms
+                                       join rbg in _context.RoomByGroups on gr.Id equals rbg.GroupRoomId into rbgGroup
+                                       from rbg in rbgGroup.DefaultIfEmpty()
+                                       join r in _context.Rooms on rbg.RoomId equals r.Id into roomGroup
+                                       from r in roomGroup.DefaultIfEmpty()
+                                       join bl in _context.Blocks on r.BlockId equals bl.Id into blockGroup
+                                       from bl in blockGroup.DefaultIfEmpty()
+                                       join fl in _context.Floors on r.FloorId equals fl.Id into floorGroup
+                                       from fl in floorGroup.DefaultIfEmpty()
+                                       join rct in _context.RoomCategories on r.RoomCategoryId equals rct.Id into categoryGroup
+                                       from rct in categoryGroup.DefaultIfEmpty()
+                                       where gr.Id == id
+                                       select new
+                                       {
+                                           GroupRoom = gr,
+                                           Room = r,
+                                           Block = bl,
+                                           Floor = fl,
+                                           Category = rct
+                                       }).ToListAsync();
 
-            RoomGroupViewDto roomGroup = null;
-            var rooms = new List<RoomViewDto>();
-
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            if (roomGroupData == null || !roomGroupData.Any())
             {
-                command.CommandText = sqlQuery;
-                command.Parameters.Add(new SqlParameter("@Id", id)); 
-                _context.Database.OpenConnection();
+                return null;
+            }
 
-                using (var result = await command.ExecuteReaderAsync())
+
+            var roomGroupViewDto = new RoomGroupViewDto
+            {
+                Id = roomGroupData.First().GroupRoom.Id,
+                GroupName = roomGroupData.First().GroupRoom.GroupName,
+                Description = roomGroupData.First().GroupRoom.Description,
+                Rooms = new List<RoomViewDto>()
+            };
+
+
+            foreach (var data in roomGroupData)
+            {
+                if (data.Room != null)
                 {
-                    while (await result.ReadAsync())
+                    var roomDto = new RoomViewDto
                     {
-                        if (roomGroup == null)
-                        {
-                            roomGroup = new RoomGroupViewDto
-                            {
-                                Id = result["id"].ToString(),
-                                GroupName = result["GroupName"].ToString(),
-                                Description = result["Description"].ToString(),
-                                Rooms = new List<RoomViewDto>()
-                            };
-                        }
-
-                        // Kiểm tra nếu có người dùng liên quan và thêm vào danh sách Users
-                        if (!result.IsDBNull(result.GetOrdinal("RoomId")))
-                        {
-                            var room = new RoomViewDto
-                            {
-                                Id = result["RoomId"].ToString(),
-                                CampusName = result["CampusName"].ToString(),
-                                CampusId = result["CampusId"].ToString(),
-                                BlockName = result["BlockName"].ToString(),
-                                FloorName = result["FloorName"].ToString(),
-                                RoomName = result["RoomName"].ToString(),
-                                CategoryName = result["CategoryName"].ToString(),
-                            };
-                            rooms.Add(room);
-                        }
-                    }
+                        Id = data.Room.Id,
+                        CampusName = data.Block?.CampusName,
+                        CampusId = data.Block?.CampusId,
+                        BlockName = data.Block?.BlockName,
+                        FloorName = data.Floor?.FloorName,
+                        RoomName = data.Room.RoomName,
+                        CategoryName = data.Category?.CategoryName
+                    };
+                    roomGroupViewDto.Rooms.Add(roomDto);
                 }
             }
 
-            if (roomGroup != null)
-            {
-                roomGroup.Rooms = rooms; 
-            }
-
-            return roomGroup;
+            return roomGroupViewDto;
         }
+
     }
 
 

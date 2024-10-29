@@ -109,6 +109,32 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetAverageScoreByTag",
+    "RelativePath": "api/Chart/average-score/{tagId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tagId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Project.Dto.UserScoreDto, Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetAverageValues",
     "RelativePath": "api/Chart/average-values",
     "HttpMethod": "GET",
@@ -1840,8 +1866,8 @@
         "IsRequired": true
       },
       {
-        "Name": "shifdto",
-        "Type": "Project.Dto.ShiftDto",
+        "Name": "shiftDto",
+        "Type": "Project.Dto.ShiftUpdateDto",
         "IsRequired": true
       }
     ],
@@ -2302,6 +2328,22 @@
         "Name": "request",
         "Type": "Project.Dto.AssignUserRequest",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.QRController",
+    "Method": "getInfoByQR",
+    "RelativePath": "GetInfo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomCode",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

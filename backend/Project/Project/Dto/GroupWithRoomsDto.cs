@@ -63,4 +63,25 @@
         public string? Description { get; set; }
         public List<RoomDto> Rooms { get; set; }
     }
+
+
+    public class GroupWithRoomsResponse
+    {
+        public int TotalRecords { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public IEnumerable<GroupWithRoomsViewDto> RoomGroups { get; set; }
+    }
+
+
+    public class ResponsiableGroupResponse
+    {
+        public int TotalRecords { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public IEnumerable<ResponsiableGroupViewDto> ResponsibleGroups { get; set; }
+    }
+
+
+
 }

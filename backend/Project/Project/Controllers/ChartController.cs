@@ -394,6 +394,58 @@ ORDER BY
 
             return Ok(result);
         }
+        [HttpGet("average-score/{tagId}")]
+        public async Task<ActionResult<IEnumerable<UserScoreDto>>> GetAverageScoreByTag(string tagId)
+        {
+            var scores = new List<UserScoreDto>();
+
+            var query = @"
+        SELECT 
+            u.Id AS UserId,
+            u.UserName,
+            AVG(CAST(us.score AS FLOAT)) AS AverageScore  
+        FROM 
+            [HcmUeQTTB_Dev].[dbo].[UserScore] us
+        JOIN 
+            [HcmUeQTTB_Dev].[dbo].[User] u ON us.userId = u.Id
+        WHERE 
+            us.tagId = @tagId
+        GROUP BY 
+            u.Id, u.UserName;";
+
+            using (var connection = _context.Database.GetDbConnection())
+            {
+                await connection.OpenAsync();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = query;
+                    command.Parameters.Add(new SqlParameter("@tagId", tagId));
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var score = new UserScoreDto
+                            {
+                                UserId = reader["UserId"].ToString(),
+                                UserName = reader["UserName"].ToString(),
+                                AverageScore = reader["AverageScore"] != DBNull.Value
+                                    ? Math.Ceiling(Convert.ToDouble(reader["AverageScore"])) // Làm tròn lên
+                                    : 0 // Gán 0 nếu là DBNull
+                            };
+                            scores.Add(score);
+                        }
+                    }
+                }
+            }
+
+            if (!scores.Any())
+            {
+                return NotFound(); // Trả về NotFound nếu không có kết quả
+            }
+
+            return Ok(scores); // Trả về kết quả
+        }
 
 
     }

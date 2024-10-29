@@ -24,121 +24,96 @@ namespace Project.Repository
 
         public async Task<ResponsiableGroupDto> GetAllResponsiableGroupById(string id)
         {
-            // Câu truy vấn SQL để lấy thông tin nhóm và danh sách người dùng liên quan
-            var sqlQuery = @"
-        SELECT 
-            rg.GroupName,
-            rg.Id,
-            rg.Description,
-            rg.Color,
-            u.Id AS UserId,
-            u.FirstName,
-            u.LastName,
-            u.UserName,
-            u.Email
-        FROM 
-            ResponsibleGroup rg
-        LEFT JOIN 
-            UserPerResGroup ubrg ON ubrg.ResponsiableGroupId = rg.Id
-        LEFT JOIN 
-            [User] u ON ubrg.UserId = u.Id
-        WHERE 
-            rg.Id = @Id";
 
-            ResponsiableGroupDto responsibleGroup = null;
-            var users = new List<UserDto>();
+            var responsibleGroupData = await (from rg in _context.ResponsibleGroups
+                                              join ubrg in _context.UserPerResGroups on rg.Id equals ubrg.ResponsiableGroupId into userGroup
+                                              from ubrg in userGroup.DefaultIfEmpty()
+                                              join u in _context.Users on ubrg.UserId equals u.Id into users
+                                              from u in users.DefaultIfEmpty()
+                                              where rg.Id == id
+                                              select new
+                                              {
+                                                  ResponsibleGroup = rg,
+                                                  User = u
+                                              }).ToListAsync();
 
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            if (responsibleGroupData == null || !responsibleGroupData.Any())
             {
-                command.CommandText = sqlQuery;
-                command.Parameters.Add(new SqlParameter("@Id", id)); // Thêm tham số Id
-                _context.Database.OpenConnection();
+                return null;
+            }
 
-                using (var result = await command.ExecuteReaderAsync())
+
+            var responsibleGroupDto = new ResponsiableGroupDto
+            {
+                Id = responsibleGroupData.First().ResponsibleGroup.Id,
+                GroupName = responsibleGroupData.First().ResponsibleGroup.GroupName,
+                Description = responsibleGroupData.First().ResponsibleGroup.Description ?? "Không có mô tả",
+                Color = responsibleGroupData.First().ResponsibleGroup.Color,
+                Users = new List<UserDto>()
+            };
+
+            // Duyệt qua dữ liệu và thêm người dùng vào danh sách nếu có
+            foreach (var data in responsibleGroupData)
+            {
+                if (data.User != null)
                 {
-                    while (await result.ReadAsync())
+                    var userDto = new UserDto
                     {
-                        if (responsibleGroup == null)
-                        {
-                            responsibleGroup = new ResponsiableGroupDto
-                            {
-                                Id = result["id"].ToString(),
-                                GroupName = result["GroupName"].ToString(),
-                                Description = result["Description"].ToString(),
-                                Color = result["Color"].ToString(),
-                                Users = new List<UserDto>()
-                            };
-                        }
-
-                        // Kiểm tra nếu có người dùng liên quan và thêm vào danh sách Users
-                        if (!result.IsDBNull(result.GetOrdinal("UserId")))
-                        {
-                            var user = new UserDto
-                            {
-                                Id = result["UserId"].ToString(),
-                                FirstName = result["FirstName"].ToString(),
-                                LastName = result["LastName"].ToString(),
-                                UserName = result["UserName"].ToString(),
-                                Email = result["Email"].ToString()
-                            };
-                            users.Add(user);
-                        }
-                    }
+                        Id = data.User.Id,
+                        FirstName = data.User.FirstName,
+                        LastName = data.User.LastName,
+                        UserName = data.User.UserName,
+                        Email = data.User.Email
+                    };
+                    responsibleGroupDto.Users.Add(userDto);
                 }
             }
 
-            if (responsibleGroup != null)
-            {
-                responsibleGroup.Users = users; // Gán danh sách người dùng vào nhóm chịu trách nhiệm
-            }
-
-            return responsibleGroup;
+            return responsibleGroupDto;
         }
 
-        public async Task<List<ResponsiableGroupViewDto>> GetAll()
+
+        public async Task<ResponsiableGroupResponse> GetAll(int pageNumber = 1, int pageSize = 10)
         {
 
-            // Câu truy vấn SQL thuần túy
-            var sqlQuery = @"
-SELECT 
-    rg.GroupName,
-    COALESCE(rg.Description, 'Không có mô tả') AS Description,
-    rg.Id,
-    COUNT(u.Id) AS NumberOfUser,
-    rg.Color
-FROM 
-    ResponsibleGroup rg
-LEFT JOIN 
-    UserPerResGroup ubrg ON rg.Id = ubrg.ResponsiableGroupId
-LEFT JOIN 
-    [User] u ON ubrg.UserId = u.Id
-GROUP BY 
-    rg.GroupName, rg.Description, rg.Color, rg.Id
-";
-            // Thực hiện truy vấn SQL
-            var responsiableGroups = new List<ResponsiableGroupViewDto>();
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = sqlQuery;
-                _context.Database.OpenConnection();
-                using (var result = await command.ExecuteReaderAsync())
-                {
-                    while (await result.ReadAsync())
-                    {
-                        var responsiableGroup = new ResponsiableGroupViewDto
-                        {
-                            Color = result["Color"].ToString(),
-                            Id = result["id"].ToString(),
-                            GroupName = result["GroupName"].ToString(),
-                            Description = result["Description"].ToString(),
-                            NumberOfUser = (int)result["NumberOfUser"]
-                        };
-                        responsiableGroups.Add(responsiableGroup);
-                    }
-                }
-            }
-            return responsiableGroups;
+            var totalRecords = await _context.ResponsibleGroups.CountAsync();
 
+
+            var responsiableGroups = await (from rg in _context.ResponsibleGroups
+                                            join ubrg in _context.UserPerResGroups on rg.Id equals ubrg.ResponsiableGroupId into userGroup
+                                            from ubrg in userGroup.DefaultIfEmpty()
+                                            join u in _context.Users on ubrg.UserId equals u.Id into userList
+                                            from u in userList.DefaultIfEmpty()
+                                            group u by new
+                                            {
+                                                rg.Id,
+                                                rg.GroupName,
+                                                rg.Description,
+                                                rg.Color
+                                            } into g
+                                            select new ResponsiableGroupViewDto
+                                            {
+                                                Id = g.Key.Id,
+                                                GroupName = g.Key.GroupName,
+                                                Description = g.Key.Description ?? "Không có mô tả",
+                                                Color = g.Key.Color,
+                                                NumberOfUser = g.Count(x => x != null)
+                                            })
+                                            .OrderBy(g => g.GroupName)
+                                            .Skip((pageNumber - 1) * pageSize)
+                                            .Take(pageSize)
+                                            .ToListAsync();
+
+
+            return new ResponsiableGroupResponse
+            {
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                ResponsibleGroups = responsiableGroups
+            };
         }
+
+
     }
 }
