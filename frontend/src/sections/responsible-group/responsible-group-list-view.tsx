@@ -10,7 +10,9 @@ import { useSettingsContext } from 'src/components/settings';
 import {
   Autocomplete, TextField, Paper, Table, TableCell, TableContainer, TableRow, TableHead,
   TableBody, Button, IconButton, Menu, MenuItem,
-  Link
+  Link,
+  TableFooter,
+  Pagination
 } from '@mui/material';
 import CampusService from 'src/@core/service/campus';
 import { useEffect, useState } from 'react';
@@ -29,6 +31,9 @@ export default function ResponsibleGroupListView() {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
 
 
@@ -44,30 +49,28 @@ export default function ResponsibleGroupListView() {
   };
 
   useEffect(() => {
-    const fetchCampus = async () => {
-      try {
-        const response: any = await CampusService.getAllCampus();
-        setCampus(response.data);
-      } catch (error: any) {
-        console.error('Error fetching campus data:', error);
-      }
-    };
+
 
     const fetchGroupRoom = async () => {
       try {
-        const response: any = await ResponsibleGroupRoomService.getAll();
-        setResponsibleGroups(response.data);
+        const response: any = await ResponsibleGroupRoomService.getAll(pageNumber, pageSize);
+        setResponsibleGroups(response.data.responsibleGroups);
+        setTotalPages(Math.ceil(response.data.totalRecords / pageSize));
       } catch (error: any) {
         console.error('Error fetching Room Group data:', error);
       }
     };
 
-    // Gọi cả hai hàm song song
-    fetchCampus();
+  
+   
     fetchGroupRoom();
 
-  }, []);
+  }, [pageNumber]);
 
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPageNumber(newPage);
+  };
 
 
   return (
@@ -76,19 +79,7 @@ export default function ResponsibleGroupListView() {
         <Typography variant="h4">Danh sách nhóm người chịu trách nhiệm</Typography>
       </Box>
 
-      {/* Autocomplete để chọn campus */}
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 3 }}>
-        <Autocomplete
-          disablePortal
-          options={campus}
-          getOptionLabel={(option: any) => option.campusName || ''}
-          sx={{ width: 300, marginBottom: 3 }}
-          // onChange={null}
-          renderInput={(params: any) => <TextField {...params} label="Chọn Campus" />}
-        />
-      </Box>
-
-      {/* Hiển thị báo cáo khối */}
+     
       {responsibleGroups.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
@@ -179,6 +170,21 @@ export default function ResponsibleGroupListView() {
                 </TableRow>
               ))}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination
+                      count={totalPages}
+                      page={pageNumber}
+                      onChange={handlePageChange}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       ) : (

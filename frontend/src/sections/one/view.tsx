@@ -33,6 +33,7 @@ import SnackbarComponent from '../components/snackBar';
 import ScheduleService from 'src/@core/service/schedule';
 import responsibleUserView from '../components/table/responsibleUserView';
 import ResponsibleUserView from '../components/table/responsibleUserView';
+import QRCodeScanner from '../components/QRScanner';
 
 type Floor = {
   id: string,
@@ -342,8 +343,7 @@ export default function OneView() {
   return (
     <Container maxWidth={false ? false : 'xl'}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant="h4"> Page One </Typography>
-
+        <QRCodeScanner />
         <Button variant="contained" href="/dashboard/group" sx={{ height: '40px' }}>
           Tạo form đánh giá
         </Button>

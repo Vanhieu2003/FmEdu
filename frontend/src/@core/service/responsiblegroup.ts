@@ -11,8 +11,11 @@ export class ResponsibleGroupRoomService {
   getAllResponsibleGroups = async ()=>{
     return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups`);
   }
-  getAll = async ()=>{
-    return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/all`);
+  getAll = async (pageNumber: number = 1, pageSize: number = 10)=>{
+    return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/all`,{ params: { 
+      pageNumber, 
+      pageSize}}
+    );
   }
   getResponsibleGroupbyId = async (id:string)=>{
     return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/${id}`);

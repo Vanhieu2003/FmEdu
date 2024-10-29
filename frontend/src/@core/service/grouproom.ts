@@ -14,8 +14,10 @@ export class GroupRoomService {
     return axios.put(`${API_ENDPOINT}/api/GroupRooms/${id}`,data);
   }
 
-  getAllGroupRooms = async ()=>{
-    return axios.get(`${API_ENDPOINT}/api/GroupRooms`);
+  getAllGroupRooms = async (pageNumber: number = 1, pageSize: number = 10)=>{
+    return axios.get(`${API_ENDPOINT}/api/GroupRooms`,{ params: { 
+      pageNumber, 
+      pageSize}});
   }
 }
 

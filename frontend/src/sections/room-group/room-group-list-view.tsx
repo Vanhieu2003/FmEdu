@@ -8,7 +8,9 @@ import Typography from '@mui/material/Typography';
 import { useSettingsContext } from 'src/components/settings';
 import { Autocomplete, TextField, Paper, Table, TableCell, TableContainer, TableRow, TableHead, TableBody,
   IconButton, Menu, MenuItem,
-  Link
+  Link,
+  TableFooter,
+  Pagination
  } from '@mui/material';
 import  CampusService  from 'src/@core/service/campus';
 import { useEffect, useState } from 'react';
@@ -22,10 +24,17 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 export default function RoomGroupListView() {
   const settings = useSettingsContext();
   const [campus, setCampus] = useState<any[]>([]);
-  const [groupRooms, setGroupRoooms] = useState<any[]>([]);
+  const [groupRooms, setGroupRooms] = useState<any[]>([]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
+
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [pageSize] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+
+
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, group: any) => {
     setAnchorEl(event.currentTarget);
@@ -52,8 +61,9 @@ export default function RoomGroupListView() {
   
     const fetchGroupRoom = async () => {
       try {
-        const response: any = await GroupRoomService.getAllGroupRooms();
-        setGroupRoooms(response.data);
+        const response: any = await GroupRoomService.getAllGroupRooms(pageNumber, pageSize);
+        setGroupRooms(response.data.roomGroups);
+        setTotalPages(Math.ceil(response.data.totalRecords / pageSize));
       } catch (error: any) {
         console.error('Error fetching Room Group data:', error);
       }
@@ -63,9 +73,11 @@ export default function RoomGroupListView() {
     fetchCampus();
     fetchGroupRoom();
   
-  }, []);
+  }, [pageNumber]);
   
-
+  const handlePageChange = (event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPageNumber(newPage);
+  };
 
 
 
@@ -171,6 +183,21 @@ export default function RoomGroupListView() {
                 </TableRow>
               ))}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination
+                      count={totalPages}
+                      page={pageNumber}
+                      onChange={handlePageChange}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       ) : (
