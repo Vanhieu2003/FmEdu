@@ -14,8 +14,10 @@ namespace Project.Repository
         }
         public async Task<List<Shift>> GetShiftsByRoomId(string id)
         {
+            var room = await _context.Rooms.Where(r=>r.Id == id).FirstOrDefaultAsync();
+       
             var shifts = await _context.Shifts
-                .Where(x => x.RoomCategoryId == id && x.Status == "ENABLE")
+                .Where(x => x.RoomCategoryId == room.RoomCategoryId && x.Status == "ENABLE")
                 .OrderBy(x => x.ShiftName)
                 .ToListAsync();
 

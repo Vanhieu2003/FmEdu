@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\shiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\shiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\shiftscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\shiftscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\responsiblegrouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\responsiblegrouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -59,16 +67,8 @@
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\shiftdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\shiftscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\shiftscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\entities\\shift.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\entities\\shift.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\shiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\shiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\entities\\hcmueqttb_devcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -110,33 +110,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "GroupRoomRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\GroupRoomRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\GroupRoomRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\GroupRoomRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\GroupRoomRepository.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAAAIAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T06:51:23.086Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "GroupRoomsController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\GroupRoomsController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\GroupRoomsController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\GroupRoomsController.cs",
-              "RelativeToolTip": "Project\\Controllers\\GroupRoomsController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACYAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T06:49:29.258Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "ResponsibleGroupsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ResponsibleGroupsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\ResponsibleGroupsController.cs",
@@ -149,7 +123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "GroupWithRoomsDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\GroupWithRoomsDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\GroupWithRoomsDto.cs",
@@ -162,7 +136,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "IResponsibleGroupRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IResponsibleGroupRepository.cs",
               "RelativeDocumentMoniker": "Project\\Interface\\IResponsibleGroupRepository.cs",
@@ -170,25 +144,76 @@
               "RelativeToolTip": "Project\\Interface\\IResponsibleGroupRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T06:47:20.658Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T06:47:20.658Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "ResponsibleGroupRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ResponsibleGroupRepository.cs",
               "RelativeDocumentMoniker": "Project\\Repository\\ResponsibleGroupRepository.cs",
               "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ResponsibleGroupRepository.cs",
               "RelativeToolTip": "Project\\Repository\\ResponsibleGroupRepository.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAAAuwAkAAAAFAAAA",
+              "ViewState": "AQIAADwAAAAAAAAAAAAAwEcAAAAnAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-29T06:46:22.633Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 1,
+              "Title": "ShiftsController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ShiftsController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\ShiftsController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ShiftsController.cs",
+              "RelativeToolTip": "Project\\Controllers\\ShiftsController.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAgwBUAAABOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T07:58:53.593Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ShiftRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ShiftRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Repository\\ShiftRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ShiftRepository.cs",
+              "RelativeToolTip": "Project\\Repository\\ShiftRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-27T07:59:32.421Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "GroupRoomsController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\GroupRoomsController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\GroupRoomsController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\GroupRoomsController.cs",
+              "RelativeToolTip": "Project\\Controllers\\GroupRoomsController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACYAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-29T06:49:29.258Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GroupRoomRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\GroupRoomRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Repository\\GroupRoomRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\GroupRoomRepository.cs",
+              "RelativeToolTip": "Project\\Repository\\GroupRoomRepository.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAAAIAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-29T06:51:23.086Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "QRController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\QRController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\QRController.cs",
@@ -201,7 +226,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "IGroupRoomRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IGroupRoomRepository.cs",
               "RelativeDocumentMoniker": "Project\\Interface\\IGroupRoomRepository.cs",
@@ -209,12 +234,11 @@
               "RelativeToolTip": "Project\\Interface\\IGroupRoomRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T04:35:00.98Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T04:35:00.98Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "QRScannerRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\QRScannerRepository.cs",
               "RelativeDocumentMoniker": "Project\\Repository\\QRScannerRepository.cs",
@@ -227,7 +251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Program.cs",
               "RelativeDocumentMoniker": "Project\\Program.cs",
@@ -235,12 +259,11 @@
               "RelativeToolTip": "Project\\Program.cs",
               "ViewState": "AQIAACoAAAAAAAAAAAAAAC4AAABHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T05:00:40.899Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T05:00:40.899Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "QRDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\QRDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\QRDto.cs",
@@ -253,7 +276,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "IQRScannerRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IQRScannerRepository.cs",
               "RelativeDocumentMoniker": "Project\\Interface\\IQRScannerRepository.cs",
@@ -261,12 +284,11 @@
               "RelativeToolTip": "Project\\Interface\\IQRScannerRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAuwAYAAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-29T04:34:20.696Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T04:34:20.696Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "ReportChartDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\ReportChartDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\ReportChartDto.cs",
@@ -300,8 +322,7 @@
               "RelativeToolTip": "Project\\Entities\\UserScore.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAvAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-27T08:12:03.389Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-27T08:12:03.389Z"
             },
             {
               "$type": "Document",
@@ -318,7 +339,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "Shift.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\Shift.cs",
               "RelativeDocumentMoniker": "Project\\Entities\\Shift.cs",
@@ -326,25 +347,11 @@
               "RelativeToolTip": "Project\\Entities\\Shift.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-27T08:00:01.421Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-27T08:00:01.421Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "ShiftRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ShiftRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\ShiftRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ShiftRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\ShiftRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABkAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-27T07:59:32.421Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "ShiftDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\ShiftDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\ShiftDto.cs",
@@ -353,19 +360,6 @@
               "ViewState": "AQIAAAoAAAAAAAAAAAA/wB8AAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-27T07:59:16.671Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "ShiftsController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ShiftsController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\ShiftsController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ShiftsController.cs",
-              "RelativeToolTip": "Project\\Controllers\\ShiftsController.cs",
-              "ViewState": "AQIAAFoAAAAAAAAAAAAAwGQAAAANAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-27T07:58:53.593Z",
               "EditorCaption": ""
             },
             {
