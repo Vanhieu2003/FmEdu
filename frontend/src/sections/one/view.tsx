@@ -155,11 +155,11 @@ export default function OneView() {
       setError(null);
       try {
         const response = await CampusService.getAllCampus();
-        console.log('Dữ liệu Campus:', response.data);
+
         setCampus(response.data);
       } catch (error) {
         setError(error.message);
-        console.error('Chi tiết lỗi:', error);
+
       } finally {
         setIsLoading(false);
       }
@@ -170,29 +170,32 @@ export default function OneView() {
 
 
   const handleCampusSelect = async (CampusId: string) => {
-    console.log(CampusId)
+    setSelectedCampus(CampusId);
     try {
       const response = await BlockService.getBlockByCampusId(CampusId);
       setBlocks(response.data);
       setFloors([]);
       setRooms([]);
+      setShifts([]);
+      setSelectedShift(null);
     } catch (error) {
       console.error('Lỗi khi lấy danh sách tầng:', error);
     }
   };
   const handleBlockSelect = async (blockId: string) => {
-    var blockId = blockId;
-
+    setSelectedBlocks(blockId);
     try {
       const response = await FloorService.getFloorByBlockId(blockId);
       if (response.data.length > 0) {
         setFloors(response.data);
-        console.log(response.data);
+        setSelectedFloor(null)
         setRooms([]);
+        setSelectedRoom(null)
+        setShifts([]);
+        setSelectedShift(null);
       }
       else {
         setFloors([]);
-        setRooms([]);
       }
     } catch (error) {
       console.error('Lỗi khi lấy danh sách tầng:', error);
@@ -200,28 +203,28 @@ export default function OneView() {
   };
 
   const handleFloorSelect = async (floorId: string) => {
-    var floorId = floorId;
-    console.log(floorId);
+    setSelectedFloor(floorId);
     try {
       const response = await RoomService.getRoomsByFloorIdIfExistForm(floorId);
       if (response.data.length > 0) {
         setRooms(response.data);
+        setSelectedRoom(null);
+        setShifts([]);
+        setSelectedShift(null);
       }
-      else {
-        setRooms([]);
-      }
+
     } catch (error) {
       console.error('Lỗi khi lấy danh sách tầng:', error);
     }
   };
 
   const handleRoomSelect = async (roomId: string) => {
-    const selectedRoom = rooms.find(room => room.id === roomId);
-    console.log(roomId);
-    if (selectedRoom && selectedRoom.roomCategoryId) {
+    setSelectedRoom(roomId);
+    if (roomId) {
       try {
-        const response = await ShiftService.getShiftsByRoomCategoricalId(selectedRoom.roomCategoryId);
+        const response = await ShiftService.getShiftsByRoomId(roomId);
         setShifts(response.data);
+        setSelectedShift(null);
         setCriteriaEvaluations([]);
       } catch (error) {
         console.error('Lỗi khi lấy danh sách ca:', error);
@@ -240,14 +243,10 @@ export default function OneView() {
     }
   };
 
-  useEffect(() => {
-    setSelectedShift(null);
-    setCriteria([]);
-  }, [selectedRoom]);
+
   const handleShiftSelect = async (ShiftId: string) => {
-    if (ShiftId === "") {
-      setSelectedShift(null);
-      setCriteria([]);
+    if (ShiftId === null || ShiftId === '') {
+      setCriteria([])
     }
     else {
       setSelectedShift(ShiftId);
@@ -284,7 +283,7 @@ export default function OneView() {
       }),
       "userPerTags": data
     }
-    console.log(reportData);
+
     if (criteriaEvaluations.length < criteria.length) {
       setSnackbarMessage("Vui lòng đánh giá đầy đủ các tiêu chí");
       setSnackbarStatus('error');
@@ -305,7 +304,7 @@ export default function OneView() {
             }
           }
           catch (e) {
-            console.log(e);
+            (e);
           }
         }
       }
@@ -339,11 +338,22 @@ export default function OneView() {
       setIsSending(false); // Enable lại nút Send nếu có lỗi
     }
   }, [snackbarStatus]);
-  //UI of the website
+
+
+  const handleQRScan = useCallback(async (data: any) => {
+    await handleCampusSelect(data.campusId);
+    await handleBlockSelect(data.blockId);
+    await handleFloorSelect(data.floorId);
+    await handleRoomSelect(data.roomId);
+    if (data.shiftId) {
+      await handleShiftSelect(data.shiftId);
+    }
+  }, [])
+  useEffect(() => { handleShiftSelect(selectedShift) }, [selectedShift]);
   return (
     <Container maxWidth={false ? false : 'xl'}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <QRCodeScanner />
+        <QRCodeScanner onchange={handleQRScan} />
         <Button variant="contained" href="/dashboard/group" sx={{ height: '40px' }}>
           Tạo form đánh giá
         </Button>
@@ -378,7 +388,6 @@ export default function OneView() {
               value={campus.find((c: any) => c.id === selectedCampus) || null}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setSelectedCampus(newValue ? newValue.id : null);
                   handleCampusSelect(newValue ? newValue.id : '');
                 }
                 else {
@@ -389,6 +398,8 @@ export default function OneView() {
                   setSelectedFloor(null);
                   setRooms([]);
                   setSelectedRoom(null);
+                  setShifts([]);
+                  setSelectedShift(null);
                 }
               }}
               renderInput={(params) => (
@@ -409,13 +420,16 @@ export default function OneView() {
               value={blocks.find((b: any) => b.id === selectedBlocks) || null}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setSelectedBlocks(newValue ? newValue.id : null);
                   handleBlockSelect(newValue ? newValue.id : '');
                 }
                 else {
                   setSelectedBlocks(null);
                   setFloors([]);
+                  setSelectedFloor(null);
                   setRooms([]);
+                  setSelectedRoom(null);
+                  setShifts([]);
+                  setSelectedShift(null);
                 }
               }}
               renderInput={(params) => (
@@ -436,12 +450,14 @@ export default function OneView() {
               value={floors.find(floor => floor.id === selectedFloor) || null}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setSelectedFloor(newValue ? newValue.id : null);
                   handleFloorSelect(newValue ? newValue.id : '');
                 }
                 else {
                   setSelectedFloor(null);
                   setRooms([]);
+                  setSelectedRoom(null);
+                  setShifts([]);
+                  setSelectedShift(null);
                 }
               }}
               renderInput={(params) => (
@@ -462,11 +478,12 @@ export default function OneView() {
               value={rooms.find(room => room.id === selectedRoom) || null}
               onChange={(event, newValue) => {
                 if (newValue) {
-                  setSelectedRoom(newValue ? newValue.id : null);
                   handleRoomSelect(newValue ? newValue.id : '');
                 }
                 else {
                   setSelectedRoom(null);
+                  setShifts([]);
+                  setSelectedShift(null)
                 }
               }}
               renderInput={(params) => (
@@ -491,8 +508,12 @@ export default function OneView() {
               getOptionLabel={(option: any) => `${option.shiftName} (${option.startTime.substring(0, 5)} - ${option.endTime.substring(0, 5)})`}
               value={shifts.find(shift => shift.id === selectedShift) || null}
               onChange={(event, newValue) => {
-                setSelectedShift(newValue ? newValue.id : null);
-                handleShiftSelect(newValue ? newValue.id : '');
+                if(newValue){
+                  handleShiftSelect(newValue ? newValue.id : '');
+                }
+                else{
+                  setSelectedShift(null);
+                }
               }}
               renderInput={(params) => (
                 <TextField

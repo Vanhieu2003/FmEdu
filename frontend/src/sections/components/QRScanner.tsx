@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { 
-    Button, 
-    Modal, 
-    Box, 
-    IconButton, 
+import {
+    Button,
+    Modal,
+    Box,
+    IconButton,
     Typography,
     styled
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import QRScannerService from 'src/@core/service/qr';
 
 const StyledModal = styled(Modal)({
     display: 'flex',
@@ -35,19 +36,21 @@ const CloseButton = styled(IconButton)({
     top: 8
 });
 
-const QRCodeScanner: React.FC = () => {
+interface QRCodeScannerProps {
+    onchange : (data:any)=>void;
+}
+
+const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onchange }) => {
     const qrReaderRef = useRef<HTMLDivElement | null>(null);
     const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
     const [result, setResult] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const searchParams = useSearchParams();
-    const router = useRouter();
-    const key = searchParams.get('key');
 
 
     const requestCameraPermission = async () => {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        
+        if (navigator.mediaDevices.getUserMedia) {
             try {
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 console.log("Camera permission granted.");
@@ -63,11 +66,26 @@ const QRCodeScanner: React.FC = () => {
             setIsModalOpen(false);
         }
     };
-    useEffect(() => {
-        if (key) {
-            //Gọi API để lấy ra thông tin form
+
+    const fetchDataByQRCode = async (roomCode: string) => {
+        try {
+            const response = await QRScannerService.getInfoByQR(roomCode);
+            onchange(response.data);
+            setResult(null);
+            setIsModalOpen(false);
         }
-    }, [searchParams]);
+        catch (e) {
+            console.log(e);
+        }
+
+    }
+    useEffect(() => {
+        if (result) {
+            fetchDataByQRCode(result);
+        }
+    }, [result])
+
+
 
     const startScanner = () => {
         if (qrReaderRef.current) {
@@ -78,15 +96,10 @@ const QRCodeScanner: React.FC = () => {
                 { facingMode: 'environment' },
                 {
                     fps: 10,
-                    qrbox:300,
+                    qrbox: 500,
                 },
                 (decodedText, decodedResult) => {
                     setResult(decodedText);
-                    if (isValidUrl(decodedText)) {
-                        router.replace(decodedText);
-                    } else {
-                        console.warn('Nội dung không phải là URL hợp lệ:', decodedText);
-                    }
                 },
                 (errorMessage) => {
                     console.warn('Lỗi quét: ', errorMessage);
@@ -116,7 +129,6 @@ const QRCodeScanner: React.FC = () => {
     };
 
     const handleCloseModal = () => {
-        
         setIsModalOpen(false);
     };
 
@@ -130,20 +142,11 @@ const QRCodeScanner: React.FC = () => {
         }
     }, [isModalOpen]);
 
-    const isValidUrl = (text: string): boolean => {
-        try {
-            new URL(text);
-            return true;
-        } catch {
-            return false;
-        }
-    };
-
     return (
         <div>
-            <Button 
-                onClick={handleStartButtonClick} 
-                disabled={isScanning} 
+            <Button
+                onClick={handleStartButtonClick}
+                disabled={isScanning}
                 variant='contained'
             >
                 Quét Mã QR
@@ -164,12 +167,12 @@ const QRCodeScanner: React.FC = () => {
                     </Typography>
 
                     <Box sx={{ mt: 2 }}>
-                        <div 
-                            id="qr-reader" 
-                            ref={qrReaderRef} 
-                            style={{ 
-                                width: '300px', 
-                           
+                        <div
+                            id="qr-reader"
+                            ref={qrReaderRef}
+                            style={{
+                                width: '500px',
+
                                 margin: '0 auto'
                             }}
                         />
