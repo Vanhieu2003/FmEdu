@@ -77,9 +77,14 @@ namespace Project.Repository
                         .ToList();
                     break;
                 case "Tầng":
-                    room =  _context.Floors
-                        .Select(f => new RoomItemDto { Id = f.Id, Name = f.FloorName })
-                        .ToList();
+                    room = (from f in _context.Floors
+                            join fb in _context.FloorOfBlocks on f.Id equals fb.FloorId
+                            join b in _context.Blocks on fb.BlockId equals b.Id
+                            select new RoomItemDto
+                            {
+                                Id = f.Id,
+                                Name = $"{b.BlockCode} - {f.FloorName}",
+                            }).ToList();
                     break;
                 case "Phòng":
                     room = _context.Rooms

@@ -111,7 +111,7 @@ namespace Project.Repository
                         {
                             TagName = tagGroup.Key.TagName,
                             LastName = tagGroup.Key.LastName,
-                            FristName = tagGroup.Key.FirstName,
+                            FirstName = tagGroup.Key.FirstName,
                             TotalReport = tagGroup.Count(), // Đếm số lượng báo cáo từ UserScores cho mỗi TagName
                             Progress = (int)Math.Ceiling(tagGroup.Average(x => x.us.Score ?? 0)), // Làm tròn tiến độ trung bình từ UserScores
                             Status = tagGroup.Average(x => x.us.Score ?? 0) >= 80 ? "Hoàn thành tốt" : "Cần cải thiện" // Xác định trạng thái
@@ -120,6 +120,101 @@ namespace Project.Repository
             var result = await query.ToListAsync();
 
             return result;
+        }
+
+        public async Task<List<RoomGroupReportDto>> GetRoomGroupReportByCampus(string? campusId)
+        {
+            var today = DateTime.Today;
+
+            var query = from roomgroup in _context.RoomByGroups
+                        join rooms in _context.Rooms on roomgroup.RoomId equals rooms.Id
+                        join grouprooms in _context.GroupRooms on roomgroup.GroupRoomId equals grouprooms.Id
+                        join cleaningform in _context.CleaningForms on rooms.Id equals cleaningform.RoomId
+                        join cleaningreport in _context.CleaningReports on cleaningform.Id equals cleaningreport.FormId
+                        join block in _context.Blocks on rooms.BlockId equals block.Id
+                        where (campusId == null || block.CampusId == campusId)
+                              && cleaningreport.CreateAt.HasValue
+                              && cleaningreport.CreateAt.Value.Date == today
+                        group new { rooms, cleaningreport } by new { grouprooms.GroupName } into Group
+                        select new
+                        {
+                            GroupName = Group.Key.GroupName,
+                            TotalRoom = Group.Select(g => g.rooms.Id).Distinct().Count(),
+                            TotalEvaluatedRoom = Group.Count(g => g.cleaningreport != null),
+                            AverageScore = Group.Average(g => g.cleaningreport.Value ?? 0)
+                        };
+
+            var result = await query.ToListAsync();
+
+            // Xử lý thêm sau khi truy vấn
+            var roomGroupReports = result.Select(x => new RoomGroupReportDto
+            {
+                GroupName = x.GroupName,
+                TotalRoom = x.TotalRoom,
+                TotalEvaluatedRoom = x.TotalEvaluatedRoom,
+                Progress = (int)Math.Ceiling(x.AverageScore),
+                Status = x.AverageScore > 80 ? "Hoàn thành tốt" : x.AverageScore < 30 ? "Chưa hoàn thành" : "Cần cải thiện"
+            }).ToList();
+
+            return roomGroupReports;
+        }
+
+
+        public async Task<List<CampusDetailReportDto>> GetCampusDetailReportById(string? campusId)
+        {
+            var today = DateTime.Today;
+
+            var query = from rooms in _context.Rooms
+                        join cleaningform in _context.CleaningForms on rooms.Id equals cleaningform.RoomId
+                        join cleaningreport in _context.CleaningReports on cleaningform.Id equals cleaningreport.FormId
+                        join block in _context.Blocks on rooms.BlockId equals block.Id
+                        where (campusId == null || block.CampusId == campusId)
+                              && cleaningreport.CreateAt.HasValue
+                              && cleaningreport.CreateAt.Value.Date == today
+                        group cleaningreport by rooms.Id into roomGroup
+                        select new
+                        {
+                            RoomId = roomGroup.Key,
+                            AverageScore = roomGroup.Average(r => r.Value ?? 0)
+                        };
+
+            var result = await query.ToListAsync();
+
+            // Tính toán tổng số lượng phòng và các mức độ hoàn thành
+            int totalRooms = result.Count;
+            int wellCompletedRooms = result.Count(r => r.AverageScore > 80);
+            int notMetRooms = result.Count(r => r.AverageScore < 30);
+            int completedRooms = totalRooms - wellCompletedRooms - notMetRooms;
+
+            // Tính tỷ lệ phần trăm cho từng mức độ
+            double wellCompletedPercentage = totalRooms > 0 ? (double)wellCompletedRooms / totalRooms * 100 : 0;
+            double notMetPercentage = totalRooms > 0 ? (double)notMetRooms / totalRooms * 100 : 0;
+            double completedPercentage = totalRooms > 0 ? (double)completedRooms / totalRooms * 100 : 0;
+
+            // Tạo danh sách kết quả
+            var campusDetailReports = new List<CampusDetailReportDto>
+    {
+        new CampusDetailReportDto
+        {
+            TotalReport = wellCompletedRooms,
+            Proportion = (int)Math.Round(wellCompletedPercentage),
+            Status = "Hoàn thành tốt"
+        },
+        new CampusDetailReportDto
+        {
+            TotalReport = notMetRooms,
+            Proportion = (int)Math.Round(notMetPercentage),
+            Status = "Chưa hoàn thành"
+        },
+        new CampusDetailReportDto
+        {
+            TotalReport = completedRooms,
+            Proportion = (int)Math.Round(completedPercentage),
+            Status = "Hoàn thành"
+        }
+    };
+
+            return campusDetailReports;
         }
     }
 }

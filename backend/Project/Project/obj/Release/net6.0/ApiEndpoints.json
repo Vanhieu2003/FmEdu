@@ -151,6 +151,22 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCampusDetailReportById",
+    "RelativePath": "api/Chart/campus-detail-report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetCampusReportComparison",
     "RelativePath": "api/Chart/comparison",
     "HttpMethod": "GET",
@@ -244,6 +260,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetRoomGroupReportByCampus",
+    "RelativePath": "api/Chart/GetRoomGroupReportByCampus",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -1801,39 +1833,33 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "shiftId",
+        "Name": "CampusId",
         "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "roomId",
+        "Name": "BlockId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FloorId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "RoomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShiftId",
         "Type": "System.String",
         "IsRequired": false
       },
       {
         "Name": "criteriaIds",
         "Type": "System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "GetUserByShiftAndRoom",
-    "RelativePath": "api/Schedules/GetUserByShiftAndRoom",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "shiftId",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "roomId",
-        "Type": "System.String",
         "IsRequired": false
       }
     ],

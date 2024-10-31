@@ -508,6 +508,42 @@ ORDER BY
             }
         }
 
+        [HttpGet("GetRoomGroupReportByCampus")]
+        public async Task<IActionResult> GetRoomGroupReportByCampus(string? campusId)
+        {
+            try
+            {
+                var reports = await _repo.GetRoomGroupReportByCampus(campusId);
+
+                if (reports == null || !reports.Any())
+                {
+                    return NotFound("No room group reports found for the specified campus.");
+                }
+
+                return Ok(reports);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging framework like Serilog, NLog, etc.)
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("campus-detail-report")]
+        public async Task<IActionResult> GetCampusDetailReportById([FromQuery] string? campusId)
+        {
+            try
+            {
+                var result = await _repo.GetCampusDetailReportById(campusId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi (nếu cần thiết) và trả về mã lỗi 500
+                return StatusCode(500, $"Đã xảy ra lỗi khi lấy báo cáo chi tiết: {ex.Message}");
+            }
+        }
+
     }
 
 }

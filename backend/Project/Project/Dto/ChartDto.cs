@@ -30,9 +30,29 @@
     {
         public string TagName { get; set; }
         public string LastName { get; set; }
-        public string FristName { get; set; }
+        public string FirstName { get; set; }
         public int TotalReport { get; set; }
         public int? Progress { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class RoomGroupReportDto
+    {
+        public string GroupName { get; set; }
+        public int TotalRoom { get; set; }
+
+        public int TotalEvaluatedRoom { get; set; }
+        public int Progress { get; set; }
+        public string Status { get; set; }
+    }
+
+
+    public class CampusDetailReportDto
+    {
+        public int TotalReport { get; set; }
+
+        public int Proportion { get; set; }
+
         public string Status { get; set; }
     }
 }
