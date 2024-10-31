@@ -37,7 +37,7 @@ interface ScheduleData {
 }
 
 interface AddScheduleComponentProps {
-    scheduleData: ScheduleData;
+    scheduleData: any;
     userList: User[];
     calendars: CalendarItem[];
     setOpenPopup: (open: boolean) => void;
@@ -58,8 +58,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
                 allDay: false,
                 users: [],
                 place: [],
-                startDate: new Date(),
-                endDate: new Date(),
+                startDate: scheduleData.StartTime?scheduleData.StartTime:new Date(),
+                endDate: scheduleData.EndTime?scheduleData.EndTime:new Date(),
                 index: undefined
             }
         }

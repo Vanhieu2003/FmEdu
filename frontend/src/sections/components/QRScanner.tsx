@@ -49,16 +49,15 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onchange }) => {
 
 
     const requestCameraPermission = async () => {
-        
         if (navigator.mediaDevices.getUserMedia) {
             try {
                 await navigator.mediaDevices.getUserMedia({ video: true });
                 console.log("Camera permission granted.");
-                startScanner(); // Chỉ khởi động trình quét sau khi có quyền truy cập
+                startScanner();
             } catch (error) {
                 console.error("Camera permission denied:", error);
                 alert("Vui lòng cấp quyền truy cập camera để sử dụng tính năng quét QR.");
-                setIsModalOpen(false); // Đóng modal nếu không có quyền truy cập
+                setIsModalOpen(false);
             }
         } else {
             console.error("Camera API không được hỗ trợ trên trình duyệt này.");
@@ -129,6 +128,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onchange }) => {
     };
 
     const handleCloseModal = () => {
+
         setIsModalOpen(false);
     };
 

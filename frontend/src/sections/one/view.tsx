@@ -251,9 +251,17 @@ export default function OneView() {
     else {
       setSelectedShift(ShiftId);
       try {
+        const place = {
+          campusId: selectedCampus,
+          blockId: selectedBlocks,
+          floorId: selectedFloor,
+          roomId: selectedRoom,
+          shiftId: ShiftId,
+        }
         const response = await CriteriaService.getCriteriaByRoomId(selectedRoom);
         const crtIds = response.data.map((c: any) => c.id);
-        const userPerTagResponse = await ScheduleService.getTagAndUserByShiftAndRoom(ShiftId, selectedRoom, crtIds)
+        console.log(ShiftId, place, crtIds)
+        const userPerTagResponse = await ScheduleService.getTagAndUserByShiftAndRoom(place, crtIds)
         setCriteria(response.data);
         setData(userPerTagResponse.data);
       } catch (error) {

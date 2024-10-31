@@ -176,9 +176,7 @@ const ReportDetail = ({ report }: Props) => {
 
             <Grid xs={12} md={9}>
                 {renderRightContent}
-            </Grid>
-
-           
+            </Grid>        
         </Grid>
     )
 }

@@ -127,3 +127,11 @@
   .scheduler-container-right{
     flex:1;
   }
+
+  .e-quick-popup-wrapper .e-cell-popup .e-popup-content {
+    padding:10px 0;
+  }
+
+  .e-quick-popup-wrapper .e-event-popup .e-popup-content {
+    padding:10px;
+  }

@@ -1,6 +1,5 @@
 import { Paper, alpha, Box, Typography, colors, PaletteColor, Chip, Avatar, useTheme } from '@mui/material';
 import React from 'react'
-import theme from 'src/theme';
 
 interface Props {
   data: any[],
@@ -26,7 +25,7 @@ const ResponsibleUserView = ({ data, isShadow = true }: Props) => {
       <Box sx={{ mb: '10px' }}>
         <Typography variant='h4'>Bộ phận chịu trách nhiệm</Typography>
       </Box>
-      {data.map((group: { tagName: string, [key: string]: any }, index: number) => {
+      {data?.map((group: { tagName: string, [key: string]: any }, index: number) => {
         const colorKey = index % 2 === 0 ? 'primary' : 'secondary';
         const groupColor = theme.palette[colorKey].main;
         return (

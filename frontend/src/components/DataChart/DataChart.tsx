@@ -1,13 +1,20 @@
 import { ChartConfiguration, Chart, registerables } from "chart.js";
 import { useEffect, useRef } from "react";
 
-const DataChart = (props: ChartConfiguration) => {
-    const { data, options } = props;
+interface DataChartProps extends ChartConfiguration {
+    width?: number;
+    height?: number;
+}
+
+const DataChart = ({ data, options, width , height , ...props }: DataChartProps) => {
     const chartRef = useRef<HTMLCanvasElement>(null);
+
     useEffect(() => {
         if (chartRef.current) {
             const chart = new Chart(chartRef.current, {
-                ...props, options: {
+                ...props,
+                data,
+                options: {
                     ...options
                 }
             });
@@ -15,10 +22,12 @@ const DataChart = (props: ChartConfiguration) => {
                 chart.destroy();
             };
         }
-    }, [data]);
+    }, [data, options]);
+
     return (
-        <canvas ref={chartRef}  />
-    )
-}
+        <canvas ref={chartRef} width={width} height={height} />
+    );
+};
+
 Chart.register(...registerables);
 export default DataChart;

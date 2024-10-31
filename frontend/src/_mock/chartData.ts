@@ -1,93 +1,35 @@
 import { months } from 'src/utils/time-for-chart';
 export const lineChartData = {
-    months: {
-        labels: months({ count: 12 }),
-        datasets: [
-            { label: "Cơ sở A", data: [65, 59, 80, 81, 56, 55, 60, 49, 12, 72, 52, 43] },
-            { label: "Cơ sở B", data: [90, 90, 63, 40, 100, 67, 68, 71, 92, 92, 93, 87] },
-            {
-                label: "Cơ sở C",
-                data: [92, 75, 84, 70, 78, 78, 87, 66, 86, 52, 87, 51],
-
-            },
-            {
-                label: "Cơ sở D",
-                data: [61, 67, 71, 98, 62, 69, 66, 67, 82, 94, 86, 88],
-
-            },
-            {
-                label: "Cơ sở E",
-                data: [51, 25, 15, 8, 55, 67, 11, 22, 80, 94, 86, 88],
-
-            }
-        ]
+    labels: months({ count: 12 }),
+    datasets: [{
+        label: 'Cơ sở 1',
+        data: [65, 59, 80, 81, 56, 55, 40,51,68,9,2,12],
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
     },
-    years: {
-        labels: ["2020", "2021", "2022", "2023", "2024"],
-        datasets: [
-            { label: "Cơ sở A", data: [200, 240, 230, 250, 260] },
-            { label: "Cơ sở B", data: [210, 250, 220, 270, 290] },
-            {
-                label: "Cơ sở C",
-                data: [92, 75, 84, 70, 78],
-
-            },
-            {
-                label: "Cơ sở D",
-                data: [61, 67, 71, 98, 62],
-
-            },
-            {
-                label: "Cơ sở E",
-                data: [51, 25, 15, 8, 55],
-
-            }
-        ]
+    {
+        label: 'Cơ sở 2',
+        data: [65, 59, 80, 81, 56, 55, 40,51,68,9,2,12],
+        fill: false,
+        borderColor: 'rgb(78, 60, 192)',
+        tension: 0.1
     },
-    weeks: {
-        labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"],
-        datasets: [
-            { label: "Cơ sở A", data: [50, 60, 70, 80] },
-            { label: "Cơ sở B", data: [40, 50, 60, 70] },
-            {
-                label: "Cơ sở C",
-                data: [92, 75, 84, 70],
-
-            },
-            {
-                label: "Cơ sở D",
-                data: [61, 67, 71, 98],
-
-            },
-            {
-                label: "Cơ sở E",
-                data: [51, 25, 15, 8],
-
-            }
-        ]
+    {
+        label: 'Cơ sở 3',
+        data: [65, 59, 80, 81, 56, 55, 40,51,68,9,2,12],
+        fill: false,
+        borderColor: 'rgb(11, 89, 192)',
+        tension: 0.1
     },
-    days: {
-        labels: ["Ngày 1", "Ngày 2", "Ngày 3", "Ngày 4", "Ngày 5", "Ngày 6", "Ngày 7", "Ngày 8", "Ngày 9", "Ngày 10"],
-        datasets: [
-            { label: "Cơ sở A", data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] },
-            { label: "Cơ sở B", data: [15, 25, 35, 45, 55, 65, 75, 85, 95, 105] },
-            {
-                label: "Cơ sở C",
-                data: [92, 75, 84, 70, 78, 78, 87, 66, 86, 52],
-
-            },
-            {
-                label: "Cơ sở D",
-                data: [61, 67, 71, 98, 62, 69, 66, 67, 82, 94],
-
-            },
-            {
-                label: "Cơ sở E",
-                data: [51, 25, 15, 8, 55, 67, 11, 22, 80, 94],
-
-            }
-        ]
+    {
+        label: 'Cơ sở 4',
+        data: [65, 59, 80, 81, 56, 55, 40,51,68,9,2,12],
+        fill: false,
+        borderColor: 'rgb(61, 251, 192)',
+        tension: 0.1
     }
+]
 }
 
 export const barChartData = {
@@ -137,37 +79,76 @@ export const barChartData = {
 }
 
 export const HorizontalBarChartData = {
-    labels: ['Xịt mùi thơm','Lau kính','Vệ sinh nhà cửa','Vệ sinh nhà bếp','Vệ sinh nhà vệ sinh'],
+    labels: ['Xịt mùi thơm', 'Lau kính', 'Vệ sinh nhà cửa', 'Vệ sinh nhà bếp', 'Vệ sinh nhà vệ sinh'],
     datasets: [
-      {
-        title: 'Cơ sở A',
-        label: 'Tiến độ (%)',
-        data: [12,56,78,90,43],
-        
-      },
-      {
-        title: 'Cơ sở B',
-        label: 'Tiến độ (%)',
-        data: [41,68,43,27,43],
-        
-      },
-      {
-        title: 'Cơ sở C',
-        label: 'Tiến độ (%)',
-        data: [58,15,85,23,96],
-        
-      },
-      {
-        title: 'Cơ sở D',
-        label: 'Tiến độ (%)',
-        data: [12,56,78,90,43],
-        
-      },
-      {
-        title: 'Cơ sở E',
-        label: 'Tiến độ (%)',
-        data: [86,47,92,5,56],
-        
-      },
+        {
+            title: 'Cơ sở A',
+            label: 'Tiến độ (%)',
+            data: [12, 56, 78, 90, 43],
+
+        },
+        {
+            title: 'Cơ sở B',
+            label: 'Tiến độ (%)',
+            data: [41, 68, 43, 27, 43],
+
+        },
+        {
+            title: 'Cơ sở C',
+            label: 'Tiến độ (%)',
+            data: [58, 15, 85, 23, 96],
+
+        },
+        {
+            title: 'Cơ sở D',
+            label: 'Tiến độ (%)',
+            data: [12, 56, 78, 90, 43],
+
+        },
+        {
+            title: 'Cơ sở E',
+            label: 'Tiến độ (%)',
+            data: [86, 47, 92, 5, 56],
+
+        },
     ]
-  };
+};
+
+export const donutData = {
+    labels: [
+        'Hoàn thành tốt',
+        'Hoàn thành',
+        'Chưa hoàn thành'
+    ],
+    datasets: [{
+        label: 'Số lượng báo cáo',
+        data: [3, 5, 2],
+        backgroundColor: [
+            '#00CC00',
+            '#66FF66',
+            '#FF0000'
+        ],
+        hoverOffset: 4
+    }]
+};
+
+export const stackedBarChartData = {
+    labels: ["Cơ sở 1", "Cơ sở 2", "Cơ sở 3", "Cơ sở 4"],
+    datasets: [
+        {
+            label: 'Điểm số',
+            data: [80, 70, 90, 85],
+            backgroundColor: '#4285F4',
+        },
+        {
+            label: 'Vi phạm',
+            data: [10, 5, 7, 6],
+            backgroundColor: '#FF0000',
+        },
+        {
+            label: 'Cải thiện',
+            data: [20, 15, 10, 12],
+            backgroundColor: '#34A853',
+        },
+    ]
+}

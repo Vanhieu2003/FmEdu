@@ -36,6 +36,15 @@ export class ChartService {
     return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsBy6Months`)
   }
 
+
+  GetCleaningProgressByCampusId = async (campusId: string) => {
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/summary?campusId=${campusId}`
+    );
+  }
+  GetChartComparision = async ()=>{
+    return axios.get(`${API_ENDPOINT}/api/Chart/comparison`)
+  }
 }
 
 export default new ChartService();

@@ -5,7 +5,9 @@ import {
   CellClickEventArgs, CurrentAction, ActionEventArgs, RecurrenceEditorComponent,
   RecurrenceEditor,
   ResourcesDirective,
-  ResourceDirective
+  ResourceDirective,
+  eventDoubleClick,
+  cellDoubleClick
 } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { ButtonComponent, CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
@@ -18,7 +20,7 @@ import { DropDownListComponent, MultiSelectComponent } from '@syncfusion/ej2-rea
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { L10n, loadCldr } from '@syncfusion/ej2-base';
-import { Table, TableBody, TableCell, TableRow, Box, IconButton, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableRow, Box, IconButton, Button, Typography } from '@mui/material';
 import LocationSelector from './location';
 import AddIcon from '@mui/icons-material/Add';
 import { CALENDAR_LICENSE_KEY } from 'src/config-global';
@@ -30,8 +32,8 @@ import { Schedule, User, CalendarItem } from 'src/utils/type/Type';
 import UserService from 'src/@core/service/user';
 import SnackbarComponent from '../snackBar';
 import Popup from '../form/Popup'
-import AddCriteria from '../form/AddCriteria';
 import AddScheduleComponent from './add-Schedule';
+import CloseIcon from '@mui/icons-material/Close';
 
 L10n.load({
   vi: {
@@ -172,10 +174,10 @@ export default function Home() {
   const [calendars, setCalendars] = useState<CalendarItem[]>([]);
   const timeScale = { enable: true, slotCount: 4 };
   const [currentEventSettings, setCurrentEventSettings] = useState([]);
-  const [scheduleData,setScheduleData] = useState<any>();
+  const [scheduleData, setScheduleData] = useState<any>();
   const [userList, setUserList] = useState<User[]>([])
   const [filterData, setFilterData] = useState(currentEventSettings)
-  const [isNewSchedule,setIsNewSchedule] = useState<boolean>(true);
+  const [isNewSchedule, setIsNewSchedule] = useState<boolean>(true);
   const handleFilterChange = useCallback((checkedIds: string[]) => {
     const SelectedResponsibleGroup = calendars
       .filter(cal => checkedIds.includes(cal.id.toString()))
@@ -208,8 +210,8 @@ export default function Home() {
     setSnackbarMessage(message);
     setSnackbarStatus('success');
     setSnackbarOpen(true);
-    setOpenPopup(false); 
-    reloadScheduleData(); 
+    setOpenPopup(false);
+    reloadScheduleData();
   };
 
   const handleSnackbarClose = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -219,7 +221,7 @@ export default function Home() {
     setSnackbarOpen(false);
   }, [snackbarStatus]);
 
-  const handleAddSchedule = async()=>{
+  const handleAddSchedule = async () => {
     const getSlotData = () => {
       const selectedElements = scheduleObj.current?.getSelectedElements();
       if (!selectedElements) return null;
@@ -238,12 +240,13 @@ export default function Home() {
       return addObj;
     };
     const eventData = getSlotData();
+    console.log("eventData",eventData);
     setScheduleData(eventData);
     setIsNewSchedule(true);
     setOpenPopup(true);
   }
 
-  const handleEditSchedule = async()=>{
+  const handleEditSchedule = async () => {
     const eventData = scheduleObj.current?.activeEventData?.event;
     setScheduleData(eventData);
     setIsNewSchedule(false);
@@ -273,27 +276,6 @@ export default function Home() {
     };
 
     switch (action) {
-      case "add":
-        eventData = getSlotData();
-        if (eventData) scheduleObj.current?.addEvent(eventData);
-        
-        break;
-      case "edit":
-        eventData = scheduleObj.current?.activeEventData?.event;
-        console.log("Action Button call");
-        console.log("eventData: ", eventData);
-        if (eventData && eventData.recurrenceRule !== null && eventData.recurrenceRule !== undefined) {
-          actionType = "EditSeries";
-          console.log(actionType);
-          eventData = scheduleObj.current?.eventBase.getParentEvent(eventData, true);
-          scheduleObj.current?.openEditor(eventData, actionType);
-        }
-        else {
-          actionType = "Save";
-          console.log(actionType);
-          scheduleObj.current?.openEditor(eventData, actionType);
-        }
-        break;
       case "delete":
         eventData = scheduleObj.current?.activeEventData?.event;
         if (eventData && eventData.recurrenceRule) {
@@ -312,10 +294,6 @@ export default function Home() {
           setSnackbarOpen(true);
           reloadScheduleData();
         }
-        break;
-      case "more-details":
-        eventData = getSlotData();
-        if (eventData) scheduleObj.current?.openEditor(eventData, "Add", true);
         break;
       default:
         break;
@@ -392,91 +370,120 @@ export default function Home() {
 
   const header = (props: any) => {
     return (
-      <div>
+      <Box>
         {props.elementType === "cell" ? (
-          <div className="e-cell-header e-popup-header" >
+          <Box
+            className="e-cell-header e-popup-header"
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
 
-            <div className="e-header-icon-wrapper">
-              <button id="close" className="e-close e-close-icon e-icons" title="Close" onClick={() => buttonClickActions("close")} />
-            </div>
-          </div>
+            }}
+          >
+            <IconButton
+              id="close"
+              className="e-close"
+              onClick={() => buttonClickActions("close")}
+              size="small"
+              sx={{ color: 'text.secondary' }}
+            >
+              <CloseIcon fontSize="medium" />
+            </IconButton>
+          </Box>
         ) : (
-          <div className="e-event-header e-popup-header" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', height: '50px', padding: '20px', fontSize: '16px', fontWeight: 600, color: '#fff' }}>
-            <div>
-              {props.title}
-            </div>
-            <div className="e-header-icon-wrapper" >
-              <button id="close" className="e-close e-close-icon e-icons" title="CLOSE" onClick={() => buttonClickActions("close")} />
-            </div>
-          </div>
+          <Box
+            className="e-event-header e-popup-header"
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              p: 2,
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 600,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {props.title || 'Không có tiêu đề'}
+            </Typography>
+            <IconButton
+              id="close"
+              className="e-close"
+              onClick={() => buttonClickActions("close")}
+              size="small"
+              sx={{
+                color: 'primary.contrastText',
+                '&:hover': {
+                  bgcolor: 'primary.dark'
+                }
+              }}
+            >
+              <CloseIcon fontSize="medium" />
+            </IconButton>
+          </Box>
         )}
-      </div>
+      </Box>
     );
   }
 
   const content = (props: any) => {
     return (
-      <div>
+      <Box>
         {props.elementType === "cell" ? (
-          <div className="e-cell-content e-template">
-            <form className="e-schedule-form">
-              <div>
-                <input className="subject e-field e-input" type="text" name="Subject" placeholder="Title" />
-              </div>
-            </form>
-          </div>
+          <Box sx={{padding:'10px 0'}}>  
+              <Typography variant='h4' textAlign={"center"}>Chưa có sự kiện nào</Typography>
+          </Box>
         ) : (
-          <div className="e-event-content e-template">
-            <div className="e-subject-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+          <Box className="e-event-content e-template">
+            <Box className="e-subject-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
               {props.place && (
-                <div><b>Địa điểm: </b>{formatLocation(props.place)}</div>
+                <Box><b>Địa điểm: </b>{formatLocation(props.place)}</Box>
               )}
-              <div>
+              <Box>
                 <b>Thời gian: </b>
                 {props.startDate.toLocaleDateString('vi-VN', { weekday: 'long' })} - {props.startDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })},
                 {props.startDate.toLocaleTimeString({ hour: '2-digit', minute: '2-digit', hour12: true })} - {props.endDate.toLocaleTimeString({ hour: '2-digit', minute: '2-digit', hour12: true })}
-              </div>
-              <div><b>Người dùng: </b>
+              </Box>
+              <Box><b>Người dùng: </b>
                 {props.users?.map((user: any) => `${user.firstName} ${user.lastName}`).join(', ')}
-              </div>
-              <div><b>Nhóm: </b>{getResponsibleGroupText(props.responsibleGroupId, calendars)}</div>
-              {props.description !== undefined && <div><b>Mô tả: </b> {props.description}</div>}
-            </div>
-          </div>
+              </Box>
+              <Box><b>Nhóm: </b>{getResponsibleGroupText(props.responsibleGroupId, calendars)}</Box>
+              {props.description !== undefined && <Box><b>Mô tả: </b> {props.description}</Box>}
+            </Box>
+          </Box>
         )}
-      </div>
+      </Box>
     );
   }
 
   const footer = (props: any) => {
     return (
-      <div>
+      <Box>
         {props.elementType === "cell" ? (
-          <div className="e-cell-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <div className="left-button">
-              <ButtonComponent id="more-details" className="e-event-details" title="Extra Details" onClick={() => buttonClickActions("more-details")}> Thông tin chi tiết </ButtonComponent>
-            </div>
-            <div className="right-button">
-              <ButtonComponent id="add" className="e-event-create" title="Add" onClick={() => buttonClickActions("add")}> Thêm </ButtonComponent>
-            </div>
-          </div>
+          <Box className="e-cell-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <Box className="right-button" sx={{marginRight:'10px'}}>
+              <ButtonComponent id="add" className="e-event-create" title="Add" onClick={handleAddSchedule}> Thêm </ButtonComponent>
+            </Box>
+          </Box>
         ) : (
-          <div className="e-event-footer" >
-            <div className="left-button">
-              <button id="edit" className="e-event-edit" title="Edit" onClick={handleEditSchedule}> Chỉnh sửa </button>
-              {props.recurrenceRule && props.recurrenceRule !== "" && (
-                <button id="edit-series" className="e-edit-series" title="Edit Series" onClick={() => buttonClickActions("edit-series")}> Chỉnh sửa chuỗi </button>
-              )}
-            </div>
-            <div className="right-button">
-              <button id="delete" className="e-event-delete" title="Delete" onClick={() => buttonClickActions("delete")}> Xóa </button>
-              {props.recurrenceRule && props.recurrenceRule !== "" && (
-                <button id="delete-series" className="e-delete-series" title="Delete Series" onClick={() => buttonClickActions("delete-series")}> Xóa chuỗi </button>
-              )}
-            </div>
-          </div>
+          <Box className="e-event-footer" sx={{display:'flex',justifyContent:'flex-end',gap:'5px',marginRight:'10px'}}>
+            <Box className="left-button">
+              <ButtonComponent id="edit" className="e-event-edit" title="Edit" onClick={handleEditSchedule}> Chỉnh sửa </ButtonComponent>
+            </Box>
+            <Box className="right-button">
+              <ButtonComponent id="delete" className="e-event-delete" title="Delete" onClick={() => buttonClickActions("delete")}> Xóa </ButtonComponent>
+            </Box>
+          </Box>
         )}
-      </div>
+      </Box>
     );
   }
   const quickInfoTemplates = { header: header, content: content, footer: footer };
@@ -690,54 +697,54 @@ export default function Home() {
     );
   };
 
-  const toolTipTemplate = (props: any) => {
-    return (
-      <div className="tooltip-custom">
-        <div><b>Tiêu đề: </b>{props.title}</div>
-        {props.place && (
-          <div><b>Địa điểm: </b>{formatLocation(props.place)}</div>
-        )}
-        <div>
-          {props.allDay ? (
-            <b>
-              {new Date(props.startDate).toDateString() === new Date(props.endDate).toDateString() ? (
-                new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
-              ) : (
-                `${new Date(props.startDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })} - ${new Date(props.endDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
-              )}
-            </b>
-          ) : (
-            <b>
-              {new Date(props.startDate).toDateString() === new Date(props.endDate).toDateString() ? (
-                <>
-                  {new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })},
-                  {' '}
-                  {new Date(props.startDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
-                  {new Date(props.endDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                </>
-              ) : (
-                <>
-                  {new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
-                  {new Date(props.startDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
-                  {new Date(props.endDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
-                  {new Date(props.endDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                </>
-              )}
-            </b>
-          )}
-        </div>
-        {props.Users && props.Users.length > 0 && (
-          <div><b>Người dùng: </b>{props.Users.join(', ')}</div>
-        )}
-        {props.ResponsibleGroupId && (
-          <div><b>Nhóm: </b>{getResponsibleGroupText(props.ResponsibleGroupId, calendars)}</div>
-        )}
-        {props.description && (
-          <div><b>Mô tả: </b>{props.description}</div>
-        )}
-      </div>
-    );
-  };
+  // const toolTipTemplate = (props: any) => {
+  //   return (
+  //     <div className="tooltip-custom">
+  //       <div><b>Tiêu đề: </b>{props.title}</div>
+  //       {props.place && (
+  //         <div><b>Địa điểm: </b>{formatLocation(props.place)}</div>
+  //       )}
+  //       <div>
+  //         {props.allDay ? (
+  //           <b>
+  //             {new Date(props.startDate).toDateString() === new Date(props.endDate).toDateString() ? (
+  //               new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
+  //             ) : (
+  //               `${new Date(props.startDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })} - ${new Date(props.endDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
+  //             )}
+  //           </b>
+  //         ) : (
+  //           <b>
+  //             {new Date(props.startDate).toDateString() === new Date(props.endDate).toDateString() ? (
+  //               <>
+  //                 {new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })},
+  //                 {' '}
+  //                 {new Date(props.startDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
+  //                 {new Date(props.endDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+  //               </>
+  //             ) : (
+  //               <>
+  //                 {new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
+  //                 {new Date(props.startDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
+  //                 {new Date(props.endDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
+  //                 {new Date(props.endDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+  //               </>
+  //             )}
+  //           </b>
+  //         )}
+  //       </div>
+  //       {props.Users && props.Users.length > 0 && (
+  //         <div><b>Người dùng: </b>{props.Users.join(', ')}</div>
+  //       )}
+  //       {props.ResponsibleGroupId && (
+  //         <div><b>Nhóm: </b>{getResponsibleGroupText(props.ResponsibleGroupId, calendars)}</div>
+  //       )}
+  //       {props.description && (
+  //         <div><b>Mô tả: </b>{props.description}</div>
+  //       )}
+  //     </div>
+  //   );
+  // };
 
 
   useEffect(() => {
@@ -764,7 +771,7 @@ export default function Home() {
         <div className='scheduler-container-left'>
           <Button variant='contained' onClick={handleAddSchedule}>Tạo mới</Button>
           <Popup title='Form đánh giá' openPopup={openPopup} setOpenPopup={setOpenPopup}>
-            <AddScheduleComponent scheduleData={scheduleData} userList={userList} calendars={calendars} setOpenPopup={setOpenPopup} isNewSchedule={isNewSchedule} onSuccess={handleAddScheduleSuccess}/>
+            <AddScheduleComponent scheduleData={scheduleData} userList={userList} calendars={calendars} setOpenPopup={setOpenPopup} isNewSchedule={isNewSchedule} onSuccess={handleAddScheduleSuccess} />
           </Popup>
           <div className='scheduler-component'>
             <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' eventSettings={{
