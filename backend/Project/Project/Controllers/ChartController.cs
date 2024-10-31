@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Project.Dto;
 using Project.Entities;
+using Project.Interface;
 
 namespace Project.Controllers
 {
@@ -12,10 +13,12 @@ namespace Project.Controllers
     public class ChartController : ControllerBase
     {
         private readonly HcmUeQTTB_DevContext _context;
+        private readonly IChartRepository _repo;
 
-        public ChartController(HcmUeQTTB_DevContext context)
+        public ChartController(HcmUeQTTB_DevContext context, IChartRepository chartRepository)
         {
             _context = context;
+            _repo = chartRepository;
         }
         [HttpGet("average-values")]
         public async Task<IActionResult> GetAverageValues(string campusId)
@@ -48,36 +51,39 @@ namespace Project.Controllers
 
             return Ok(result);
         }
-        [HttpGet("GetCriteriaValuesByCampus/{campusId}")]
-        public async Task<IActionResult> GetCriteriaValuesByCampus(string campusId)
+        [HttpGet("GetTopCriteriaValuesByCampus")]
+        public async Task<IActionResult> GetTopCriteriaValuesByCampus([FromQuery] string? campusId = null)
         {
-            var result = await _context.Set<CriteriaValueDto>()
+            var query = _context.Set<CriteriaValueDto>()
                 .FromSqlRaw(@"
-            SELECT 
-                ca.CampusName,
-                cr.CriteriaName,
-                CEILING(
-                    CASE 
-                        WHEN cr.CriteriaType = 'RATING' THEN 
-                            (SUM(crr.Value) / (COUNT(crr.Value) * 5.0)) * 100 
-                        WHEN cr.CriteriaType = 'BINARY' THEN 
-                            (SUM(crr.Value) / (COUNT(crr.Value) * 2.0)) * 100
-                        ELSE 0
-                    END) AS Value
-            FROM 
-                CleaningForm cf
-                JOIN CriteriaReport crr ON cf.Id = crr.FormId
-                JOIN Criteria cr ON crr.CriteriaId = cr.Id
-                JOIN Rooms r ON cf.RoomId = r.Id
-                JOIN Blocks b ON r.BlockId = b.Id
-                JOIN Campus ca ON b.CampusId = ca.Id
-            WHERE 
-                ca.Id = {0}
-            GROUP BY 
-                ca.CampusName, 
-                cr.CriteriaName, 
-                cr.CriteriaType;", campusId)
-                .ToListAsync();
+     SELECT TOP 5 
+         ca.CampusName,
+         cr.CriteriaName,
+         CEILING(
+             CASE 
+                 WHEN cr.CriteriaType = 'RATING' THEN 
+                     (SUM(crr.Value) / (COUNT(crr.Value) * 5.0)) * 100 
+                 WHEN cr.CriteriaType = 'BINARY' THEN 
+                     (SUM(crr.Value) / (COUNT(crr.Value) * 2.0)) * 100
+                 ELSE 0
+             END) AS Value
+     FROM 
+         CleaningForm cf
+         JOIN CriteriaReport crr ON cf.Id = crr.FormId
+         JOIN Criteria cr ON crr.CriteriaId = cr.Id
+         JOIN Rooms r ON cf.RoomId = r.Id
+         JOIN Blocks b ON r.BlockId = b.Id
+         JOIN Campus ca ON b.CampusId = ca.Id
+     " + (string.IsNullOrEmpty(campusId) ? "" : "WHERE ca.Id = {0}") + @"
+     GROUP BY 
+         ca.CampusName, 
+         cr.CriteriaName, 
+         cr.CriteriaType
+     ORDER BY 
+         Value DESC;",
+                    campusId);
+
+            var result = await query.ToListAsync();
 
             return Ok(result);
         }
@@ -447,6 +453,60 @@ ORDER BY
             return Ok(scores); // Trả về kết quả
         }
 
+
+
+
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetCleaningReportSummary([FromQuery] string? campusId)
+        {
+            try
+            {
+                var result = await _repo.GetCleaningReportSummary(campusId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu cần thiết
+                return StatusCode(500, "Đã xảy ra lỗi trong quá trình xử lý.");
+            }
+        }
+
+
+        [HttpGet("comparison")]
+        public async Task<IActionResult> GetCampusReportComparison([FromQuery] int? year = null)
+        {
+            try
+            {
+                var result = await _repo.GetCampusReportComparison(year);
+
+                if (result == null || result.Count == 0)
+                {
+                    return NotFound("Không có báo cáo nào được tìm thấy.");
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ
+                return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
+            }
+        }
+
+        [HttpGet("responsible-tag-report")]
+        public async Task<IActionResult> GetResponsibleTagReportByCampus([FromQuery] string? campusId)
+        {
+            try
+            {
+                var result = await _repo.GetResponsibleTagReportByCampus(campusId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu cần thiết
+                return StatusCode(500, "Đã có lỗi xảy ra: " + ex.Message);
+            }
+        }
 
     }
 

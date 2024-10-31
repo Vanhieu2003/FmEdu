@@ -31,7 +31,8 @@ namespace Project.Repository
             var shift = _context.Shifts
                 .Where(s => s.RoomCategoryId == room.RoomCategoryId
                             && s.StartTime <= currentTime
-                            && currentTime <= s.EndTime)
+                            && currentTime <= s.EndTime
+                            && s.Status == "ENABLE")
                 .FirstOrDefault();
 
             // Tạo response

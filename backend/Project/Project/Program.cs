@@ -45,6 +45,7 @@ builder.Services.AddScoped<IScheduleRepository,ScheduleRepository>();
 builder.Services.AddScoped<IUserPerTagRepository, UserPerTagRepository>();
 builder.Services.AddScoped<IResponsibleGroupRepository, ResponsibleGroupRepository>();
 builder.Services.AddScoped<IQRScannerRepository,QRScannerRepository>();
+builder.Services.AddScoped<IChartRepository, ChartRepository>();
 
 
 // Add Static Files Middleware

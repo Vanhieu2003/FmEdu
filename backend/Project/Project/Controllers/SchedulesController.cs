@@ -146,92 +146,7 @@ namespace Project.Controllers
         }
 
 
-        [HttpGet("GetUserByShiftAndRoom")]
-        public async Task<IActionResult> GetUserByShiftAndRoom(string shiftId, string roomId)
-        {
-            // Lấy thông tin shift dựa trên shiftId
-            var shift = await _context.Shifts.FirstOrDefaultAsync(s => s.Id == shiftId);
-            if (shift == null)
-            {
-                return NotFound("Shift not found");
-            }
-
-            // Lấy startTime và endTime từ Shift và chuyển sang kiểu TimeSpan
-            var shiftStartTime = shift.StartTime;
-            var shiftEndTime = shift.EndTime;
-
-            // Tìm các Schedule có Start và End nằm trong khoảng thời gian của Shift
-            var schedules = await _context.Schedules
-                .Where(s => s.Start.TimeOfDay >= shiftStartTime && s.End.TimeOfDay <= shiftEndTime)
-                .ToListAsync();
-
-            if (schedules.Count == 0)
-            {
-                return NotFound("No schedules found within the shift time range");
-            }
-
-            // Tìm các ScheduleDetail dựa trên ScheduleId và RoomId
-            var scheduleIds = schedules.Select(s => s.Id).ToList();
-            var scheduleDetails = await _context.ScheduleDetails
-                .Where(sd => scheduleIds.Contains(sd.ScheduleId) && sd.RoomId == roomId)
-                .ToListAsync();
-
-            if (scheduleDetails.Count == 0)
-            {
-                return NotFound("No schedule details found for the given room and shift");
-            }
-
-            // Lấy danh sách UserId từ ScheduleDetail
-            var userIds = scheduleDetails.Select(sd => sd.UserId).Distinct().ToList();
-
-            // Bước 4: Lấy danh sách TagId và UserId từ bảng UserPerTag theo userIds
-            var userPerTags = await _context.UserPerTags
-                .Where(upt => userIds.Contains(upt.UserId))
-                .ToListAsync();
-
-            // Bước 5: Lấy tất cả các TagId trong danh sách userPerTags
-            var tagIds = userPerTags.Select(upt => upt.TagId).Distinct().ToList();
-
-            // Bước 6: Lấy tên các Tag dựa trên tagIds
-            var tags = await _context.Tags
-                .Where(t => tagIds.Contains(t.Id))
-                .ToListAsync();
-
-            // Bước 7: Tạo một Dictionary để nhóm các User theo từng Tag
-            var result = new List<object>();
-
-            foreach (var tag in tags)
-            {
-                // Lấy tất cả các userId trong bảng UserPerTag tương ứng với tag.Id
-                var usersInTag = userPerTags
-                    .Where(upt => upt.TagId == tag.Id)
-                    .Select(upt => upt.UserId)
-                    .ToList();
-
-                // Lấy thông tin các User dựa trên danh sách userIds trong tag này
-                var users = await _context.Users
-                    .Where(u => usersInTag.Contains(u.Id))
-                    .Select(u => new UserDto
-                    {
-                        Id = u.Id,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        UserName = u.UserName,
-                        Email = u.Email
-                    })
-                    .ToListAsync();
-
-                // Tạo đối tượng để lưu kết quả, với TagName là key và danh sách User là value
-                result.Add(new
-                {
-                    TagName = tag.TagName,
-                    Users = users
-                });
-            }
-
-            return Ok(result);
-        }
-
+       
         // PUT: api/Schedules/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 
@@ -246,34 +161,27 @@ namespace Project.Controllers
         [HttpGet]
         [Route("get-users-by-shift-room-and-criteria")]
         public async Task<IActionResult> GetUsersByShiftRoomAndCriteria(
-     [FromQuery] string shiftId,
-     [FromQuery] string roomId,
+    
+     [FromQuery] QRDto place,
      [FromQuery] List<string> criteriaIds)
         {
             // Bước 1: Lấy thời gian startTime và endTime của Shift dựa vào shiftId
             var shift = await _context.Shifts
-                .Where(s => s.Id == shiftId)
+                .Where(s => s.Id == place.ShiftId)
                 .Select(s => new { s.StartTime, s.EndTime })
                 .FirstOrDefaultAsync();
 
-            if (shift == null)
-            {
-                // Nếu không tìm thấy shift, trả về kết quả rỗng
-                return Ok(new { Message = "Shift not found.", Data = new List<object>() });
-            }
-
             // Bước 2: Lấy danh sách Schedule trong khoảng thời gian của shift
             var schedules = await _context.Schedules
-                .Where(s => s.Start.TimeOfDay <= shift.StartTime && s.End.TimeOfDay >= shift.EndTime)
-                .Select(s => s.Id)
-                .ToListAsync();
+            .Where(s => s.Start.TimeOfDay <= shift.StartTime &&
+                        s.End.TimeOfDay >= shift.EndTime &&
+                        s.Start.Date <= DateTime.Now.Date &&
+                        s.End.Date >= DateTime.Now.Date)
+            .Select(s => s.Id)
+            .ToListAsync();
 
             // Bước 3: Tìm kiếm trong bảng ScheduleDetail các scheduleId và roomId trùng khớp
-            var userIds = await _context.ScheduleDetails
-                .Where(sd => schedules.Contains(sd.ScheduleId) && sd.RoomId == roomId)
-                .Select(sd => sd.UserId)
-                .Distinct()
-                .ToListAsync();
+            var userIds = await GetUserByLevel(schedules, place);
 
             // Bước 4: Lấy danh sách TagId từ bảng TagsPerCriteria dựa trên danh sách criteriaIds
             var tagIdsFromCriteria = await _context.TagsPerCriteria
@@ -561,6 +469,64 @@ namespace Project.Controllers
         private bool ScheduleExists(string id)
         {
             return (_context.Schedules?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private async Task<List<string>> GetUserByLevel(List<string> schedule, QRDto place)
+        {
+            if (schedule == null)
+            {
+                return new List<string>();
+            }
+
+            var userIds = new List<string>();
+
+            // Tìm UserId theo cấp CampusId
+            userIds = await _context.ScheduleDetails
+                .Where(sd => schedule.Contains(sd.ScheduleId) && sd.RoomId == place.CampusId)
+                .Select(sd => sd.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            // Nếu có kết quả ở cấp CampusId, trả về
+            if (userIds.Count > 0)
+            {
+                return userIds;
+            }
+
+            // Nếu không có kết quả ở cấp CampusId, tìm theo cấp BlockId
+            userIds = await _context.ScheduleDetails
+                .Where(sd => schedule.Contains(sd.ScheduleId) && sd.RoomId == place.BlockId)
+                .Select(sd => sd.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            // Nếu có kết quả ở cấp BlockId, trả về
+            if (userIds.Count > 0)
+            {
+                return userIds;
+            }
+
+            // Nếu không có kết quả ở cấp BlockId, tìm theo cấp FloorId
+            userIds = await _context.ScheduleDetails
+                .Where(sd => schedule.Contains(sd.ScheduleId) && sd.RoomId == place.FloorId)
+                .Select(sd => sd.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            // Nếu có kết quả ở cấp FloorId, trả về
+            if (userIds.Count > 0)
+            {
+                return userIds;
+            }
+
+            // Nếu không có kết quả ở cấp FloorId, tìm theo cấp RoomId
+            userIds = await _context.ScheduleDetails
+                .Where(sd => schedule.Contains(sd.ScheduleId) && sd.RoomId == place.RoomId)
+                .Select(sd => sd.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            return userIds;
         }
     }
 }

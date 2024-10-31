@@ -7,6 +7,6 @@
         public string FloorId { get; set; }
         public string RoomId { get; set; }
 
-        public string ShiftId { get; set; }
+        public string? ShiftId { get; set; }
     }
 }

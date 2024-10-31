@@ -151,6 +151,22 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCampusReportComparison",
+    "RelativePath": "api/Chart/comparison",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "year",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetBlockReports",
     "RelativePath": "api/Chart/GetBlockReports",
     "HttpMethod": "GET",
@@ -222,8 +238,18 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetCriteriaValuesByCampus",
-    "RelativePath": "api/Chart/GetCriteriaValuesByCampus/{campusId}",
+    "Method": "GetReportInADay",
+    "RelativePath": "api/Chart/GetReportInADay",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetTopCriteriaValuesByCampus",
+    "RelativePath": "api/Chart/GetTopCriteriaValuesByCampus",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -231,19 +257,9 @@
       {
         "Name": "campusId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetReportInADay",
-    "RelativePath": "api/Chart/GetReportInADay",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -262,6 +278,38 @@
       {
         "Name": "monthNum",
         "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetResponsibleTagReportByCampus",
+    "RelativePath": "api/Chart/responsible-tag-report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCleaningReportSummary",
+    "RelativePath": "api/Chart/summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],
