@@ -16,11 +16,6 @@ const transformDataForChart = (data: any) => {
             backgroundColor: '#FF0000',
         },
         {
-            label: 'Hoàn thành',
-            data: data?.map((item: any) => item.countCompleted),
-            backgroundColor: '#34A853',
-        },
-        {
             label: 'Hoàn thành tốt',
             data: data?.map((item: any) => item.countWellCompleted),
             backgroundColor: '#FFD700',
@@ -54,7 +49,7 @@ const RenderBarChart = ({data}:props) => {
             y: {
 
                 beginAtZero: true,
-                max: 800,
+                max: 100,
             },
         },
     };

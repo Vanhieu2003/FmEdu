@@ -45,6 +45,24 @@ export class ChartService {
   GetChartComparision = async ()=>{
     return axios.get(`${API_ENDPOINT}/api/Chart/comparison`)
   }
+
+  GetDailyTagAndUserByCampus = async(campusId:string)=>{
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/responsible-tag-report?campusId=${campusId}`
+    );
+  }
+
+  GetDailyRoomGroupReportByCampus = async (campusId: string) => {
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/GetRoomGroupReportByCampus?campusId=${campusId}`
+    );
+  }
+
+  GetDailyReportStatusTableByCampus = async (campusId: string) => {
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/campus-detail-report?campusId=${campusId}`
+    );
+  }
 }
 
 export default new ChartService();
