@@ -5,6 +5,88 @@ interface props {
     data: any
 }
 
+const data1 = [
+    {
+        "tagName": "Lau ghế",
+        "lastName": "Add User",
+        "fristName": "Huan",
+        "totalReport": 2,
+        "progress": 50,
+        "status": "Cần cải thiện"
+    },
+    {
+        "tagName": "Vệ sinh",
+        "lastName": "Add User",
+        "fristName": "Huan",
+        "totalReport": 2,
+        "progress": 80,
+        "status": "Hoàn thành tốt"
+    },
+    {
+        "tagName": "Lau bàn",
+        "lastName": "Nguyễn",
+        "fristName": "Huấn",
+        "totalReport": 2,
+        "progress": 50,
+        "status": "Cần cải thiện"
+    },
+    {
+        "tagName": "Vệ sinh",
+        "lastName": "test",
+        "fristName": "Huan",
+        "totalReport": 2,
+        "progress": 80,
+        "status": "Hoàn thành tốt"
+    },
+    {
+        "tagName": "Lau ghế",
+        "lastName": "test",
+        "fristName": "Huan",
+        "totalReport": 2,
+        "progress": 50,
+        "status": "Cần cải thiện"
+    },
+    {
+        "tagName": "Lau bàn",
+        "lastName": "tét",
+        "fristName": "test1",
+        "totalReport": 2,
+        "progress": 50,
+        "status": "Cần cải thiện"
+    },
+    {
+        "tagName": "Lau ghế",
+        "lastName": "Nguyễn",
+        "fristName": "Huân ",
+        "totalReport": 1,
+        "progress": 100,
+        "status": "Hoàn thành tốt"
+    },
+    {
+        "tagName": "Vệ sinh",
+        "lastName": "Nguyễn",
+        "fristName": "Huân ",
+        "totalReport": 1,
+        "progress": 60,
+        "status": "Cần cải thiện"
+    },
+    {
+        "tagName": "Vệ sinh",
+        "lastName": "11g",
+        "fristName": "Huan",
+        "totalReport": 2,
+        "progress": 80,
+        "status": "Hoàn thành tốt"
+    },
+    {
+        "tagName": "Lau ghế",
+        "lastName": "11g",
+        "fristName": "Huan",
+        "totalReport": 2,
+        "progress": 50,
+        "status": "Cần cải thiện"
+    }
+]
 const getBackGroundColor = (status: string) => {
     switch (status) {
         case 'Hoàn thành tốt':
@@ -28,11 +110,11 @@ const ResponsibleUserForChart = ({ data }: props) => {
 
     // Tính toán các rows sẽ hiển thị trên trang hiện tại  
     const visibleRows = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  
+
 
     return (
-        <Box>
-            <TableContainer component={Card}>
+        <Box sx={{ height: '100%' }}>
+            <TableContainer component={Card} sx={{ height: 'inherit' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -77,7 +159,7 @@ const ResponsibleUserForChart = ({ data }: props) => {
                                 </TableCell>
                             </TableRow>
                         )}
-                        <TableRow>
+                        {data.length>0?(<TableRow>
                             <TableCell colSpan={5} align='right'>
                                 <TablePagination
                                     component="div"
@@ -89,7 +171,7 @@ const ResponsibleUserForChart = ({ data }: props) => {
                                     labelDisplayedRows={({ from, to, count }) => `${from}-${to} của ${count}`}
                                 />
                             </TableCell>
-                        </TableRow>
+                        </TableRow>):null}
                     </TableBody>
                 </Table>
             </TableContainer>

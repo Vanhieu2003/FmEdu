@@ -43,8 +43,13 @@ const transformDataForDonutChart = (data: any) => {
 const ReportCountChart = ({ data }: props) => {
     const donutData = transformDataForDonutChart(data);
     return (
-        <Card>
-            <CardContent>
+        <Card sx={{flexGrow:1}}>
+            <CardContent sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+              }}>
                 <DataChart
                     type={"doughnut"}
                     data={donutData}
@@ -60,8 +65,6 @@ const ReportCountChart = ({ data }: props) => {
                         }
                     }}
                     plugins={[centerTextPlugin]}
-                    width={300}
-                    height={300}
                 />
             </CardContent>
         </Card>

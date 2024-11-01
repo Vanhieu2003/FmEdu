@@ -31,8 +31,8 @@ const ResponsibleGroupForChart = ({ data }: props) => {
   
 
     return (
-        <Box>
-            <TableContainer component={Card}>
+        <Box sx={{ height: '100%' }}>
+            <TableContainer component={Card} sx={{ height: 'inherit' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -73,11 +73,11 @@ const ResponsibleGroupForChart = ({ data }: props) => {
                         )) : (
                             <TableRow>
                                 <TableCell align='center' colSpan={5} sx={{ fontSize: '20px', fontWeight: 700, fontStyle: 'bold' }}>
-                                    Chưa có thông tin đánh giá cho ngày hôm nay
+                                    Chưa có nhóm phòng được đánh giá cho ngày hôm nay
                                 </TableCell>
                             </TableRow>
                         )}
-                        <TableRow>
+                        {data.length>0?(<TableRow>
                             <TableCell colSpan={5} align='right'>
                                 <TablePagination
                                     component="div"
@@ -89,7 +89,8 @@ const ResponsibleGroupForChart = ({ data }: props) => {
                                     labelDisplayedRows={({ from, to, count }) => `${from}-${to} của ${count}`}
                                 />
                             </TableCell>
-                        </TableRow>
+                        </TableRow>):null}
+                        
                     </TableBody>
                 </Table>
             </TableContainer>

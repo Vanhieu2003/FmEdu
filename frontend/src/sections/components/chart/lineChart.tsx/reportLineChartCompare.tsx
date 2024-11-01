@@ -45,30 +45,30 @@ function transformDataToChartFormat(data: any, type: string) {
                 labels: quarters,
                 datasets: datasets,
             };
-        case "week":
+        case "day":
             const campusMap1 = new Map<string, Map<string, number>>();
-            const YearSet = new Set<string>();
+            const Neareast10Day = new Set<string>();
 
             // Khởi tạo mảng dữ liệu cho mỗi cơ sở
-            data.forEach((item: any) => {
+            data?.forEach((item: any) => {
                 if (!campusMap1.has(item.campusName)) {
                     campusMap1.set(item.campusName, new Map<string, number>());
                 }
                 campusMap1.get(item.campusName)!.set(item.reportTime, item.averageValue);
-                YearSet.add(item.reportTime);
+                Neareast10Day.add(item.reportTime);
             });
 
             // Chuyển Set thành Array và sắp xếp các quý
-            const Years = Array.from(YearSet).sort();
+            const NearestDay = Array.from(Neareast10Day).sort();
 
             // Chuyển đổi dữ liệu thành định dạng mong muốn
             const datasets1 = Array.from(campusMap1.entries()).map(([campusName, values]) => ({
                 label: campusName,
-                data: Years.map(year => values.get(year) || 0),
+                data: NearestDay.map(day => values.get(day) || 0),
             }));
 
             return {
-                labels: Years,
+                labels: NearestDay,
                 datasets: datasets1,
             };
     }
@@ -84,7 +84,7 @@ const RenderLineChartData = ({ data, type }: props) => {
                 plugins: {
                     title: {
                         display: true,
-                        text: `Báo cáo`,
+                        text: `Báo cáo điểm sổ của các cơ sở theo ${type === 'quater'?"quý":"10 ngày gần nhất"}`,
                         font: { size: 18 },
                     }
                 }

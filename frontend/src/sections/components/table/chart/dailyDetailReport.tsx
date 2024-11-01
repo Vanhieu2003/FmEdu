@@ -19,8 +19,8 @@ const getBackGroundColor = (status: string) => {
 
 const DailyDetailReport = ({ data,campusName }: props) => {
     return (
-        <Box>
-            <TableContainer component={Card}>
+        <Box >
+            <TableContainer component={Card} sx={{marginTop:'10px'}}>
                 <Table>
                     <TableHead>
                         <TableRow>

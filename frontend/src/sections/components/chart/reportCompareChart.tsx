@@ -16,7 +16,7 @@ const ReportCompareChart = () => {
             setOption('quater');
         }
         else{
-            setOption('week');
+            setOption('day');
         }
     }
 
@@ -30,10 +30,9 @@ const ReportCompareChart = () => {
             setLineChartData(response.data);
         }
         else {
-            const response = await ChartService.GetCleaningReportByYear();
+            const response = await ChartService.GetCleaningReportBy10Days();
             setLineChartData(response.data);
-        }
-       
+        }  
     }
 
     useEffect(() => {
@@ -44,28 +43,26 @@ const ReportCompareChart = () => {
             fetchDataForLineChart('quater');
         }
         else{
-            fetchDataForLineChart('week');
-        }
-        
+            fetchDataForLineChart('day');
+        }  
     }, [option])
 
 
     return (
         <>
-            <Card sx={{ marginTop: '20px' }}>
+            <Card sx={{ marginTop: '10px',flexGrow:1 }}>
                 <CardContent>
                     <Box sx={{ display: 'flex', gap: 3 }}>
                         <Button variant={option === 'year' ? 'contained' : 'outlined'}
                             onClick={() => handleClick('year')} >Theo năm</Button>
                         <Button variant={option === 'quater' ? 'contained' : 'outlined'}
                             onClick={() => handleClick('quater')}>Theo quý</Button>
-                        <Button variant={option === 'week' ? 'contained' : 'outlined'}
-                            onClick={() => handleClick('week')}>Theo tuần</Button>
+                        <Button variant={option === 'day' ? 'contained' : 'outlined'}
+                            onClick={() => handleClick('day')}>10 ngày gần nhất</Button>
                     </Box>
                     {option === 'year' ? <RenderBarChart data={barChartData} /> : <RenderLineChartData data={lineChartData} type={option}/>}
                 </CardContent>
             </Card>
-
         </>
     )
 }

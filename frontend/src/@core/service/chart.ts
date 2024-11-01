@@ -8,7 +8,7 @@ export class ChartService {
 
   GetAverageValueForCriteriaPerCampus = async (campusId: string) => {
     return axios.get(
-      `${API_ENDPOINT}/api/Chart/GetCriteriaValuesByCampus/${campusId}`
+      `${API_ENDPOINT}/api/Chart/GetTopCriteriaValuesByCampus?campusId=${campusId}`
     );
   };
 
@@ -18,23 +18,13 @@ export class ChartService {
     );
   };
 
-  GetCleaningReportCount = async () => {
-    return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportCount`);
-  }
-
-  GetTotalReportPerDayCount = async()=>{
-    return axios.get(`${API_ENDPOINT}/api/Chart/GetReportInADay`)
-  }
-
-  GetCleaningReportByYear = async()=>{
-    return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsByYear`)
+  GetCleaningReportBy10Days = async ()=>{
+    return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsByLast10Days`)
   }
   GetCleaningReportByQuarter = async()=>{
     return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsByQuarter`)
   }
-  GetCleaningReportBySixMonth = async ()=>{
-    return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsBy6Months`)
-  }
+  
 
 
   GetCleaningProgressByCampusId = async (campusId: string) => {
@@ -54,13 +44,13 @@ export class ChartService {
 
   GetDailyRoomGroupReportByCampus = async (campusId: string) => {
     return axios.get(
-      `${API_ENDPOINT}/api/Chart/GetRoomGroupReportByCampus?campusId=${campusId}`
+      `${API_ENDPOINT}/api/Chart/room-group-report?campusId=${campusId}`
     );
   }
 
   GetDailyReportStatusTableByCampus = async (campusId: string) => {
     return axios.get(
-      `${API_ENDPOINT}/api/Chart/campus-detail-report?campusId=${campusId}`
+      `${API_ENDPOINT}/api/Chart/detail-report?campusId=${campusId}`
     );
   }
 }
