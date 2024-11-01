@@ -456,92 +456,39 @@ ORDER BY
 
 
 
+        [HttpGet("comparison")]
+        public async Task<IActionResult> GetCampusReportComparison(int? year = null)
+        {
+            var result = await _repo.GetCampusReportComparison(year);
+            return Ok(result);
+        }
+
         [HttpGet("summary")]
         public async Task<IActionResult> GetCleaningReportSummary([FromQuery] string? campusId)
         {
-            try
-            {
-                var result = await _repo.GetCleaningReportSummary(campusId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                // Log lỗi nếu cần thiết
-                return StatusCode(500, "Đã xảy ra lỗi trong quá trình xử lý.");
-            }
-        }
-
-
-        [HttpGet("comparison")]
-        public async Task<IActionResult> GetCampusReportComparison([FromQuery] int? year = null)
-        {
-            try
-            {
-                var result = await _repo.GetCampusReportComparison(year);
-
-                if (result == null || result.Count == 0)
-                {
-                    return NotFound("Không có báo cáo nào được tìm thấy.");
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                // Xử lý ngoại lệ
-                return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
-            }
+            var result = await _repo.GetCleaningReportSummary(campusId);
+            return Ok(result);
         }
 
         [HttpGet("responsible-tag-report")]
         public async Task<IActionResult> GetResponsibleTagReportByCampus([FromQuery] string? campusId)
         {
-            try
-            {
-                var result = await _repo.GetResponsibleTagReportByCampus(campusId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                // Log lỗi nếu cần thiết
-                return StatusCode(500, "Đã có lỗi xảy ra: " + ex.Message);
-            }
+            var result = await _repo.GetResponsibleTagReportByCampus(campusId);
+            return Ok(result);
         }
 
-        [HttpGet("GetRoomGroupReportByCampus")]
-        public async Task<IActionResult> GetRoomGroupReportByCampus(string? campusId)
+        [HttpGet("room-group-report")]
+        public async Task<IActionResult> GetRoomGroupReportByCampus([FromQuery] string? campusId)
         {
-            try
-            {
-                var reports = await _repo.GetRoomGroupReportByCampus(campusId);
-
-                if (reports == null || !reports.Any())
-                {
-                    return NotFound("No room group reports found for the specified campus.");
-                }
-
-                return Ok(reports);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (consider using a logging framework like Serilog, NLog, etc.)
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            var result = await _repo.GetRoomGroupReportByCampus(campusId);
+            return Ok(result);
         }
 
-        [HttpGet("campus-detail-report")]
+        [HttpGet("detail-report")]
         public async Task<IActionResult> GetCampusDetailReportById([FromQuery] string? campusId)
         {
-            try
-            {
-                var result = await _repo.GetCampusDetailReportById(campusId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                // Log lỗi (nếu cần thiết) và trả về mã lỗi 500
-                return StatusCode(500, $"Đã xảy ra lỗi khi lấy báo cáo chi tiết: {ex.Message}");
-            }
+            var result = await _repo.GetCampusDetailReportById(campusId);
+            return Ok(result);
         }
 
     }

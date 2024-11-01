@@ -15,34 +15,34 @@ namespace Project.Repository
 
         public async Task<List<CampusReportComparisonDto>> GetCampusReportComparison(int? year = null)
         {
-            // Sử dụng năm hiện tại nếu year không được truyền vào
             int targetYear = year ?? DateTime.Now.Year;
 
             var reports = await (from cr in _context.CleaningReports
                                  join cf in _context.CleaningForms on cr.FormId equals cf.Id
                                  join r in _context.Rooms on cf.RoomId equals r.Id
                                  join b in _context.Blocks on r.BlockId equals b.Id
-                                 where cr.CreateAt.HasValue && cr.CreateAt.Value.Year == targetYear // Kiểm tra null trước khi lấy Year
+                                 where cr.CreateAt.HasValue && cr.CreateAt.Value.Year == targetYear
                                  select new
                                  {
                                      b.CampusId,
-                                     b.CampusName, // Lưu lại tên campus
+                                     b.CampusName,
                                      cr.Value
                                  }).ToListAsync();
 
             var groupedReports = reports
-                .GroupBy(r => new { r.CampusId, r.CampusName }) // Nhóm theo CampusId và CampusName
+                .GroupBy(r => new { r.CampusId, r.CampusName })
                 .Select(g => new CampusReportComparisonDto
                 {
-                    CampusName = g.Key.CampusName, // Lấy tên campus từ Key
-                    AverageValue = Math.Ceiling(g.Average(r => r.Value ?? 0)), // Làm tròn lên
-                    CountNotMet = g.Count(value => (value.Value ?? 0) < 30), // So sánh với thuộc tính Value
-                    CountCompleted = g.Count(value => (value.Value ?? 0) >= 30 && (value.Value ?? 0) <= 80), // So sánh với thuộc tính Value
-                    CountWellCompleted = g.Count(value => (value.Value ?? 0) > 80) // So sánh với thuộc tính Value
+                    CampusName = g.Key.CampusName,
+                    AverageValue = Math.Ceiling(g.Average(r => r.Value ?? 0)),
+                    CountNotMet = g.Count(value => (value.Value ?? 0) < 30),
+                    CountCompleted = g.Count(value => (value.Value ?? 0) >= 30 && (value.Value ?? 0) <= 80),
+                    CountWellCompleted = g.Count(value => (value.Value ?? 0) > 80)
                 }).ToList();
 
-            return groupedReports;
+            return groupedReports.Any() ? groupedReports : new List<CampusReportComparisonDto>();
         }
+
 
 
 
@@ -50,7 +50,6 @@ namespace Project.Repository
         {
             var today = DateTime.Today;
 
-            // Tạo truy vấn cơ bản lấy thông tin báo cáo trong ngày
             var query = from cr in _context.CleaningReports
                         join cf in _context.CleaningForms on cr.FormId equals cf.Id
                         join r in _context.Rooms on cf.RoomId equals r.Id
@@ -58,26 +57,20 @@ namespace Project.Repository
                         where cr.CreateAt.HasValue && cr.CreateAt.Value.Date == today
                         select new { cr, b.CampusId };
 
-            // Chỉ lọc theo campusId khi campusId có giá trị
             if (!string.IsNullOrEmpty(campusId))
             {
                 query = query.Where(q => q.CampusId == campusId);
             }
 
-
             var reports = await query.Select(q => q.cr.Value).ToListAsync();
 
-
             int totalReportsToday = reports.Count;
-
-
             int countNotMet = reports.Count(value => value < 30);
             int countCompleted = reports.Count(value => value >= 30 && value < 80);
             int countWellCompleted = reports.Count(value => value >= 80);
 
-
             var reportCounts = new List<CleaningReportDetailDto>
-            {
+    {
         new CleaningReportDetailDto { Status = "Chưa hoàn thành", Count = countNotMet },
         new CleaningReportDetailDto { Status = "Hoàn thành", Count = countCompleted },
         new CleaningReportDetailDto { Status = "Hoàn thành tốt", Count = countWellCompleted }
@@ -89,6 +82,7 @@ namespace Project.Repository
                 ReportCounts = reportCounts
             };
         }
+
 
 
 
@@ -112,15 +106,15 @@ namespace Project.Repository
                             TagName = tagGroup.Key.TagName,
                             LastName = tagGroup.Key.LastName,
                             FirstName = tagGroup.Key.FirstName,
-                            TotalReport = tagGroup.Count(), // Đếm số lượng báo cáo từ UserScores cho mỗi TagName
-                            Progress = (int)Math.Ceiling(tagGroup.Average(x => x.us.Score ?? 0)), // Làm tròn tiến độ trung bình từ UserScores
-                            Status = tagGroup.Average(x => x.us.Score ?? 0) >= 80 ? "Hoàn thành tốt" : "Cần cải thiện" // Xác định trạng thái
+                            TotalReport = tagGroup.Count(),
+                            Progress = (int)Math.Ceiling(tagGroup.Average(x => x.us.Score ?? 0)),
+                            Status = tagGroup.Average(x => x.us.Score ?? 0) >= 80 ? "Hoàn thành tốt" : "Cần cải thiện"
                         };
 
             var result = await query.ToListAsync();
-
-            return result;
+            return result.Any() ? result : new List<ResponsibleTagReportDto>();
         }
+
 
         public async Task<List<RoomGroupReportDto>> GetRoomGroupReportByCampus(string? campusId)
         {
@@ -129,35 +123,55 @@ namespace Project.Repository
             var query = from roomgroup in _context.RoomByGroups
                         join rooms in _context.Rooms on roomgroup.RoomId equals rooms.Id
                         join grouprooms in _context.GroupRooms on roomgroup.GroupRoomId equals grouprooms.Id
-                        join cleaningform in _context.CleaningForms on rooms.Id equals cleaningform.RoomId
-                        join cleaningreport in _context.CleaningReports on cleaningform.Id equals cleaningreport.FormId
                         join block in _context.Blocks on rooms.BlockId equals block.Id
-                        where (campusId == null || block.CampusId == campusId)
-                              && cleaningreport.CreateAt.HasValue
-                              && cleaningreport.CreateAt.Value.Date == today
-                        group new { rooms, cleaningreport } by new { grouprooms.GroupName } into Group
+                        where campusId == null || block.CampusId == campusId
+                        group new { rooms, roomgroup } by new { grouprooms.GroupName } into Group
                         select new
                         {
                             GroupName = Group.Key.GroupName,
-                            TotalRoom = Group.Select(g => g.rooms.Id).Distinct().Count(),
-                            TotalEvaluatedRoom = Group.Count(g => g.cleaningreport != null),
-                            AverageScore = Group.Average(g => g.cleaningreport.Value ?? 0)
+                            TotalRoom = Group.Select(g => g.rooms.Id).Distinct().Count()
                         };
 
-            var result = await query.ToListAsync();
+            var evaluatedQuery = from roomgroup in _context.RoomByGroups
+                                 join rooms in _context.Rooms on roomgroup.RoomId equals rooms.Id
+                                 join grouprooms in _context.GroupRooms on roomgroup.GroupRoomId equals grouprooms.Id
+                                 join cleaningform in _context.CleaningForms on rooms.Id equals cleaningform.RoomId
+                                 join cleaningreport in _context.CleaningReports on cleaningform.Id equals cleaningreport.FormId
+                                 join block in _context.Blocks on rooms.BlockId equals block.Id
+                                 where (campusId == null || block.CampusId == campusId) &&
+                                       cleaningreport.CreateAt.HasValue &&
+                                       cleaningreport.CreateAt.Value.Date == today
+                                 group cleaningreport by new { grouprooms.GroupName } into Group
+                                 select new
+                                 {
+                                     GroupName = Group.Key.GroupName,
+                                     TotalEvaluatedRoom = Group.Count(),
+                                     AverageScore = Group.Average(g => g.Value ?? 0)
+                                 };
 
-            // Xử lý thêm sau khi truy vấn
-            var roomGroupReports = result.Select(x => new RoomGroupReportDto
-            {
-                GroupName = x.GroupName,
-                TotalRoom = x.TotalRoom,
-                TotalEvaluatedRoom = x.TotalEvaluatedRoom,
-                Progress = (int)Math.Ceiling(x.AverageScore),
-                Status = x.AverageScore > 80 ? "Hoàn thành tốt" : x.AverageScore < 30 ? "Chưa hoàn thành" : "Cần cải thiện"
-            }).ToList();
+            var roomGroups = await query.ToListAsync();
+            var evaluatedRooms = await evaluatedQuery.ToListAsync();
 
-            return roomGroupReports;
+            var result = (from rg in roomGroups
+                          join er in evaluatedRooms on rg.GroupName equals er.GroupName into evaluatedGroup
+                          from eg in evaluatedGroup.DefaultIfEmpty()
+                          select new RoomGroupReportDto
+                          {
+                              GroupName = rg.GroupName,
+                              TotalRoom = rg.TotalRoom,
+                              TotalEvaluatedRoom = eg?.TotalEvaluatedRoom ?? 0,
+                              Progress = eg != null ? (int)Math.Ceiling(eg.AverageScore) : 0,
+                              Status = eg != null
+                                  ? eg.AverageScore > 80 ? "Hoàn thành tốt"
+                                    : eg.AverageScore < 30 ? "Chưa hoàn thành"
+                                    : "Cần cải thiện"
+                                  : "Chưa hoàn thành"
+                          }).ToList();
+
+            return result.Any() ? result : new List<RoomGroupReportDto>();
         }
+
+
 
 
         public async Task<List<CampusDetailReportDto>> GetCampusDetailReportById(string? campusId)

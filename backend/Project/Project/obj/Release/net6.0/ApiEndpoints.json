@@ -151,22 +151,6 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetCampusDetailReportById",
-    "RelativePath": "api/Chart/campus-detail-report",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "campusId",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetCampusReportComparison",
     "RelativePath": "api/Chart/comparison",
     "HttpMethod": "GET",
@@ -176,6 +160,22 @@
       {
         "Name": "year",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetCampusDetailReportById",
+    "RelativePath": "api/Chart/detail-report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
         "IsRequired": false
       }
     ],
@@ -264,22 +264,6 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetRoomGroupReportByCampus",
-    "RelativePath": "api/Chart/GetRoomGroupReportByCampus",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "campusId",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetTopCriteriaValuesByCampus",
     "RelativePath": "api/Chart/GetTopCriteriaValuesByCampus",
     "HttpMethod": "GET",
@@ -319,6 +303,22 @@
     "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetResponsibleTagReportByCampus",
     "RelativePath": "api/Chart/responsible-tag-report",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetRoomGroupReportByCampus",
+    "RelativePath": "api/Chart/room-group-report",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

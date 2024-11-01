@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\chartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\chartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\chartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\dto\\chartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\dto\\chartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -26,8 +30,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ChartController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ChartController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\ChartController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ChartController.cs",
+              "RelativeToolTip": "Project\\Controllers\\ChartController.cs",
+              "ViewState": "AQIAAHsBAAAAAAAAAAAAANIBAABVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T15:46:44.364Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -36,14 +53,14 @@
               "RelativeDocumentMoniker": "Project\\Repository\\ChartRepository.cs",
               "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ChartRepository.cs",
               "RelativeToolTip": "Project\\Repository\\ChartRepository.cs",
-              "ViewState": "AQIAAGAAAAAAAAAAAAAkwHEAAAAfAAAA",
+              "ViewState": "AQIAABgAAAAAAAAAAAAowOcAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-31T09:46:05.73Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ChartDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\ChartDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\ChartDto.cs",
@@ -56,7 +73,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ScheduleDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\ScheduleDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\ScheduleDto.cs",
@@ -69,7 +86,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ScheduleRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ScheduleRepository.cs",
               "RelativeDocumentMoniker": "Project\\Repository\\ScheduleRepository.cs",
