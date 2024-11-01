@@ -1,34 +1,30 @@
 'use client'
 registerLicense(CALENDAR_LICENSE_KEY as string);
 import {
-  Week, Day, Month, Agenda, ScheduleComponent, ViewsDirective, ViewDirective, EventSettingsModel, DragEventArgs, ResizeEventArgs, Inject, Resize, DragAndDrop, TimelineMonth, TimelineViews,
-  CellClickEventArgs, CurrentAction, ActionEventArgs, RecurrenceEditorComponent,
+  Week, Day, Month, Agenda, ScheduleComponent, ViewsDirective, ViewDirective, Inject, Resize, DragAndDrop, TimelineMonth, TimelineViews,
+  CellClickEventArgs, CurrentAction, 
   RecurrenceEditor,
   ResourcesDirective,
   ResourceDirective,
-  eventDoubleClick,
-  cellDoubleClick
+  EventClickArgs
 } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
-import { ButtonComponent, CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import { TextBoxComponent, TextAreaComponent } from '@syncfusion/ej2-react-inputs';
+import { ButtonComponent} from '@syncfusion/ej2-react-buttons';
+
 import numberingSystems from '@syncfusion/ej2-cldr-data/supplemental/numberingSystems.json';
 import gregorian from '@syncfusion/ej2-cldr-data/main/vi/ca-gregorian.json';
 import numbers from '@syncfusion/ej2-cldr-data/main/vi/numbers.json';
 import timeZoneNames from '@syncfusion/ej2-cldr-data/main/vi/timeZoneNames.json';
-import { DropDownListComponent, MultiSelectComponent } from '@syncfusion/ej2-react-dropdowns';
-import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { L10n, loadCldr } from '@syncfusion/ej2-base';
-import { Table, TableBody, TableCell, TableRow, Box, IconButton, Button, Typography } from '@mui/material';
-import LocationSelector from './location';
-import AddIcon from '@mui/icons-material/Add';
+import {  Box, IconButton, Button, Typography } from '@mui/material';
 import { CALENDAR_LICENSE_KEY } from 'src/config-global';
 import CalendarList from './list-UserGroup-view';
 import ScheduleService from 'src/@core/service/schedule';
 import ResponsibleGroupRoomService from 'src/@core/service/responsiblegroup';
-import { getResponsibleGroupText, userMapping } from 'src/utils/schedule/handle-schedule';
-import { Schedule, User, CalendarItem } from 'src/utils/type/Type';
+import { getResponsibleGroupText } from 'src/utils/schedule/handle-schedule';
+import { User, CalendarItem } from 'src/utils/type/Type';
 import UserService from 'src/@core/service/user';
 import SnackbarComponent from '../snackBar';
 import Popup from '../form/Popup'
@@ -167,7 +163,7 @@ L10n.load({
 
 
 
-export default function Home() {
+ const CalendarView = ()=> {
   loadCldr(numbers, timeZoneNames, gregorian, numberingSystems);
 
   const scheduleObj = useRef<ScheduleComponent | null>(null);
@@ -257,24 +253,6 @@ export default function Home() {
     let eventData: any = {};
     let actionType: CurrentAction = "Add";
 
-    const getSlotData = () => {
-      const selectedElements = scheduleObj.current?.getSelectedElements();
-      if (!selectedElements) return null;
-
-      const cellDetails = scheduleObj.current?.getCellDetails(selectedElements);
-      if (!cellDetails) return null;
-
-      const formData = scheduleObj.current?.eventWindow.getObjectFromFormData("e-quick-popup-wrapper");
-      if (!formData) return null;
-
-      const addObj: any = {};
-      addObj.Id = scheduleObj.current?.getEventMaxID();
-      addObj.Subject = formData.Subject && formData.Subject.length > 0 ? formData.Subject : "Add title";
-      addObj.StartTime = new Date(cellDetails.startTime);
-      addObj.EndTime = new Date(cellDetails.endTime);
-      return addObj;
-    };
-
     switch (action) {
       case "delete":
         eventData = scheduleObj.current?.activeEventData?.event;
@@ -300,73 +278,9 @@ export default function Home() {
     }
     scheduleObj.current?.closeQuickInfoPopup();
   }, []);
-  const onActionComplete = async (args: ActionEventArgs) => {
-    if (args.requestType === 'eventCreated' || args.requestType === 'eventChanged') {
-      const eventData = args.data as any;
-      if (Array.isArray(eventData)) {
-        eventData.forEach(processEventData);
-      } else if (typeof eventData === 'object' && eventData !== null) {
-        processEventData(eventData);
-      }
-      console.log(args.requestType);
-      console.log(eventData);
-      if (args.requestType === 'eventCreated') {
-        try {
-          const response = await ScheduleService.createSchedule(eventData[0]);
-          if (response.status === 200) {
-            setSnackbarMessage(response.data.message);
-            setSnackbarStatus("success");
-            setSnackbarOpen(true);
-            reloadScheduleData();
-          }
-        }
-        catch (e) {
-          console.log(e);
-        }
-      }
-    }
-  };
+ 
 
-  const processEventData = (event: any) => {
-    //Hàm chuyển đổi múi giờ thành UTC + 07:00
-    const adjustTimeZone = (date: Date) => {
-      const adjustedDate = new Date(date);
-      adjustedDate.setHours(adjustedDate.getHours() + 7);
-      return adjustedDate;
-    };
-    if (event.place) {
-      if (typeof event.place === 'string') {
-        try {
-          event.place = JSON.parse(event.place);
-        } catch (error) {
-          console.error('Error parsing place:', error);
-          event.place = [];
-        }
-      } else if (!Array.isArray(event.place)) {
-        console.warn('place is not an array:', event.place);
 
-        event.place = [event.place];
-      }
-    } else {
-      event.place = [];
-    }
-
-    if (!event.responsibleGroupId) {
-      event.responsibleGroupId = calendars[0].id;
-    }
-    if (event.description === undefined) {
-      event.description = "";
-    }
-    if (event.recurrenceRule === null) {
-      event.recurrenceRule = '';
-    }
-    if (event.startDate) {
-      event.startDate = adjustTimeZone(new Date(event.startDate));
-    }
-    if (event.endDate) {
-      event.endDate = adjustTimeZone(new Date(event.endDate));
-    }
-  };
 
   const header = (props: any) => {
     return (
@@ -487,188 +401,7 @@ export default function Home() {
     );
   }
   const quickInfoTemplates = { header: header, content: content, footer: footer };
-  const editorWindowTemplate = (props: any) => {
-    console.log(props);
-    const [locations, setLocations] = useState(() => {
-      if (props.place && typeof props.place === 'string') {
-        try {
-          return JSON.parse(props.place);
-        } catch (error) {
-          console.error('Error parsing place:', error);
-          return []; // Đặt giá trị mặc định nếu parse thất bại
-        }
-      }
-      return props.place || [];
-    });
-    // const [recurrenceRule, setRecurrenceRule] = useState(props.recurrenceRule || '');
-    const [isAllDay, setIsAllDay] = useState(props.allDay || false);
-
-    const handleIsAllDayChange = (args: any) => {
-      setIsAllDay(args.checked);
-    };
-
-    const handleRecurrenceChange = (args: any) => {
-      console.log("New recurrenceRule value from editor:", args.value);
-      // Thay vì sử dụng setState, chúng ta cập nhật trực tiếp giá trị của input ẩn
-      const recurrenceInput = document.querySelector('input[data-name="recurrenceRule"]') as HTMLInputElement;
-      if (recurrenceInput) {
-        recurrenceInput.value = args.value || '';
-      }
-    };
-
-
-    const handleLocationChange = (index: number, level: string, rooms: Array<{ id: string, name: string }>) => {
-      const newLocations = [...locations];
-      newLocations[index] = { level, rooms };
-      setLocations(newLocations);
-    };
-
-    const addLocation = () => {
-      setLocations([...locations, { level: '', rooms: [] }]);
-    };
-
-    const removeLocation = (index: number) => {
-      const newLocations = locations.filter((_: any, i: number) => i !== index);
-      setLocations(newLocations);
-    };
-
-    return (
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableCell colSpan={2}>
-              <TextBoxComponent
-                id="title"
-                data-name="title"
-                className="e-field"
-                floatLabelType="Always"
-                placeholder='Tiêu đề'
-                value={props.title || ''} />
-            </TableCell>
-
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>
-              <MultiSelectComponent
-                id="EventType"
-                dataSource={userMapping(userList)}
-                fields={{ text: 'text', value: 'id' }}
-                placeholder="Chọn người dùng"
-                floatLabelType="Always"
-                mode="Box"
-                style={{ color: "#000" }}
-                showClearButton={true}
-                showDropDownIcon={true}
-                filterBarPlaceholder="Tìm kiếm người dùng"
-                popupHeight="200px"
-                value={props.users || []}
-                className='e-field'
-                allowFiltering={true}
-                filterType="Contains"
-                data-name="users"
-              />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>
-              <DropDownListComponent
-                id="EventType"
-                dataSource={calendars.map(cal => ({ text: cal.groupName, id: cal.id }))}
-                fields={{ text: 'text', value: 'id' }}
-                placeholder="Chọn nhóm người"
-                floatLabelType="Always"
-                popupHeight="200px"
-                style={{ color: "#000" }}
-                showClearButton={true}
-                value={props.responsibleGroupId || ''}
-                className='e-field'
-                data-name="responsibleGroupId"
-              />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>
-              <DateTimePickerComponent id="startDate" data-name="startDate" value={new Date(props.startDate)} className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu' locale='vi' ></DateTimePickerComponent >
-            </TableCell>
-            <TableCell>
-              <DateTimePickerComponent id="endDate" data-name="endDate" value={new Date(props.endDate || props.endDate)} className='e-field' floatLabelType="Always" placeholder='Ngày kết thúc' locale='vi'></DateTimePickerComponent>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>
-              <CheckBoxComponent
-                id="allDay"
-                checked={isAllDay}
-                label="Cả ngày"
-                change={handleIsAllDayChange}
-                className="e-field"
-                data-name="allDay"
-              />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>
-              {locations.map((location: any, index: any) => (
-                <Box key={index} sx={{ mt: 2 }}>
-                  <LocationSelector
-                    key={index}
-                    index={index}
-                    data={location}
-                    onChange={handleLocationChange}
-                    onRemove={removeLocation} />
-                </Box>
-              ))}
-              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', border: '1px dashed', borderRadius: '5px', cursor: 'pointer' }} onClick={addLocation}>
-                <IconButton color="primary">
-                  <AddIcon />
-                </IconButton>
-              </Box>
-              <input
-                type="hidden"
-                className="e-field"
-                data-name="place"
-                value={JSON.stringify(locations)}
-              />
-
-            </TableCell>
-          </TableRow>
-
-          <TableRow>
-            <TableCell colSpan={2}>
-              <RecurrenceEditorComponent
-                id='recurrenceRule'
-                value={props.recurrenceRule || ''}
-                change={handleRecurrenceChange}
-                locale='vi'
-              />
-              <input
-                id='recurrenceRule'
-                type="hidden"
-                data-name="recurrenceRule"
-                defaultValue={props.recurrenceRule || ''}
-                className="e-field"
-              />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={2}>
-              <TextAreaComponent
-                id="description"
-                data-name='description'
-                placeholder="Nhập mô tả"
-                resizeMode='None'
-                floatLabelType="Always"
-                className="e-field"
-                style={{ width: '100%' }}
-                value={props.description || ''}
-              />
-
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    )
-  }
+ 
   const formatLocation = (place: any) => {
     if (typeof place === 'string') {
       try {
@@ -697,61 +430,20 @@ export default function Home() {
     );
   };
 
-  // const toolTipTemplate = (props: any) => {
-  //   return (
-  //     <div className="tooltip-custom">
-  //       <div><b>Tiêu đề: </b>{props.title}</div>
-  //       {props.place && (
-  //         <div><b>Địa điểm: </b>{formatLocation(props.place)}</div>
-  //       )}
-  //       <div>
-  //         {props.allDay ? (
-  //           <b>
-  //             {new Date(props.startDate).toDateString() === new Date(props.endDate).toDateString() ? (
-  //               new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
-  //             ) : (
-  //               `${new Date(props.startDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })} - ${new Date(props.endDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
-  //             )}
-  //           </b>
-  //         ) : (
-  //           <b>
-  //             {new Date(props.startDate).toDateString() === new Date(props.endDate).toDateString() ? (
-  //               <>
-  //                 {new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })},
-  //                 {' '}
-  //                 {new Date(props.startDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
-  //                 {new Date(props.endDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-  //               </>
-  //             ) : (
-  //               <>
-  //                 {new Date(props.startDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
-  //                 {new Date(props.startDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })} -
-  //                 {new Date(props.endDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })}{' '}
-  //                 {new Date(props.endDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-  //               </>
-  //             )}
-  //           </b>
-  //         )}
-  //       </div>
-  //       {props.Users && props.Users.length > 0 && (
-  //         <div><b>Người dùng: </b>{props.Users.join(', ')}</div>
-  //       )}
-  //       {props.ResponsibleGroupId && (
-  //         <div><b>Nhóm: </b>{getResponsibleGroupText(props.ResponsibleGroupId, calendars)}</div>
-  //       )}
-  //       {props.description && (
-  //         <div><b>Mô tả: </b>{props.description}</div>
-  //       )}
-  //     </div>
-  //   );
-  // };
+  const OnEventDoubleClick = (args: EventClickArgs) => {
+    args.cancel = true;
+    handleEditSchedule();
+ }
+ const OnCellDoubleClick = (args: CellClickEventArgs) => {
+    args.cancel = true;
+    handleAddSchedule();
+ }
+
 
 
   useEffect(() => {
     const fetchData = async () => {
-      const ResponsibleGroupRes = await ResponsibleGroupRoomService.getAllResponsibleGroups();
-      const ScheduleData = await ScheduleService.getAllSchedule();
-      const UserData = await UserService.getAllUsers();
+      const [ResponsibleGroupRes,ScheduleData,UserData] = await Promise.all([ResponsibleGroupRoomService.getAllResponsibleGroups(),ScheduleService.getAllSchedule(),UserService.getAllUsers()]);
       const updatedCalendars = ResponsibleGroupRes.data.map((item: any) => ({
         ...item,
         isChecked: true
@@ -774,7 +466,7 @@ export default function Home() {
             <AddScheduleComponent scheduleData={scheduleData} userList={userList} calendars={calendars} setOpenPopup={setOpenPopup} isNewSchedule={isNewSchedule} onSuccess={handleAddScheduleSuccess} />
           </Popup>
           <div className='scheduler-component'>
-            <ScheduleComponent width='100%' height='550px' dateFormat='dd-MM-yyyy' eventSettings={{
+            <ScheduleComponent width='100%' height='700px' dateFormat='dd-MM-yyyy' eventSettings={{
               dataSource: filterData, fields: {
                 id: 'index',
                 subject: { name: 'title' },
@@ -790,7 +482,7 @@ export default function Home() {
                 customId: { name: 'id' }
               }
               , template: eventTemplate
-            }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} actionComplete={onActionComplete} editorTemplate={editorWindowTemplate} enableAdaptiveUI={true}>
+            }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} eventDoubleClick={OnEventDoubleClick} cellDoubleClick={OnCellDoubleClick}>
               <ViewsDirective>
                 <ViewDirective option="Day" interval={5}></ViewDirective>
                 <ViewDirective option="Month" isSelected={true}></ViewDirective>
@@ -832,3 +524,5 @@ export default function Home() {
     </>
   )
 }
+
+export default CalendarView;

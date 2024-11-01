@@ -110,14 +110,6 @@ type Tag = {
   name: string;
 };
 
-
-type Criteria = {
-  CriteriaID: number;
-  Name: string;
-  ratingtype?: string;
-  tags?: Tag[];
-};
-
 type Form = {
   id?: string,
   formName: string,

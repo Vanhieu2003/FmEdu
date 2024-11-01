@@ -11,90 +11,10 @@
 @import "../../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css";
 @import "../../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
 
-.scheduler-title-container {
-    width: 80%;
-    display: inline-block;
-    text-align: center;
-    font-weight: 500;
-  }
+
   
   .scheduler-component {
     float: left;
-  }
-  
-  .threeview-title-container {
-    width: 100%;
-    text-align: center;
-    color: #000;
-    font-weight: 500;
-  }
-  
-  .threeview-component {
-    background-color: #fff;
-    text-align: center;
-  }
-  
-  .threeview-side {
-    width: 20%;
-    background-color: #fff;
-    float: right;
-  }
-  
-  .e-schedule .e-appointment {
-    min-height: auto;
-    /* Đặt chiều cao tối thiểu */
-    white-space: normal;
-    /* Cho phép nội dung tràn xuống nhiều dòng nếu cần */
-  }
-  
-  .e-schedule .e-appointment-template {
-    white-space: normal;
-    /* Cho phép nội dung hiển thị trên nhiều dòng */
-    height: auto;
-  }
-  
-  .tooltip-custom {
-    background-color: #fff3f3;
-    /* Màu nền nhẹ */
-    padding: 10px;
-    /* Khoảng cách giữa nội dung và viền */
-    border: 1px solid #ccc;
-    /* Viền mỏng xám */
-    border-radius: 8px;
-    /* Các góc bo tròn */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Hiệu ứng đổ bóng */
-    font-family: Arial, sans-serif;
-    /* Font chữ mềm mại */
-  }
-  
-  .tooltip-custom b {
-    color: #333;
-    /* Màu sắc cho tiêu đề */
-  }
-  
-  .tooltip-custom div {
-    margin-bottom: 5px;
-    /* Khoảng cách giữa các dòng */
-    color: #333;
-  }
-  
-  .tooltip-header {
-    font-weight: bold;
-    font-size: 16px;
-    color: #fff;
-    height: 50px;
-    padding: 20px;
-  }
-  
-  .tooltip-content {
-    font-size: 14px;
-  }
-  
-  .tooltip-footer {
-    font-style: italic;
-    margin-top: 10px;
-    color: #000;
   }
   
   .e-quick-popup-wrapper .e-event-popup .e-popup-footer {
@@ -102,17 +22,13 @@
   }
   
   .schedule-customization.e-schedule .e-header-popup .e-header-calendar.e-calendar {
-  
     min-width: 360px;
-  
   }
   
   .schedule-customization.e-schedule .e-header-popup .e-header-calendar.e-calendar .e-content.e-year td>span.e-day,
   
   .schedule-customization.e-schedule .e-header-popup .e-header-calendar.e-calendar .e-content.e-decade td>span.e-day {
-  
     width: 100%;
-  
   }
   
   .scheduler-container{
