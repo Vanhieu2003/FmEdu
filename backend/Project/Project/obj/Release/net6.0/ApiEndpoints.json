@@ -264,6 +264,22 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
+    "Method": "GetShiftEvaluations",
+    "RelativePath": "api/Chart/GetShiftEvaluations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "campusId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetTopCriteriaValuesByCampus",
     "RelativePath": "api/Chart/GetTopCriteriaValuesByCampus",
     "HttpMethod": "GET",

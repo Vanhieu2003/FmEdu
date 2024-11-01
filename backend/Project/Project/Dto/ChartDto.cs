@@ -55,4 +55,12 @@
 
         public string Status { get; set; }
     }
+    public class ShiftEvaluationSummaryDto
+    {
+        public string ShiftName { get; set; }
+        public string ShiftTime { get; set; } 
+        public int TotalEvaluations { get; set; }
+        public double AverageCompletionPercentage { get; set; }
+        public DateTime EvaluationDate { get; set; }
+    }
 }

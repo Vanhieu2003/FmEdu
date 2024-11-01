@@ -9,5 +9,6 @@ namespace Project.Interface
         public Task<List<ResponsibleTagReportDto>> GetResponsibleTagReportByCampus(string? campusId);
         public Task<List<RoomGroupReportDto>> GetRoomGroupReportByCampus(string? campusId);
         public Task<List<CampusDetailReportDto>> GetCampusDetailReportById(string? campusId);
+        public Task<IEnumerable<ShiftEvaluationSummaryDto>> GetShiftEvaluationsAsync(string campusId);
     }
 }

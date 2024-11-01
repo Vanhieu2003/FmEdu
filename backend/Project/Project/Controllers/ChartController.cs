@@ -491,6 +491,13 @@ ORDER BY
             return Ok(result);
         }
 
+        [HttpGet("GetShiftEvaluations")]
+        public async Task<IActionResult> GetShiftEvaluations([FromQuery] string? campusId = null)
+        {
+            var evaluations = await _repo.GetShiftEvaluationsAsync(campusId);
+            return Ok(evaluations);
+        }
+
     }
 
 }

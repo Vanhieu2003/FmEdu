@@ -230,5 +230,42 @@ namespace Project.Repository
 
             return campusDetailReports;
         }
+
+
+        public async Task<IEnumerable<ShiftEvaluationSummaryDto>> GetShiftEvaluationsAsync(string? campusId = null)
+        {
+            var today = DateTime.Today;
+
+            var query = from cleaningreport in _context.CleaningReports
+                        join cleaningform in _context.CleaningForms on cleaningreport.FormId equals cleaningform.Id
+                        join rooms in _context.Rooms on cleaningform.RoomId equals rooms.Id
+                        join block in _context.Blocks on rooms.BlockId equals block.Id
+                        join shifts in _context.Shifts on cleaningreport.ShiftId equals shifts.Id
+                        where cleaningreport.CreateAt.HasValue
+                              && cleaningreport.CreateAt.Value.Date == today
+                              && (string.IsNullOrEmpty(campusId) || block.CampusId == campusId)
+                        group cleaningreport by new
+                        {
+                            shifts.ShiftName,
+                            shifts.StartTime,
+                            shifts.EndTime,
+                            EvaluationDate = cleaningreport.CreateAt.Value.Date
+                        } into Group
+                        select new ShiftEvaluationSummaryDto
+                        {
+                            ShiftName = Group.Key.ShiftName,
+                            ShiftTime = $"{Group.Key.StartTime:hh\\:mm} - {Group.Key.EndTime:hh\\:mm}",
+                            TotalEvaluations = Group.Count(),
+                            AverageCompletionPercentage = Group.Any(g => g.Value != null)
+                                ? (int)Math.Round(Group.Average(g => g.Value ?? 0))
+                                : 0,
+                            EvaluationDate = Group.Key.EvaluationDate
+                        };
+
+            return await query.OrderBy(dto => dto.EvaluationDate)
+                               .ThenBy(dto => dto.ShiftName)
+                               .ToListAsync();
+        }
+
     }
 }
