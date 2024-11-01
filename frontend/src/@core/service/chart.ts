@@ -53,6 +53,12 @@ export class ChartService {
       `${API_ENDPOINT}/api/Chart/detail-report?campusId=${campusId}`
     );
   }
+
+  GetDailyComparisionByCampus = async (campusId: string) => {
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/GetShiftEvaluations?campusId=${campusId}`
+    );
+  }
 }
 
 export default new ChartService();

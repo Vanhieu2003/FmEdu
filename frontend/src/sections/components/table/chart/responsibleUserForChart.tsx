@@ -99,28 +99,25 @@ const getBackGroundColor = (status: string) => {
 }
 
 const ResponsibleUserForChart = ({ data }: props) => {
-    // Thêm state cho pagination
     const [page, setPage] = useState(0);
     const rowsPerPage = 5;
 
-    // Xử lý thay đổi trang
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
-    // Tính toán các rows sẽ hiển thị trên trang hiện tại  
     const visibleRows = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-
     return (
-        <Box sx={{ height: '100%' }}>
-            <TableContainer component={Card} sx={{ height: 'inherit' }}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <TableContainer sx={{ flexGrow: 1 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell
                                 align='center'
                                 colSpan={5}
+                                sx={{fontSize:'20px',color:'#000'}}
                             >
                                 Bảng thống kê người chịu trách nhiệm
                             </TableCell>
@@ -138,7 +135,7 @@ const ResponsibleUserForChart = ({ data }: props) => {
                             <TableRow>
                                 <TableCell align='center' sx={{ width: '20%' }}>{record.tagName}</TableCell>
                                 <TableCell align='center' sx={{ width: '20%' }}>
-                                    {`${record.fristName} ${record.lastName}`}
+                                    {`${record.firstName} ${record.lastName}`}
                                 </TableCell>
                                 <TableCell align='center' sx={{ width: '20%' }}>
                                     {record.totalReport}
@@ -159,25 +156,29 @@ const ResponsibleUserForChart = ({ data }: props) => {
                                 </TableCell>
                             </TableRow>
                         )}
-                        {data.length>0?(<TableRow>
-                            <TableCell colSpan={5} align='right'>
-                                <TablePagination
-                                    component="div"
-                                    count={data.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    onPageChange={handleChangePage}
-                                    rowsPerPageOptions={[]} // Ẩn options chọn số record mỗi trang
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} của ${count}`}
-                                />
-                            </TableCell>
-                        </TableRow>):null}
                     </TableBody>
                 </Table>
             </TableContainer>
-
-        </Box>
-    )
-}
+            
+            {data.length > 0 && (
+                <Box sx={{ 
+                    borderTop: '1px solid rgba(224, 224, 224, 1)',
+                    display: 'flex',
+                    justifyContent: 'flex-end'
+                }}>
+                    <TablePagination
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        rowsPerPageOptions={[]}
+                        labelDisplayedRows={({ from, to, count }) => `${from}-${to} của ${count}`}
+                    />
+                </Box>
+            )}
+        </Card>
+    );
+};
 
 export default ResponsibleUserForChart

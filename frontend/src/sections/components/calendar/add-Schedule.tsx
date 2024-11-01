@@ -58,8 +58,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
                 allDay: false,
                 users: [],
                 place: [],
-                startDate: scheduleData.StartTime?scheduleData.StartTime:new Date(),
-                endDate: scheduleData.EndTime?scheduleData.EndTime:new Date(),
+                startDate: scheduleData?scheduleData.StartTime:new Date(),
+                endDate: scheduleData?scheduleData.EndTime:new Date(),
                 index: undefined
             }
         }
@@ -97,9 +97,17 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
         }
     })
 
-    const adjustTimeZone = (date: Date) => {
+    const adjustTimeZone = (date: Date, dateType: string) => {
+        
         const adjustedDate = new Date(date);
         adjustedDate.setHours(adjustedDate.getHours() + 7);
+        if (dateType === 'end' && adjustedDate.getHours() === 7 && adjustedDate.getMinutes() === 0) {
+            adjustedDate.setDate(adjustedDate.getDate() - 1);
+            adjustedDate.setHours(30);
+            adjustedDate.setMinutes(59);
+            console.log("enter end date");
+        }
+    
         return adjustedDate;
     };
 
@@ -150,8 +158,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        formData.startDate = adjustTimeZone(formData.startDate);
-        formData.endDate = adjustTimeZone(formData.endDate);
+        formData.startDate = adjustTimeZone(formData.startDate,'start');
+        formData.endDate = adjustTimeZone(formData.endDate,'end');
         try {
             if (isNewSchedule) {
                 const res = await ScheduleService.createSchedule(formData);
@@ -166,8 +174,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
             }
         } catch (error) {
             console.error('Lỗi khi gửi dữ liệu:', error);
-            // Xử lý lỗi ở đây (ví dụ: hiển thị thông báo lỗi)
         }
+      
     };
     return (
         <Table>

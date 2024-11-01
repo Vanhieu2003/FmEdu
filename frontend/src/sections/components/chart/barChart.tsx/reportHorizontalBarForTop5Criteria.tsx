@@ -6,6 +6,7 @@ import DataChart from 'src/components/DataChart/DataChart';
 
 interface props {
     data: any;
+    campusName:string;
 }
 
 const colors =[
@@ -75,14 +76,14 @@ const data1 = {
 };
 
 
-const RenderHorizontalBarChart = ({ data }: props) => {
+const RenderHorizontalBarChart = ({ data,campusName }: props) => {
     const options = {
         indexAxis: 'y',  // Đặt trục x thành trục dọc, cho phép thanh nằm ngang
         responsive: true,
         plugins: {
             title: {
                 display: true, // Hiển thị title
-                text: 'Biểu đồ cột ngang', // Tiêu đề
+                text: `Biểu đồ Top 5 tiêu chí đánh giá của ${campusName}`, // Tiêu đề
                 font: {
                     size: 20 // Kích thước font
                 }

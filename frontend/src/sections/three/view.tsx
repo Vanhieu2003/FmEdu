@@ -30,6 +30,7 @@ import DailyDetailReport from '../components/table/chart/dailyDetailReport';
 import RenderHorizontalBarChart from '../components/chart/barChart.tsx/reportHorizontalBarForTop5Criteria';
 import { ChartSkeleton } from '../components/skeleton/chartSkeleton';
 import { TableSkeleton } from '../components/skeleton/tableSkeleton';
+import DailyShiftByCampus from '../components/table/chart/dailyShiftByCampus';
 
 
 // ----------------------------------------------------------------------
@@ -124,6 +125,7 @@ export default function ThreeView() {
   const [dailyRoomGroupData, setDailyRoomGroupData] = useState<any>();
   const [dailyReportData, setDailyReportData] = useState<any>();
   const [dailyTop5CriteriaValueData, setDailyTop5CriteriaValueData] = useState<any>();
+  const [dailyShiftValueData,setDailyShiftValueData] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
 
 
@@ -132,18 +134,8 @@ export default function ThreeView() {
       try {
         setIsLoading(true);
         const response = await CampusService.getAllCampus();
-        const response1 = await ChartService.GetCleaningProgressByCampusId('');
-        const response2 = await ChartService.GetDailyTagAndUserByCampus('');
-        const response3 = await ChartService.GetDailyRoomGroupReportByCampus('');
-        const response4 = await ChartService.GetDailyReportStatusTableByCampus('');
-        const response5 = await ChartService.GetAverageValueForCriteriaPerCampus('')
-
-        setData(response1.data);
         setCampus(response.data);
-        setDailyTagByUserData(response2.data);
-        setDailyRoomGroupData(response3.data);
-        setDailyReportData(response4.data);
-        setDailyTop5CriteriaValueData(response5.data);
+       
       } catch (error) {
         console.error(error);
       } finally {
@@ -152,59 +144,6 @@ export default function ThreeView() {
     };
     fetchData();
   }, []);
-
-  const fetchDataForDonutChart = async (campusId: any) => {
-    try {
-      setIsLoading(true);
-      const response = await ChartService.GetCleaningProgressByCampusId(campusId === 'All' ? '' : campusId);
-      setData(response.data)
-    }
-    finally {
-      setIsLoading(false);
-    }
-
-  }
-
-
-  const fetchDataForTagAndUserTable = async (campusId: any) => {
-    try {
-      setIsLoading(true);
-      const response = await ChartService.GetDailyTagAndUserByCampus(campusId === 'All' ? '' : campusId);
-      setDailyTagByUserData(response.data);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const fetchDataForRoomGroupTable = async (campusId: any) => {
-    try {
-      setIsLoading(true);
-      const response = await ChartService.GetDailyRoomGroupReportByCampus(campusId === 'All' ? '' : campusId);
-      setDailyRoomGroupData(response.data);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const fetchDataForDailyReportTable = async (campusId: any) => {
-    try {
-      setIsLoading(true);
-      const response = await ChartService.GetDailyReportStatusTableByCampus(campusId === 'All' ? '' : campusId);
-      setDailyReportData(response.data);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const fetchDataForDailyTop5CriteriaChart = async (campusId: any) => {
-    try {
-      setIsLoading(true);
-      const response = await ChartService.GetAverageValueForCriteriaPerCampus(campusId === 'All' ? '' : campusId);
-      setDailyTop5CriteriaValueData(response.data);
-    } finally {
-      setIsLoading(false);
-    }
-  }
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -214,13 +153,15 @@ export default function ThreeView() {
           tagUserResponse,
           roomGroupResponse,
           dailyReportResponse,
-          criteriaResponse
+          criteriaResponse,
+          shiftResponse
         ] = await Promise.all([
           ChartService.GetCleaningProgressByCampusId(selectedCampus === 'All' ? '' : selectedCampus),
           ChartService.GetDailyTagAndUserByCampus(selectedCampus === 'All' ? '' : selectedCampus),
           ChartService.GetDailyRoomGroupReportByCampus(selectedCampus === 'All' ? '' : selectedCampus),
           ChartService.GetDailyReportStatusTableByCampus(selectedCampus === 'All' ? '' : selectedCampus),
-          ChartService.GetAverageValueForCriteriaPerCampus(selectedCampus === 'All' ? '' : selectedCampus)
+          ChartService.GetAverageValueForCriteriaPerCampus(selectedCampus === 'All' ? '' : selectedCampus),
+          ChartService.GetDailyComparisionByCampus(selectedCampus === 'All' ? '' : selectedCampus)
         ]);
 
         setData(donutResponse.data);
@@ -228,6 +169,7 @@ export default function ThreeView() {
         setDailyRoomGroupData(roomGroupResponse.data);
         setDailyReportData(dailyReportResponse.data);
         setDailyTop5CriteriaValueData(criteriaResponse.data);
+        setDailyShiftValueData(shiftResponse.data)
       } catch (error) {
         console.error(error);
       } finally {
@@ -327,7 +269,7 @@ export default function ThreeView() {
             }}
           >
             <ReportCountChart data={data} />
-            {dailyReportData && < DailyDetailReport data={dailyReportData} campusName={selectedCampus === 'All' ? "Tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName} />}
+            {dailyReportData && < DailyDetailReport data={dailyReportData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName} />}
           </Box>
         </Grid>
       </Grid>
@@ -337,7 +279,7 @@ export default function ThreeView() {
           {dailyTagByUserData && <ResponsibleUserForChart data={dailyTagByUserData} />}
         </Grid>
         <Grid item xs={6}>
-          {dailyTop5CriteriaValueData && <RenderHorizontalBarChart data={dailyTop5CriteriaValueData} />}
+          {dailyTop5CriteriaValueData && <RenderHorizontalBarChart data={dailyTop5CriteriaValueData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName} />}
         </Grid>
       </Grid>
       <Grid container spacing={2} sx={{ marginTop: '10px' }}>
@@ -345,7 +287,7 @@ export default function ThreeView() {
           {dailyRoomGroupData && <ResponsibleGroupForChart data={dailyRoomGroupData} />}
         </Grid>
         <Grid item xs={6}>
-          <ReportCountChart data={data} />
+          {dailyShiftValueData && <DailyShiftByCampus data={dailyShiftValueData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName}/>}
         </Grid>
       </Grid>
 
