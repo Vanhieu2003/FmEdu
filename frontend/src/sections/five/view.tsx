@@ -21,6 +21,7 @@ import CriteriaService from 'src/@core/service/criteria';
 import TagService from 'src/@core/service/tag';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
 import { throttle } from 'lodash';
+import SnackbarComponent from '../components/snackBar';
 
 dayjs.locale('vi');
 
@@ -55,6 +56,25 @@ export default function FiveView() {
   const [searchTerm, setSearchTerm] = useState('');
   const [mockCriteria,setMockCriteria] = useState<Criteria[]>();
   const [filterCriteriaList,setFilterCriteriaList] = useState<Criteria[]>();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarStatus, setSnackbarStatus] = useState('success');
+
+
+
+  const handleAddCriteriaSuccess = () => {
+    setSnackbarOpen(true);
+    setSnackbarMessage('Thêm tiêu chí thành công');
+    setSnackbarStatus('success');
+    fetchCriteriaAndTags(page);
+  };
+
+  const handleSnackbarClose = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  }, [snackbarStatus]);
 
   const filterCriteria = () => {
     let filteredCriteria = mockCriteria;
@@ -224,7 +244,7 @@ export default function FiveView() {
 
         <Button variant='contained' onClick={() => setOpenPopUp(true)}>Tạo mới</Button>
         <Popup title='Form đánh giá' openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
-          <AddCriteria setOpenPopup={setOpenPopUp} />
+          <AddCriteria setOpenPopup={setOpenPopUp} onSuccess={handleAddCriteriaSuccess}/>
         </Popup>
       </Box>
       <TableContainer component={Paper}>
@@ -284,6 +304,12 @@ export default function FiveView() {
       <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', margin: '10px', float: 'right' }}>
         <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange} />
       </Stack>
+      <SnackbarComponent
+        status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+      />
     </Container>
   );
 }

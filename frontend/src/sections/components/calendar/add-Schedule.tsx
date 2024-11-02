@@ -46,6 +46,7 @@ interface AddScheduleComponentProps {
 }
 
 const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup, isNewSchedule, onSuccess }: AddScheduleComponentProps) => {
+    console.log(scheduleData);
 
     const [formData, setFormData] = useState<ScheduleData>(() => {
         if (isNewSchedule) {

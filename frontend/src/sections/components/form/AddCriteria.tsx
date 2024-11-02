@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import TagService from 'src/@core/service/tag';
 import CriteriaService from 'src/@core/service/criteria';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 
 interface Tag {
     id?: string;
@@ -31,9 +32,10 @@ type RoomCategorical = {
 
 type AddCriteriaFormProps = {
     setOpenPopup: (open: boolean) => void;
+    onSuccess:(message:string)=>void;
 };
 
-const AddCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
+const AddCriteria = ({ setOpenPopup,onSuccess }: AddCriteriaFormProps) => {
     const [type, setType] = useState('')
     const [ratingTypesSelected, setRatingTypesSelected] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -121,10 +123,14 @@ const AddCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
             roomCategoryId: selectedRoom,
             tags: tagsSelected.map(tag => tag.tagName)
         };
-        console.log(newCriteria)
-        await CriteriaService.postCriteria(newCriteria);
-        window.location.reload();
-        setOpenPopup(false);
+        
+        const response = await CriteriaService.postCriteria(newCriteria);
+    
+        if(response.status === 200){
+            onSuccess("Tạo mới tiêu chí thành công");
+            setOpenPopup(false);
+        }
+        
     };
 
 

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import FileService from 'src/@core/service/files';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, Grid, IconButton } from '@mui/material';
+import { Box, Button, Grid, IconButton, Modal } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import React from 'react';
 
@@ -10,12 +10,25 @@ import React from 'react';
 interface UploadProps {
     onImagesChange: (images: { [criteriaId: string]: string[] }) => void;
     criteriaId:string;
+    images?:string[];
   }
 
 
-export default function Upload({ onImagesChange,criteriaId}: UploadProps) {
-    const [imageUrls, setImageUrls] = useState<string[]>([]);
+export default function Upload({ onImagesChange,criteriaId,images}: UploadProps) {
+    const [imageUrls, setImageUrls] = useState<string[]>(images?.length?images:[]);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const handleImageClick = (imageUrl: string) => {
+        setSelectedImage(imageUrl);
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setSelectedImage(null);
+    };
+
 
     // Hàm xử lý khi người dùng chọn file ảnh
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +52,7 @@ export default function Upload({ onImagesChange,criteriaId}: UploadProps) {
         }
     };
     
-    const handleRemoveImage = async (urlToRemove: string) => {
-        console.log(urlToRemove)
+    const handleRemoveImage = async (urlToRemove: string) => {     
         const filename = urlToRemove.split('uploads/').pop();
         if (filename) {
             const res = await FileService.DeleteFile(filename);
@@ -56,7 +68,7 @@ export default function Upload({ onImagesChange,criteriaId}: UploadProps) {
         fileInputRef.current?.click();
     };
     return (
-        <div style={{ padding: '20px' }}>
+        <Box sx={{ padding: '20px' }}>
            <input
                 type="file"
                 accept="image/*"
@@ -73,32 +85,56 @@ export default function Upload({ onImagesChange,criteriaId}: UploadProps) {
                 Chọn ảnh
             </Button>
             {imageUrls.length > 0 && (
-                <div>
+                <Box>
                     <h3>Uploaded Images:</h3>
                     <Grid container spacing={2}>
                         {imageUrls.map((url, index) => (
                             <Grid item key={index}>
-                                <div style={{ position: 'relative' }}>
-                                    <img src={url} alt={`Uploaded ${index}`} width={100} height={100} style={{ objectFit: 'cover' }} />
+                                <Box sx={{ position: 'relative' }}>
+                                    <img src={url} alt={`Uploaded ${index}`} width={100} height={100} style={{ objectFit: 'cover', cursor:'zoom-in' }} onClick={()=>handleImageClick(url)}/>
                                     <IconButton
                                         onClick={() => handleRemoveImage(url)}
                                         style={{
                                             position: 'absolute',
                                             top: 0,
                                             right: 0,
-                                            
                                             color: 'red'
                                         }}
                                         size="small"
                                     >
                                         <DeleteIcon />
                                     </IconButton>
-                                </div>
+                                </Box>
                             </Grid>
                         ))}
                     </Grid>
-                </div>
+                </Box>
             )}
-        </div>
+            <Modal open={openModal} onClose={handleCloseModal}>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        bgcolor: "background.paper",
+                        borderRadius: 2,
+                        boxShadow: 24,
+                        p: 4,
+                        maxHeight: "90%",
+                        maxWidth: "90%",
+                        overflow: "auto",
+                    }}
+                >
+                    {selectedImage && (
+                        <img
+                            src={selectedImage}
+                            alt="Zoomed"
+                            style={{ width: "100%", height: "auto" }}
+                        />
+                    )}
+                </Box>
+            </Modal>
+        </Box>
     );
 }

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Autocomplete, Box, Button, Container, FormControl, IconButton, InputLabel, Link, Menu, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, alpha } from '@mui/material';
 import Dayjs from 'dayjs';
 import Popup from '../components/form/Popup';
@@ -14,6 +14,7 @@ import FloorService from 'src/@core/service/floor';
 import RoomService from 'src/@core/service/room';
 import CampusService from 'src/@core/service/campus';
 import CleaningFormService from 'src/@core/service/form';
+import SnackbarComponent from '../components/snackBar';
 interface Campus {
   id: string;
   campusCode: string;
@@ -141,7 +142,34 @@ export default function FourView() {
   const [openPopUp, setOpenPopUp] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mockForm, setMockForm] = useState<Form[]>();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarStatus, setSnackbarStatus] = useState('success');
   const open = Boolean(anchorEl);
+
+
+
+
+  const handleAddFormSuccess = async (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarStatus('success');
+    setSnackbarOpen(true);
+    await fetchData(page);
+  };
+
+  const handleEditFormSuccess = async (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarStatus('success');
+    setSnackbarOpen(true);
+    await fetchData(page);
+  }
+
+  const handleSnackbarClose = useCallback((event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  }, [snackbarStatus]);
 
   const filterForm = () => {
     let filteredForm = mockForm;
@@ -183,7 +211,7 @@ export default function FourView() {
     try {
       const response1 = await CampusService.getAllCampus();
       const response2 = await CleaningFormService.getAllCleaningForm(pageNumber);
-      const response3 = await CleaningFormService.getAllCleaningForm(1,500);
+      const response3 = await CleaningFormService.getAllCleaningForm(1, 500);
       setCampus(response1.data);
       setFormList(response2.data.result);
       setMockForm(response3.data.result);
@@ -197,316 +225,322 @@ export default function FourView() {
     }
   }
 
-const handleClick = (event: React.MouseEvent<HTMLElement>, form: Form) => {
-  setCurrentFormID(form.id || '');
-  setAnchorEl(event.currentTarget);
-};
+  const handleClick = (event: React.MouseEvent<HTMLElement>, form: Form) => {
+    setCurrentFormID(form.id || '');
+    setAnchorEl(event.currentTarget);
+  };
 
-const handleAddClick = () => {
-  setIsEditing(false);
-  setOpenPopUp(true);
-}
-
-const handleEditClick = () => {
-  setIsEditing(true);
-  setOpenPopUp(true);
-}
-
-
-
-const handleClose = () => {
-  setAnchorEl(null);
-};
-useEffect(() => {
-  filterForm();
-}, [selectedCampus, selectedBlocks, selectedFloor, selectedRoom]);
-
-
-useEffect(() => {
-  setFilterFormList(formList);
-}, [formList]);
-
-const handleCampusSelect = async (CampusId: string) => {
-  var campusId = CampusId;
-  try {
-    const response = await BlockService.getBlockByCampusId(campusId);
-    setBlocks(response.data);
-    setFloors([]);
-    setRooms([]);
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách tầng:', error);
+  const handleAddClick = () => {
+    setIsEditing(false);
+    setOpenPopUp(true);
   }
-};
-const handleBlockSelect = async (blockId: string) => {
-  var blockId = blockId;
 
-  try {
-    const response = await FloorService.getFloorByBlockId(blockId);
-    if (response.data.length > 0) {
-      setFloors(response.data);
-      console.log(response.data);
-      setRooms([]);
-    }
-    else {
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setOpenPopUp(true);
+  }
+
+
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  useEffect(() => {
+    filterForm();
+  }, [selectedCampus, selectedBlocks, selectedFloor, selectedRoom]);
+
+
+  useEffect(() => {
+    setFilterFormList(formList);
+  }, [formList]);
+
+  const handleCampusSelect = async (CampusId: string) => {
+    var campusId = CampusId;
+    try {
+      const response = await BlockService.getBlockByCampusId(campusId);
+      setBlocks(response.data);
       setFloors([]);
       setRooms([]);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
     }
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách tầng:', error);
-  }
-};
+  };
+  const handleBlockSelect = async (blockId: string) => {
+    var blockId = blockId;
 
-const handleFloorSelect = async (floorId: string) => {
-  var floorId = floorId;
+    try {
+      const response = await FloorService.getFloorByBlockId(blockId);
+      if (response.data.length > 0) {
+        setFloors(response.data);
+        console.log(response.data);
+        setRooms([]);
+      }
+      else {
+        setFloors([]);
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
 
-  try {
-    const response = await RoomService.getRoomsByFloorId(floorId);
-    if (response.data.length > 0) {
-      setRooms(response.data);
+  const handleFloorSelect = async (floorId: string) => {
+    var floorId = floorId;
+
+    try {
+      const response = await RoomService.getRoomsByFloorIdAndBlockId(floorId,selectedBlocks?selectedBlocks:'');
+      if (response.data.length > 0) {
+        setRooms(response.data);
+      }
+      else {
+        setRooms([]);
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách tầng:', error);
+    }
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  useEffect(() => {
+    if (filterFormList !== undefined) {
+      filterForm();
     }
     else {
-      setRooms([]);
+      fetchData(page);
+      console.log("totalPages", totalPages);
     }
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách tầng:', error);
-  }
-};
 
-const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-  setPage(value);
-};
+  }, [page]);
 
-useEffect(() => {
-  if (filterFormList !== undefined) {
-    filterForm();
-  }
-  else {
-    fetchData(page);
-    console.log("totalPages", totalPages);
-  }
-
-}, [page]);
-
-return (
-  <Container maxWidth="xl">
-    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Typography variant="h4">Page four</Typography>
-      <Button variant='contained' onClick={handleAddClick}>Tạo mới</Button>
-      <Popup title={isEditing ? 'Chỉnh sửa Form' : 'Tạo mới Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
-        {isEditing ? (
-          <EditForm formId={currentFormID} setOpenPopup={setOpenPopUp} />
-        ) : (
-          <AddForm setOpenPopup={setOpenPopUp} />
-        )
-        }
-      </Popup>
-    </Box>
-    <Box
-      sx={{
-        mt: 5,
-        width: 1,
-        minHeight: 320,
-        borderRadius: 2,
-        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
-        border: (theme) => `dashed 1px ${theme.palette.divider}`,
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-      }}
-    >
-      <Box sx={{ p: 2 }}>
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 2,
-          marginBottom: 2,
-        }}>
-          <Autocomplete
-            fullWidth
-            sx={{ flex: 1 }}
-            options={campus}
-            getOptionLabel={(option: any) => option.campusName || ''}
-            value={campus.find((c: any) => c.id === selectedCampus) || null}
-            onChange={(event, newValue) => {
-              if (newValue) {
-                setSelectedCampus(newValue ? newValue.id : null);
-                handleCampusSelect(newValue ? newValue.id : '');
-              }
-              else {
-                setSelectedCampus(null);
-                setBlocks([]);
-                setSelectedBlocks(null);
-                setFloors([]);
-                setSelectedFloor(null);
-                setRooms([]);
-                setSelectedRoom(null);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Chọn cơ sở"
-                variant="outlined"
-              />
-            )}
-            noOptionsText="Không có dữ liệu cơ sở"
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-          />
-          <Autocomplete
-            fullWidth
-            sx={{ flex: 1 }}
-            options={blocks}
-            getOptionLabel={(option: any) => option.blockName || ''}
-            value={blocks.find((b: any) => b.id === selectedBlocks) || null}
-            onChange={(event, newValue) => {
-              if (newValue) {
-                setSelectedBlocks(newValue ? newValue.id : null);
-                handleBlockSelect(newValue ? newValue.id : '');
-              }
-              else {
-                setSelectedBlocks(null);
-                setFloors([]);
-                setSelectedFloor(null);
-                setRooms([]);
-                setSelectedRoom(null);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Chọn tòa nhà"
-                variant="outlined"
-              />
-            )}
-            noOptionsText="Không có dữ liệu tòa nhà"
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-          />
-          <Autocomplete
-            fullWidth
-            sx={{ flex: 1 }}
-            options={floors}
-            getOptionLabel={(option: Floor) => option.floorName || ''}
-            value={floors.find(floor => floor.id === selectedFloor) || null}
-            onChange={(event, newValue) => {
-              if (newValue) {
-                setSelectedFloor(newValue ? newValue.id : null);
-                handleFloorSelect(newValue ? newValue.id : '');
-              }
-              else {
-                setSelectedFloor(null);
-                setRooms([]);
-                setSelectedRoom(null);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Chọn tầng"
-                variant="outlined"
-              />
-            )}
-            noOptionsText="Không có dữ liệu tầng"
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-          />
-          <Autocomplete
-            fullWidth
-            sx={{ flex: 1 }}
-            options={rooms}
-            getOptionLabel={(option: any) => option.roomName || ''}
-            value={rooms.find(room => room.id === selectedRoom) || null}
-            onChange={(event, newValue) => {
-              setSelectedRoom(newValue ? newValue.id : null);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Chọn phòng"
-                variant="outlined"
-              />
-            )}
-            noOptionsText="Không có dữ liệu phòng"
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-          />
-        </Box>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-            <TableHead sx={{ width: 1 }}>
-              <TableRow>
-                <TableCell align='center' sx={{ width: '5px' }}>STT</TableCell>
-                <TableCell align='center'>Cơ sở</TableCell>
-                <TableCell align='center'>Tòa nhà</TableCell>
-                <TableCell align="center">Tầng</TableCell>
-                <TableCell align="center">Khu vực</TableCell>
-                <TableCell align="center"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filterFormList?.map((form: any, index) => (
-                <TableRow key={form.id} sx={{ marginTop: '5px' }}>
-                  <TableCell align='center' sx={{ width: '5px' }}>{index + 1 + ((page-1)*10)}</TableCell>
-                  <TableCell align='center'>
-                    {form.campusName}
-                  </TableCell>
-                  <TableCell align='center'>
-                    {form.blockName}
-                  </TableCell>
-                  <TableCell align='center'>
-                    {form.floorName}
-                  </TableCell>
-                  <TableCell align='center'>
-                    {form.roomName}
-                  </TableCell>
-                  <TableCell align='center' sx={{ width: '2px' }}>
-                    <div>
-                      <IconButton
-                        aria-label="more"
-                        id="long-button"
-                        aria-controls={open ? 'long-menu' : undefined}
-                        aria-expanded={open ? 'true' : undefined}
-                        aria-haspopup="true"
-                        onClick={(event) => handleClick(event, form)}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                      <Menu
-                        id="long-menu"
-                        MenuListProps={{
-                          'aria-labelledby': 'long-button',
-                        }}
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                      >
-                        <MenuItem onClick={handleClose}>
-                          <Link href={`/dashboard/group/detail/${currentFormID}`} sx={{ display: 'flex' }} underline='none'>
-                            <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> View
-                          </Link>
-                        </MenuItem>
-                        <MenuItem onClick={() => { handleClose(); handleEditClick() }}>
-                          <Link sx={{ display: 'flex' }} underline='none' onClick={() => setOpenPopUp(true)}   >
-                            <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }}>
-                              <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} formId={currentFormID} >
-                                <EditForm formId={currentFormID} setOpenPopup={setOpenPopUp} />
-                              </Popup>
-                            </EditOutlinedIcon>
-                            Edit
-                          </Link>
-                        </MenuItem>
-                      </Menu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+  return (
+    <Container maxWidth="xl">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h4">Page four</Typography>
+        <Button variant='contained' onClick={handleAddClick}>Tạo mới</Button>
+        <Popup title={isEditing ? 'Chỉnh sửa Form' : 'Tạo mới Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
+          {isEditing ? (
+            <EditForm formId={currentFormID} setOpenPopup={setOpenPopUp} onSuccess={handleEditFormSuccess} />
+          ) : (
+            <AddForm setOpenPopup={setOpenPopUp} onSuccess={handleAddFormSuccess} />
+          )
+          }
+        </Popup>
       </Box>
+      <Box
+        sx={{
+          mt: 5,
+          width: 1,
+          minHeight: 320,
+          borderRadius: 2,
+          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
+          border: (theme) => `dashed 1px ${theme.palette.divider}`,
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+        }}
+      >
+        <Box sx={{ p: 2 }}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            marginBottom: 2,
+          }}>
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
+              options={campus}
+              getOptionLabel={(option: any) => option.campusName || ''}
+              value={campus.find((c: any) => c.id === selectedCampus) || null}
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setSelectedCampus(newValue ? newValue.id : null);
+                  handleCampusSelect(newValue ? newValue.id : '');
+                }
+                else {
+                  setSelectedCampus(null);
+                  setBlocks([]);
+                  setSelectedBlocks(null);
+                  setFloors([]);
+                  setSelectedFloor(null);
+                  setRooms([]);
+                  setSelectedRoom(null);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn cơ sở"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu cơ sở"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
+              options={blocks}
+              getOptionLabel={(option: any) => option.blockName || ''}
+              value={blocks.find((b: any) => b.id === selectedBlocks) || null}
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setSelectedBlocks(newValue ? newValue.id : null);
+                  handleBlockSelect(newValue ? newValue.id : '');
+                }
+                else {
+                  setSelectedBlocks(null);
+                  setFloors([]);
+                  setSelectedFloor(null);
+                  setRooms([]);
+                  setSelectedRoom(null);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn tòa nhà"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu tòa nhà"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
+              options={floors}
+              getOptionLabel={(option: Floor) => option.floorName || ''}
+              value={floors.find(floor => floor.id === selectedFloor) || null}
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setSelectedFloor(newValue ? newValue.id : null);
+                  handleFloorSelect(newValue ? newValue.id : '');
+                }
+                else {
+                  setSelectedFloor(null);
+                  setRooms([]);
+                  setSelectedRoom(null);
+                }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn tầng"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu tầng"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+            <Autocomplete
+              fullWidth
+              sx={{ flex: 1 }}
+              options={rooms}
+              getOptionLabel={(option: any) => option.roomName || ''}
+              value={rooms.find(room => room.id === selectedRoom) || null}
+              onChange={(event, newValue) => {
+                setSelectedRoom(newValue ? newValue.id : null);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Chọn phòng"
+                  variant="outlined"
+                />
+              )}
+              noOptionsText="Không có dữ liệu phòng"
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+          </Box>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+              <TableHead sx={{ width: 1 }}>
+                <TableRow>
+                  <TableCell align='center' sx={{ width: '5px' }}>STT</TableCell>
+                  <TableCell align='center'>Cơ sở</TableCell>
+                  <TableCell align='center'>Tòa nhà</TableCell>
+                  <TableCell align="center">Tầng</TableCell>
+                  <TableCell align="center">Khu vực</TableCell>
+                  <TableCell align="center"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filterFormList?.map((form: any, index) => (
+                  <TableRow key={form.id} sx={{ marginTop: '5px' }}>
+                    <TableCell align='center' sx={{ width: '5px' }}>{index + 1 + ((page - 1) * 10)}</TableCell>
+                    <TableCell align='center'>
+                      {form.campusName}
+                    </TableCell>
+                    <TableCell align='center'>
+                      {form.blockName}
+                    </TableCell>
+                    <TableCell align='center'>
+                      {form.floorName}
+                    </TableCell>
+                    <TableCell align='center'>
+                      {form.roomName}
+                    </TableCell>
+                    <TableCell align='center' sx={{ width: '2px' }}>
+                      <div>
+                        <IconButton
+                          aria-label="more"
+                          id="long-button"
+                          aria-controls={open ? 'long-menu' : undefined}
+                          aria-expanded={open ? 'true' : undefined}
+                          aria-haspopup="true"
+                          onClick={(event) => handleClick(event, form)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          id="long-menu"
+                          MenuListProps={{
+                            'aria-labelledby': 'long-button',
+                          }}
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleClose}
+                        >
+                          <MenuItem onClick={handleClose}>
+                            <Link href={`/dashboard/group/detail/${currentFormID}`} sx={{ display: 'flex' }} underline='none'>
+                              <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> Xem chi tiết
+                            </Link>
+                          </MenuItem>
+                          <MenuItem onClick={() => { handleClose(); handleEditClick() }}>
+                            <Link sx={{ display: 'flex' }} underline='none' onClick={() => setOpenPopUp(true)}   >
+                              <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }}>
+                                <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} formId={currentFormID} >
+                                  <EditForm formId={currentFormID} setOpenPopup={setOpenPopUp} onSuccess={handleEditFormSuccess} />
+                                </Popup>
+                              </EditOutlinedIcon>
+                              Chỉnh sửa
+                            </Link>
+                          </MenuItem>
+                        </Menu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
 
-    </Box>
-    <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', margin: '10px', float: 'right' }}>
-      <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange} />
-    </Stack>
-  </Container>
-);
+      </Box>
+      <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center', margin: '10px', float: 'right' }}>
+        <Pagination count={totalPages} color="primary" page={page} onChange={handlePageChange} />
+      </Stack>
+      <SnackbarComponent
+        status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+      />
+    </Container>
+  );
 }

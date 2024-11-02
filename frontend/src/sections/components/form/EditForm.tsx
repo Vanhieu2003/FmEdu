@@ -122,12 +122,13 @@ type Form = {
   CriteriaList?: Criteria[];
 };
 
-type EditFormProps = {
+interface EditFormProps {
   formId: string;
   setOpenPopup: (open: boolean) => void;
+  onSuccess:(message:string)=>void;
 };
 
-const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
+const EditForm = ({ formId, setOpenPopup,onSuccess }: EditFormProps) => {
   const [form, setForm] = useState<Form>();
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
   const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[] | null>(null);
@@ -179,8 +180,11 @@ const EditForm = ({ formId, setOpenPopup }: EditFormProps) => {
       criteriaList: newCriteria?.map((criteria) => ({ id: criteria.id }))
     };
     // console.log("newForm", newForm);
-    await CleaningFormService.EditCleaningForm(newForm);
-    window.location.reload();
+    const response = await CleaningFormService.EditCleaningForm(newForm);
+    if(response.status === 200){
+      onSuccess("Form đã được sửa thành công")
+      setOpenPopup(false);
+    }
     setOpenPopup(false);
   };
 

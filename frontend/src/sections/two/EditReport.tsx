@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import "src/global.css";
 import SendIcon from '@mui/icons-material/Send';
 import { useSettingsContext } from 'src/components/settings';
-import { Button, FormControl, FormControlLabel, IconButton, InputLabel, Link, MenuItem, Popover, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import { Button, FormControl, FormControlLabel, IconButton, InputLabel, Link, MenuItem, Modal, Popover, Radio, RadioGroup, Select, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import dayjs from 'dayjs';
@@ -23,6 +23,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CleaningReportService from 'src/@core/service/cleaningReport';
 import React from 'react';
 import ResponsibleUserView from '../components/table/responsibleUserView';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Upload from '../components/files/Upload';
+import FileService from 'src/@core/service/files';
 dayjs.locale('vi');
 // ----------------------------------------------------------------------
 
@@ -33,17 +36,49 @@ export default function OneView({ reportId }: { reportId: string }) {
   const [criteria, setCriteria] = useState<any[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [userPerTags, SetUserPerTags] = useState<any[]>([]);
+  const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
   const settings = useSettingsContext();
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const parse = require('html-react-parser').default;
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const handleImageClick = (imageUrl: string) => {
+    console.log(imageUrl);
+    setSelectedImage(imageUrl);
+    setOpenModal(true);
+  };
+
+  const parseImageUrls = (imageUrlString: string | null): string[] => {
+    try {
+      if (!imageUrlString) return [];
+
+      const imageObject = JSON.parse(imageUrlString);
+      return Object.values(imageObject) as string[];
+    } catch (error) {
+      console.error('Error parsing image URLs:', error);
+      return [];
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedImage(null);
+  };
 
   const [report, setReport] = useState<any>(null);
+  useEffect(()=>{console.log(criteriaImages)},[criteriaImages])
   useEffect(() => {
     const fetchData = async () => {
       const response = await CleaningReportService.getCleaningReportById(reportId);
       setReport(response.data);
       setCriteria(response.data.criteriaList);
-      SetUserPerTags(response.data.usersByTags)
+      SetUserPerTags(response.data.usersByTags);
+      const initialImages: { [criteriaId: string]: string[] } = {};
+      response.data.criteriaList.forEach((criteria: any) => {
+        initialImages[criteria.id] = parseImageUrls(criteria.imageUrl);
+      });
+      setCriteriaImages(initialImages);
       const initialEvaluations = response.data.criteriaList.map((criteria: any) => ({
         criteriaId: criteria.id,
         value: criteria.value || '',
@@ -56,6 +91,8 @@ export default function OneView({ reportId }: { reportId: string }) {
   if (!report) {
     return
   }
+
+  
 
 
 
@@ -79,14 +116,20 @@ export default function OneView({ reportId }: { reportId: string }) {
   const handleSubmit = async () => {
     const reportData = {
       "reportId": report.id,
-      "criteriaList": criteriaEvaluations.map((criteria) => {
+      "criteriaList": criteriaEvaluations.map((criteria: any) => {
+        const images = criteriaImages[criteria.criteriaId] || [];
+        const imagesObject = images.reduce((acc: any, url: string, index: number) => {
+          acc[`image_${index + 1}`] = url;
+          return acc;
+        }, {});
         return {
-          "id": criteria.criteriaId,
+          "criteriaId": criteria.criteriaId,
           "value": criteria.value,
           "note": criteria.note,
+          "images": imagesObject
         }
       }),
-      "userPerTags":userPerTags,
+      "userPerTags": userPerTags,
     }
     console.log("reportData:", reportData);
     // const response = await CleaningReportService.updateCleaningReport(reportData);
@@ -106,6 +149,16 @@ export default function OneView({ reportId }: { reportId: string }) {
     const existingEvaluation = criteriaEvaluations.find(evaluation => evaluation.criteriaId === criteriaId);
     updateCriteriaEvaluation(criteriaId, existingEvaluation?.value || '', note);
   };
+
+  const handleImagesChange = (images: { [criteriaId: string]: string[] }) => {
+    setCriteriaImages(prevImages => ({
+      ...prevImages,
+      ...images
+    }));
+  };
+
+  
+
   //UI of the website
   return (
     <Container maxWidth={false ? false : 'xl'}>
@@ -268,19 +321,45 @@ export default function OneView({ reportId }: { reportId: string }) {
                           onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
                           value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.note || ''}
                         />
+                        <Upload onImagesChange={handleImagesChange} criteriaId={criterion.id} images={criteriaImages[criterion.id]}></Upload>
                       </TableCell>
                     </TableRow>
 
                   )
                 })}
                 <TableRow>
-                  <TableCell colSpan={3}>
+                  <TableCell colSpan={4}>
                     <ResponsibleUserView data={userPerTags} />
                   </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
+          <Modal open={openModal} onClose={handleCloseModal}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                borderRadius: 2,
+                boxShadow: 24,
+                p: 4,
+                maxHeight: "90%",
+                maxWidth: "90%",
+                overflow: "auto",
+              }}
+            >
+              {selectedImage && (
+                <img
+                  src={selectedImage}
+                  alt="Zoomed"
+                  style={{ width: "100%", height: "auto" }}
+                />
+              )}
+            </Box>
+          </Modal>
         </Box>
         {criteria.length !== 0 &&
           <Button variant="contained" endIcon={<SendIcon />} sx={{ mt: 'auto', alignSelf: 'flex-end', mb: 2, mr: 2 }} onClick={handleSubmit}>

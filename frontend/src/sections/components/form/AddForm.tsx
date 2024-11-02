@@ -121,8 +121,9 @@ type Criteria = {
 
 type AddFormProps = {
   setOpenPopup: (open: boolean) => void;
+  onSuccess: (message: string) => void;
 }
-const AddForm = ({ setOpenPopup }: AddFormProps) => {
+const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
   const [campus, setCampus] = useState<Campus[]>([]);
   const [blocks, setBlocks] = useState<Blocks[]>([]);
   const [floors, setFloors] = useState<Floor[]>([]);
@@ -224,10 +225,10 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
 
     try {
       const response = await CleaningFormService.postCleaningForm(newForm);
-      console.log("Form đã được tạo:", response.data);
-      alert('Form đã được tạo thành công');
-      window.location.reload();
-      setOpenPopup(false);
+      if(response.status === 200){
+        onSuccess("Form đã được tạo thành công")
+        setOpenPopup(false);
+      }
     } catch (error) {
       console.error("Lỗi khi tạo form:", error);
       alert('Có lỗi xảy ra khi tạo form');
@@ -303,7 +304,7 @@ const AddForm = ({ setOpenPopup }: AddFormProps) => {
     var floorId = floorId;
 
     try {
-      const response = await RoomService.getRoomsByFloorId(floorId);
+      const response = await RoomService.getRoomsByFloorIdAndBlockId(floorId,selectedBlocks?selectedBlocks:'');
       if (response.data.length > 0) {
         setRooms(response.data);
       }

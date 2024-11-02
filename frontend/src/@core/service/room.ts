@@ -2,14 +2,14 @@ import axios from "axios";
 import { API_ENDPOINT } from "src/config-global";
 
 export class RoomService {
-   getRoomsByFloorId = async (floorId: string) => {
-      return axios.get(`${API_ENDPOINT}/api/Rooms/Floor/${floorId}`);
+   getRoomsByFloorIdAndBlockId = async (floorId: string,blockId:string) => {
+      return axios.get(`${API_ENDPOINT}/api/Rooms/By-Floor&Block?floorId=${floorId}&blockId=${blockId}`);
    }
    getRoomById = async (roomId: string) => {
       return axios.get(`${API_ENDPOINT}/api/Rooms/${roomId}`);
    }
-   getRoomsByFloorIdIfExistForm = async (floorId: string) => {
-      return axios.get(`${API_ENDPOINT}/api/Rooms/IfExistForm/${floorId}`);
+   getRoomsByFloorIdAndBlockIdIfExistForm = async (floorId: string,blockId:string) => {
+      return axios.get(`${API_ENDPOINT}/api/Rooms/IfExistForm-Floor&Block?floorId=${floorId}&blockId=${blockId}`);
    }
    getAllRooms = async () => {
       return axios.get(`${API_ENDPOINT}/api/Rooms`);

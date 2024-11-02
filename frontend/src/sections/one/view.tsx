@@ -125,7 +125,29 @@ export default function OneView() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
+
+  
   const [isSending, setIsSending] = useState(false);
+
+
+  const resetComponent = useCallback(() => {
+    setSelectedCampus(null);
+    setBlocks([]);
+    setSelectedBlocks(null);
+    setFloors([]);
+    setSelectedFloor(null);
+    setRooms([]);
+    setSelectedRoom(null);
+    setShifts([]);
+    setSelectedShift(null);
+    setCriteria([]);
+    setCriteriaEvaluations([]);
+    setCriteriaImages({});
+    setData([]);
+    setForm(null);
+    setIsSending(false);
+  }, []);
+
 
   const handleImagesChange = (images: { [criteriaId: string]: string[] }) => {
     setCriteriaImages(prevImages => ({
@@ -205,7 +227,7 @@ export default function OneView() {
   const handleFloorSelect = async (floorId: string) => {
     setSelectedFloor(floorId);
     try {
-      const response = await RoomService.getRoomsByFloorIdIfExistForm(floorId);
+      const response = await RoomService.getRoomsByFloorIdAndBlockIdIfExistForm(floorId,selectedBlocks);
       if (response.data.length > 0) {
         setRooms(response.data);
         setSelectedRoom(null);
@@ -341,7 +363,7 @@ export default function OneView() {
     }
     setSnackbarOpen(false);
     if (snackbarStatus === 'success') {
-      window.location.reload();
+      resetComponent();
     } else {
       setIsSending(false); // Enable lại nút Send nếu có lỗi
     }

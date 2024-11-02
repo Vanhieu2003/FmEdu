@@ -31,9 +31,10 @@ type RoomCategorical = {
 
 type AddCriteriaFormProps = {
     setOpenPopup: (open: boolean) => void;
+    onSuccess:(message:string)=>void;
 };
 
-const EditCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
+const EditCriteria = ({ setOpenPopup,onSuccess }: AddCriteriaFormProps) => {
     const [ratingTypesSelected, setRatingTypesSelected] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState<any>(null);
@@ -121,9 +122,12 @@ const EditCriteria = ({ setOpenPopup }: AddCriteriaFormProps) => {
             tags: tagsSelected.map(tag => tag.tagName)
         };
         console.log(newCriteria)
-        await CriteriaService.postCriteria(newCriteria);
-        window.location.reload();
-        setOpenPopup(false);
+        const response = await CriteriaService.postCriteria(newCriteria);
+        if(response.status===200){
+            onSuccess("Tiêu chí đã được chỉnh sửa thành công")
+            setOpenPopup(false);
+        }
+        
     };
 
 
