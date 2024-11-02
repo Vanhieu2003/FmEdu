@@ -191,21 +191,11 @@ namespace Project.Controllers
             // Tìm danh sách người dùng dựa vào shiftId, roomId và criteriaIds
             var criteriaIds = criteriaPerReport.Select(c => c.CriteriaId).ToList();
 
-            // Bước 1: Lấy thời gian startTime và endTime của Shift
-            var shiftTime = await _context.Shifts
-                .Where(s => s.Id == shift.Id)
-                .Select(s => new { s.StartTime, s.EndTime })
-                .FirstOrDefaultAsync();
-
-            // Bước 2: Lấy danh sách Schedule trong khoảng thời gian của shift
-            var schedules = await _context.Schedules
-                .Where(s => s.Start.TimeOfDay <= shiftTime.StartTime && s.End.TimeOfDay >= shiftTime.EndTime)
-                .Select(s => s.Id)
-                .ToListAsync();
+          
 
             // Bước 3: Tìm kiếm trong bảng ScheduleDetail các scheduleId và roomId trùng khớp
-            var userIds = await _context.ScheduleDetails
-                .Where(sd => schedules.Contains(sd.ScheduleId) && sd.RoomId == room.Id)
+            var userIds = await _context.UserScores
+                .Where(us => us.ReportId == ReportId)
                 .Select(sd => sd.UserId)
                 .Distinct()
                 .ToListAsync();
@@ -300,34 +290,7 @@ namespace Project.Controllers
             return Ok(result);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCleaningReport(string id, CleaningReport cleaningReport)
-        //{
-        //    if (id != cleaningReport.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(cleaningReport).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CleaningReportExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+      
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateCriteriaAndCleaningReport([FromBody] UpdateCleaningReportRequest request)
@@ -358,7 +321,7 @@ namespace Project.Controllers
                 criteriaReport.ReportId = request.ReportId;
                 criteriaReport.Note = criteriaDto.Note;
                 criteriaReport.UpdateAt = DateTime.UtcNow;
-
+                criteriaReport.ImageUrl = JsonConvert.SerializeObject(criteriaDto.Images);
                 _context.CriteriaReports.Update(criteriaReport);
             }
 
@@ -439,7 +402,6 @@ namespace Project.Controllers
                         _context.UserScores.Update(existingUserScore);
                     }
                 }
-                _context.CleaningReports.Update(cleaningReport);
             }
 
 

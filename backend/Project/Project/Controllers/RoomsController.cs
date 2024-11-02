@@ -54,11 +54,12 @@ namespace Project.Controllers
         }
 
 
-        [HttpGet("Floor/{FloorId}")]
-        public async Task<IActionResult> GetRoomsByFloorId(string FloorId)
+        [HttpGet("By-Floor&Block")]
+        public async Task<IActionResult> GetRoomsByFloorIdAndBlockId([FromQuery] string floorId,
+     [FromQuery] string blockId)
         {
-            var rooms = await _repo.GetRoomByFloorId(FloorId);
-
+            var rooms = await _repo.GetRoomByFloorIdAndBlockId(floorId,blockId);
+            
             if (rooms == null || rooms.Count == 0)
             {
                 return NotFound();
@@ -67,10 +68,11 @@ namespace Project.Controllers
             return Ok(rooms);
         }
 
-        [HttpGet("IfExistForm/{FloorId}")]
-        public async Task<IActionResult> GetRoomsByFloorIdIfFormExists(string FloorId)
+        [HttpGet("IfExistForm-Floor&Block")]
+        public async Task<IActionResult> GetRoomsByFloorIdAndBlockIdIfFormExists([FromQuery] string floorId,
+     [FromQuery] string blockId)
         {
-            var rooms = await _repo.GetRoomByFloorIdIfFormExist(FloorId);
+            var rooms = await _repo.GetRoomByFloorIdAndBlockIdIfFormExist(floorId, blockId);
 
             if (rooms == null || rooms.Count == 0)
             {

@@ -1658,16 +1658,21 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomsController",
-    "Method": "GetRoomsByFloorId",
-    "RelativePath": "api/Rooms/Floor/{FloorId}",
+    "Method": "GetRoomsByFloorIdAndBlockId",
+    "RelativePath": "api/Rooms/By-Floor\u0026Block",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "FloorId",
+        "Name": "floorId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
+      },
+      {
+        "Name": "blockId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1711,16 +1716,21 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomsController",
-    "Method": "GetRoomsByFloorIdIfFormExists",
-    "RelativePath": "api/Rooms/IfExistForm/{FloorId}",
+    "Method": "GetRoomsByFloorIdAndBlockIdIfFormExists",
+    "RelativePath": "api/Rooms/IfExistForm-Floor\u0026Block",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "FloorId",
+        "Name": "floorId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
+      },
+      {
+        "Name": "blockId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

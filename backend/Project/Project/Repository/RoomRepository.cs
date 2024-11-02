@@ -13,10 +13,10 @@ namespace Project.Repository
         {
             _context = context;
         }
-        public async Task<List<RoomDto>> GetRoomByFloorId(string id)
+        public async Task<List<RoomDto>> GetRoomByFloorIdAndBlockId(string floorId,string blockId)
         {
             var rooms = await _context.Rooms
-        .Where(x => x.FloorId == id)
+        .Where(x => x.FloorId == floorId && x.BlockId == blockId)
         .OrderBy(x => x.SortOrder) 
         .ToListAsync();
 
@@ -34,10 +34,10 @@ namespace Project.Repository
             return roomDtos;
         }
 
-        public async Task<List<RoomDto>> GetRoomByFloorIdIfFormExist(string id)
+        public async Task<List<RoomDto>> GetRoomByFloorIdAndBlockIdIfFormExist(string floorId,string blockId)
         {
             var rooms = await _context.Rooms
-        .Where(room => room.FloorId == id)
+        .Where(room => room.FloorId == floorId && room.BlockId == blockId)
         .Join(_context.CleaningForms,
               room => room.Id,
               form => form.RoomId,

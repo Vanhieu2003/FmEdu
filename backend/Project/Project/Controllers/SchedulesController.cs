@@ -301,7 +301,7 @@ namespace Project.Controllers
                                     {
                                         Id = Guid.NewGuid().ToString(),
                                         ScheduleId = existingSchedule.Id,
-                                        UserId = user.Id,
+                                        UserId = user,
                                         RoomId = room.Id,
                                         RoomType = place.level,
                                     };

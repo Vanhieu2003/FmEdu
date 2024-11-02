@@ -17,12 +17,12 @@
       "PackagePath": "staticwebassets\\uploads\\638622536832977215.jpg"
     },
     {
-      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638622553231090139.jpg",
-      "PackagePath": "staticwebassets\\uploads\\638622553231090139.jpg"
-    },
-    {
       "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638622555493254819.jpg",
       "PackagePath": "staticwebassets\\uploads\\638622555493254819.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638661418676179446.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638661418676179446.jpg"
     },
     {
       "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.Project.Microsoft.AspNetCore.StaticWebAssets.props",
