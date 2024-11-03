@@ -26,9 +26,9 @@ import RenderProgressBar from '../components/renderProgressBar';
 import CampusService from 'src/@core/service/campus';
 import BlockService from 'src/@core/service/block';
 import FloorService from 'src/@core/service/floor';
-import axios from 'axios';
 import CleaningReportService from 'src/@core/service/cleaningReport';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import RoomService from 'src/@core/service/room';
 
 interface Campus {
   id: string;
@@ -166,6 +166,7 @@ export default function TwoView() {
   const [reports, setReports] = useState<any[]>();
   const [mockReports, setMockReports] = useState<any[]>();
   const filterReports = () => {
+    setPage(1);
     let filteredReports = mockReports;
     if (selectedCampus !== null) {
       filteredReports = filteredReports?.filter(report => report.campusName === campus.find(campus => campus.id === selectedCampus)?.campusName);
@@ -244,6 +245,7 @@ export default function TwoView() {
   }, [reports]);
 
   useEffect(() => {
+    setPage(1);
     filterReports();
   }, [selectedCampus, selectedBlock, selectedFloor, selectedRoom, selectedDate]);
 
@@ -296,7 +298,7 @@ export default function TwoView() {
   const handleFloorSelect = async (floorId: string) => {
     setSelectedFloor(floorId);
     try {
-      const response = await axios.get(`http://localhost:8000/api/Rooms/Floor/${floorId}`);
+      const response = await RoomService.getRoomsByFloorIdAndBlockId(floorId,selectedBlock?selectedBlock:'');
       if (response.data.length > 0) {
         setRooms(response.data);
       }
