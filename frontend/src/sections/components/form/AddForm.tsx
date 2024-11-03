@@ -9,6 +9,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CleaningFormService from 'src/@core/service/form';
 import throttle from 'lodash/throttle';
+import { debounce } from 'lodash';
 
 interface Campus {
   id: string;
@@ -147,41 +148,35 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
     setLoading(true);
     try {
       const response = await RoomService.searchRooms(input);
-      setRooms(response.data);
+      // Kết hợp kết quả tìm kiếm với các phòng đã chọn
+      const searchResults = response.data;
+      const selectedRoomIds = new Set(selectedRooms.map(room => room.id));
+      
+      // Lọc ra các phòng từ kết quả tìm kiếm mà chưa có trong selectedRooms
+      const newRooms = searchResults.filter((room:any) => !selectedRoomIds.has(room.id));
+      
+      // Kết hợp selectedRooms với kết quả tìm kiếm mới
+      setRooms([...selectedRooms, ...newRooms]);
     } catch (error) {
       console.error('Lỗi khi tìm kiếm phòng:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
-  const throttledFetchRooms = useCallback(
-    throttle((input: string) => fetchRooms(input), 500, { leading: true, trailing: true }),
+  }, [selectedRooms]);
+
+  const debouncedFetchRooms = useCallback(
+    debounce((input: string) => {
+      if (input.trim().length >= 1) {
+        fetchRooms(input);
+      }
+    }, 500),
     [fetchRooms]
   );
 
   const handleInputChange = (event: React.SyntheticEvent, newInputValue: string) => {
     setInputValue(newInputValue);
-
-    // Hủy bỏ timeout trước đó nếu có
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    // Đặt một timeout mới
-    timeoutRef.current = setTimeout(() => {
-      if (newInputValue.trim()) {
-        throttledFetchRooms(newInputValue);
-      }
-    }, 500); // Đợi 500ms sau khi người dùng ngừng nhập
+    debouncedFetchRooms(newInputValue);
   };
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   const handleSave = async () => {
     if (options === "one") {
@@ -497,15 +492,21 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
         disableCloseOnSelect
         getOptionLabel={(option: Room) => option.roomName || ''}
         value={selectedRooms}
-        onChange={(event, newValue) => setSelectedRooms(newValue)}
+        onChange={(event, newValue) => {setSelectedRooms(newValue);
+          setRooms(prevRooms => {
+            const selectedIds = new Set(newValue.map(room => room.id));
+            return [...newValue, ...prevRooms.filter(room => !selectedIds.has(room.id))];
+          });
+        }}
         onInputChange={handleInputChange}
         renderOption={(props, option, { selected }) => (
           <li {...props} key={option.id}>
             <Checkbox
+              key={`checkbox-${option.id}`}
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
               checkedIcon={<CheckBoxIcon fontSize="small" />}
               style={{ marginRight: 8 }}
-              checked={selected}
+              checked={selected || selectedRooms.some(room => room.id === option.id)}
             />
             {option.roomName}
           </li>
@@ -526,6 +527,7 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
             }}
           />
         )}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         noOptionsText="Không có dữ liệu phòng"
         loading={loading}
         loadingText="Đang tìm kiếm..."
@@ -540,8 +542,9 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
           setSelectedCriteriaList(newValue);
         }}
         renderOption={(props, option, { selected }) => (
-          <li {...props}>
+          <li {...props} key={option.id}>
             <Checkbox
+              key={`checkbox-${option.id}`} 
               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
               checkedIcon={<CheckBoxIcon fontSize="small" />}
               style={{ marginRight: 8 }}

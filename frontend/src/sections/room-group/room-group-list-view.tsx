@@ -12,7 +12,8 @@ import {
   Link,
   TableFooter,
   Pagination,
-  Collapse
+  Collapse,
+  Button
 } from '@mui/material';
 import CampusService from 'src/@core/service/campus';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import CollapsibleRoomGroup from '../components/table/RoomGroup/CollapsibleRoomGroup';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import React from 'react';
+import AddForm from '../components/form/AddForm';
+import Popup from '../components/form/Popup';
+import AddRoomGroup from '../components/form/AddRoomGroup';
+import SnackbarComponent from '../components/snackBar';
 
 // ----------------------------------------------------------------------
 
@@ -31,34 +36,40 @@ export default function RoomGroupListView() {
   const [campus, setCampus] = useState<any[]>([]);
   const [groupRooms, setGroupRooms] = useState<any[]>([]);
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedGroup, setSelectedGroup] = useState<any>(null);
-
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [pageSize] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
-
+  const [openPopUpAdd, setOpenPopUpAdd] = useState<boolean>(false);
   const [openRow, setOpenRow] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarStatus, setSnackbarStatus] = useState('success');
+
 
   const handleRowClick = (rowId: any) => {
     setOpenRow(openRow === rowId ? null : rowId);
   };
 
-
-
-
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, group: any) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedGroup(group.id); // Gán nhóm đang chọn
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedGroup(null);
+  const handleAddRoomGroupSuccess = async (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarStatus('success');
+    setSnackbarOpen(true);
+    fetchGroupRoom();
+    setTimeout(() => {
+      setSnackbarOpen(false);
+    }, 3000);
   };
 
 
-
+  const fetchGroupRoom = async () => {
+    try {
+      const response: any = await GroupRoomService.getAllGroupRooms(pageNumber, pageSize);
+      setGroupRooms(response.data.roomGroups);
+      setTotalPages(Math.ceil(response.data.totalRecords / pageSize));
+    } catch (error: any) {
+      console.error('Error fetching Room Group data:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchCampus = async () => {
@@ -70,15 +81,7 @@ export default function RoomGroupListView() {
       }
     };
 
-    const fetchGroupRoom = async () => {
-      try {
-        const response: any = await GroupRoomService.getAllGroupRooms(pageNumber, pageSize);
-        setGroupRooms(response.data.roomGroups);
-        setTotalPages(Math.ceil(response.data.totalRecords / pageSize));
-      } catch (error: any) {
-        console.error('Error fetching Room Group data:', error);
-      }
-    };
+    
 
     // Gọi cả hai hàm song song
     fetchCampus();
@@ -90,6 +93,10 @@ export default function RoomGroupListView() {
     setPageNumber(newPage);
   };
 
+  const handleAddClick = () => {
+    setOpenPopUpAdd(true);
+  }
+
 
 
   return (
@@ -97,22 +104,24 @@ export default function RoomGroupListView() {
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h4">Danh sách nhóm phòng</Typography>
-
       </Box>
 
-      {/* Autocomplete để chọn campus */}
-      <Box sx={{ display: 'flex', gap: 2, marginBottom: 3 }}>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginY: 2, alignItems: 'center' }}>
         <Autocomplete
           disablePortal
           options={campus}
           getOptionLabel={(option: any) => option.campusName || ''}
-          sx={{ width: 300, marginBottom: 3 }}
+          sx={{ width: 300, marginY: 1 }}
           // onChange={null}
           renderInput={(params: any) => <TextField {...params} label="Chọn cơ sở" />}
         />
+        <Button variant='contained' onClick={handleAddClick} sx={{ height: 'fit-content', padding: '10px' }}>Tạo mới</Button>
+        <Popup title="Tạo mới nhóm phòng" openPopup={openPopUpAdd} setOpenPopup={setOpenPopUpAdd} >
+          <AddRoomGroup setOpenPopup={setOpenPopUpAdd} onSuccess={handleAddRoomGroupSuccess} />
+        </Popup>
       </Box>
 
-      {/* Hiển thị báo cáo khối */}
       {groupRooms.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
@@ -179,6 +188,11 @@ export default function RoomGroupListView() {
       ) : (
         <Typography>Không có báo cáo nào cho campus này.</Typography>
       )}
+      <SnackbarComponent
+        status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+        open={snackbarOpen}
+        message={snackbarMessage}
+      />
     </Container>
   );
 }

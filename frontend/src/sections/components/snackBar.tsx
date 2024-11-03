@@ -4,7 +4,7 @@ import { Snackbar, Alert } from '@mui/material';
 interface SnackbarComponentProps {
   open: boolean;
   message: string;
-  onClose: (event?: React.SyntheticEvent | Event, reason?: string) => void;
+  onClose?: (event?: React.SyntheticEvent | Event, reason?: string) => void;
   status: 'success' | 'error' | 'info' | 'warning';
 }
 
