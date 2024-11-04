@@ -25,7 +25,7 @@ export default function UserPerTagCreate() {
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
 
       <Box sx={{ marginTop: '10px' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom:'20px' }}>
           <Typography variant='h4'>Danh sách các nhóm tag đã tạo</Typography>
           <Button
             variant='contained'

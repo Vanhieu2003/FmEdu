@@ -1,7 +1,7 @@
 import { Stack, Card, Typography, Chip, TableContainer, Paper, Table, TableBody, TableCell, TableHead, TableRow, Box, Rating, Modal, ListItemText, Grid } from '@mui/material';
 
 import React, { useState } from 'react'
-import ResponsibleUserView from './responsibleUserView';
+import ResponsibleUserView from './Report/responsibleUserView';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import dayjs from 'dayjs';
 import HouseIcon from '@mui/icons-material/House';

@@ -1,91 +1,41 @@
 "use client"
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Menu, MenuItem } from "@mui/material";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Menu, MenuItem, Box, Collapse } from "@mui/material";
 import dayjs from "dayjs";
 import Link from '@mui/material/Link';
 import { useEffect, useState } from "react";
-import MoreVertIcon from  "@mui/icons-material/MoreVert";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import  TagService  from "src/@core/service/tag";
-const initialData = [
-    {
-        id: '1',
-        tagName: 'Vệ sinh',
-        SL: 20
-    },
-    {
-        id: '2',
-        tagName: 'Bảo trì',
-        SL: 15
-    },
-    {
-        id: '3',
-        tagName: 'An ninh',
-        SL: 12
-    },
-    {
-        id: '4',
-        tagName: 'Hỗ trợ kỹ thuật',
-        SL: 8
-    },
-    {
-        id: '5',
-        tagName: 'Quản lý tài sản',
-        SL: 10
-    },
-    {
-        id: '6',
-        tagName: 'Dịch vụ khách hàng',
-        SL: 22
-    },
-    {
-        id: '7',
-        tagName: 'Phát triển phần mềm',
-        SL: 30
-    },
-    {
-        id: '8',
-        tagName: 'Kiểm định chất lượng',
-        SL: 5
-    },
-    {
-        id: '9',
-        tagName: 'Nhân sự',
-        SL: 18
-    },
-    {
-        id: '10',
-        tagName: 'Marketing',
-        SL: 25
-    },
-]
-export default function UserPerTagListView() {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [currentTagId, setcurrentTagId] = useState<any>(null);
-    const [tagGroup,setTagGroup] = useState<any[]>([]);
-    const open = Boolean(anchorEl);
+import TagService from "src/@core/service/tag";
+import { KeyboardArrowDown } from "@mui/icons-material";
+import { KeyboardArrowUp } from "@mui/icons-material";
+import CollapsibleResUserGroup from "../table/ResponsibleUserGroup/CollapsibleResUserGroup";
+import React from "react";
+import CollapsibleUserPerTag from "./CollapsibleUserPerTag";
+import SnackbarComponent from "../snackBar";
 
-    useEffect(()=>{
-        const fetchData = async()=>{
-            try{
+export default function UserPerTagListView() {
+    const [openRow, setOpenRow] = useState(null);
+    const [tagGroup, setTagGroup] = useState<any[]>([]);
+
+
+    const handleRowClick = (rowId: any) => {
+        setOpenRow(openRow === rowId ? null : rowId);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
                 const response = await TagService.getTagGroups();
                 setTagGroup(response.data);
             }
-            catch(e){
+            catch (e) {
                 console.log(e)
             }
         }
         fetchData();
-    },[])
+    }, [])
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>, tag: any) => {
-        setAnchorEl(event.currentTarget);
-        setcurrentTagId(tag.id);
-      };
-    
-      const handleClose = () => {
-        setAnchorEl(null);
-      };
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="Danh sách báo cáo vệ sinh">
@@ -99,43 +49,36 @@ export default function UserPerTagListView() {
                 </TableHead>
                 <TableBody>
                     {tagGroup?.map((tag: any, index) => (
-                        <TableRow key={tag.id}>
-                            <TableCell align="center">{index + 1}</TableCell>
-                            <TableCell align="center">{tag.tagName}</TableCell>
-                            <TableCell align="center">{tag.numberOfUsers}</TableCell>
-                            <TableCell align="center">
-                                <div>
+                        <React.Fragment key={tag.id}>
+                            <TableRow key={tag.id}>
+                                <TableCell align="center">{index + 1}</TableCell>
+                                <TableCell align="center">{tag.tagName}</TableCell>
+                                <TableCell align="center">{tag.numberOfUsers}</TableCell>
+                                <TableCell align='right'>
                                     <IconButton
-                                        aria-label="more"
-                                        id="long-button"
-                                        aria-controls={open ? 'long-menu' : undefined}
-                                        aria-expanded={open ? 'true' : undefined}
-                                        aria-haspopup="true"
-                                        onClick={(event) => handleClick(event, tag)}
+                                        aria-label="expand row"
+                                        size="small"
+                                        onClick={() => handleRowClick(tag.id)}
                                     >
-                                        <MoreVertIcon />
+                                        {openRow === tag.id ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                                     </IconButton>
-                                    <Menu
-                                        id="long-menu"
-                                        MenuListProps={{
-                                            'aria-labelledby': 'long-button',
-                                        }}
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleClose}
-                                    >
-                                        <MenuItem onClick={handleClose}>
-                                            <Link href={`/dashboard/responsible-group/createUserPerTag/detail/${currentTagId}`} sx={{ display: 'flex' }} underline='none'>
-                                                <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> Xem chi tiết
-                                            </Link>
-                                        </MenuItem>
-                                    </Menu>
-                                </div>
-                            </TableCell>
-                        </TableRow>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                                    <Collapse in={openRow === tag.id} timeout="auto" unmountOnExit>
+                                        <Box margin={1}>
+                                            <CollapsibleUserPerTag id={tag.id} tagName={tag.tagName}></CollapsibleUserPerTag>
+                                        </Box>
+                                    </Collapse>
+                                </TableCell>
+                            </TableRow>
+                        </React.Fragment>
+
                     ))}
                 </TableBody>
             </Table>
+
         </TableContainer>
     )
 }

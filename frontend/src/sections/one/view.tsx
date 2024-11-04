@@ -31,8 +31,8 @@ import Contact from 'src/sections/components/form/RichTextEditor';
 import Upload from '../components/files/Upload';
 import SnackbarComponent from '../components/snackBar';
 import ScheduleService from 'src/@core/service/schedule';
-import responsibleUserView from '../components/table/responsibleUserView';
-import ResponsibleUserView from '../components/table/responsibleUserView';
+import responsibleUserView from '../components/table/Report/responsibleUserView';
+import ResponsibleUserView from '../components/table/Report/responsibleUserView';
 import QRCodeScanner from '../components/QRScanner';
 
 type Floor = {

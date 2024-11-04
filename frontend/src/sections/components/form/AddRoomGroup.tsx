@@ -17,12 +17,12 @@ import SnackbarComponent from '../snackBar';
 // ----------------------------------------------------------------------
 
 
-type AddFormProps = {
+type props = {
     setOpenPopup: (open: boolean) => void;
     onSuccess: (message: string) => void;
 }
 
-export default function AddRoomGroup({ setOpenPopup, onSuccess }: AddFormProps) {
+export default function AddRoomGroup({ setOpenPopup, onSuccess }: props) {
     const settings: any = useSettingsContext();
 
     // State variables

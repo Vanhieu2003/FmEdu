@@ -22,7 +22,7 @@ import RenderRatingInput from 'src/sections/components/rating/renderRatingInput'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CleaningReportService from 'src/@core/service/cleaningReport';
 import React from 'react';
-import ResponsibleUserView from '../components/table/responsibleUserView';
+import ResponsibleUserView from '../components/table/Report/responsibleUserView';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Upload from '../components/files/Upload';
 import FileService from 'src/@core/service/files';
