@@ -20,9 +20,15 @@ const ReportCompareChart = () => {
         }
     }
 
-    const fetchDataForBarChart = async () => {
-        const response = await ChartService.GetChartComparision();
-        setBarChartData(response.data);
+    const fetchDataForBarChart = async (type:string) => {
+        if(type === 'year'){
+            const response = await ChartService.GetChartComparision();
+            setBarChartData(response.data);
+        }
+        else{
+            const response = await ChartService.GetCleaningReportByQuarter();
+            setBarChartData(response.data);
+        }
     }
     const fetchDataForLineChart = async (type:string) => {
         if(type === 'quater'){
@@ -37,10 +43,10 @@ const ReportCompareChart = () => {
 
     useEffect(() => {
         if (option === 'year') {
-            fetchDataForBarChart();
+            fetchDataForBarChart("year");
         }
         else if (option === 'quater') {
-            fetchDataForLineChart('quater');
+            fetchDataForBarChart('quater');
         }
         else{
             fetchDataForLineChart('day');
@@ -60,7 +66,7 @@ const ReportCompareChart = () => {
                         <Button variant={option === 'day' ? 'contained' : 'outlined'}
                             onClick={() => handleClick('day')}>10 ngày gần nhất</Button>
                     </Box>
-                    {option === 'year' ? <RenderBarChart data={barChartData} /> : <RenderLineChartData data={lineChartData} type={option}/>}
+                    {option === 'day' ? <RenderLineChartData data={lineChartData} type={option}/>: <RenderBarChart data={barChartData} type={option}/> }
                 </CardContent>
             </Card>
         </>

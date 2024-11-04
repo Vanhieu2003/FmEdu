@@ -149,7 +149,6 @@ export default function AddRoomGroup({ setOpenPopup, onSuccess }: props) {
                 <Autocomplete
                     multiple
                     fullWidth
-
                     options={rooms}
                     disableCloseOnSelect
                     getOptionLabel={(option: any) => option.roomName || ''}

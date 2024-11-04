@@ -18,6 +18,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ShiftService from 'src/@core/service/shift';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
+import Popup from '../components/form/Popup';
+import EditShift from '../components/form/EditShift';
+import AddShift from '../components/form/AddShift';
+import SnackbarComponent from '../components/snackBar';
+
 
 export default function ShiftListView() {
   const settings = useSettingsContext();
@@ -33,6 +38,7 @@ export default function ShiftListView() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedArea, setSelectedArea] = useState<any>('');
   const [areas, setAreas] = useState<any[]>([]);
+  const [openPopUp,setOpenPopUp] = useState<boolean>(false);
   const [searchShiftName, setSearchShiftName] = useState<string>('');
   const [debounceTimeout, setDebounceTimeout] = useState<any>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -41,20 +47,26 @@ export default function ShiftListView() {
 
 
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedGroup(null);
-  };
+  const handleAddClick = async () => {
+    setOpenPopUp(true);
+  }
+  const handleAddSuccess = async (message:string)=>{
+    setSnackbarMessage(message);
+    setSnackbarSeverity('success');
+    setOpenSnackbar(true);
+    setTimeout(()=>{setOpenSnackbar(false)},3000);
+  }
 
+  const fetchAreas = async () => {
+    try {
+      const response = await RoomCategoryService.getAllRoomCategory();
+      setAreas(response.data);
+    } catch (error: any) {
+      console.error('Lỗi khi tải danh sách khu vực:', error);
+    }
+  };
   useEffect(() => {
-    const fetchAreas = async () => {
-      try {
-        const response = await RoomCategoryService.getAllRoomCategory();
-        setAreas(response.data);
-      } catch (error: any) {
-        console.error('Lỗi khi tải danh sách khu vực:', error);
-      }
-    };
+    
     fetchAreas();
   }, []);
 
@@ -146,42 +158,37 @@ export default function ShiftListView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
       <Typography variant="h4">Danh sách ca làm việc</Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-        <Autocomplete
-          value={selectedArea}
-          onChange={(event, newValue) => {
-            setSelectedArea(newValue);
-          }}
-          options={areas
-            .filter((area) => area.categoryName.trim() !== '')
-            .map((area) => area.categoryName.trim() || 'Khu vực không tên')}
-          renderInput={(params) => (
-            <TextField {...params} label="Chọn khu vực" variant="outlined" />
-          )}
-          sx={{ minWidth: 200 }}
-        />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between',alignItems:'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          <Autocomplete
+            value={selectedArea}
+            onChange={(event, newValue) => {
+              setSelectedArea(newValue);
+            }}
+            options={areas
+              .filter((area) => area.categoryName.trim() !== '')
+              .map((area) => area.categoryName.trim() || 'Khu vực không tên')}
+            renderInput={(params) => (
+              <TextField {...params} label="Chọn khu vực" variant="outlined" />
+            )}
+            sx={{ minWidth: 200 }}
+          />
 
-        <TextField
-          variant="outlined"
-          placeholder="Tìm kiếm theo tên ca"
-          size="small"
-          value={searchShiftName}
-          onChange={(e) => setSearchShiftName(e.target.value)}
-          sx={{ minWidth: 300 }}
-        />
+          <TextField
+            variant="outlined"
+            placeholder="Tìm kiếm theo tên ca"
+            value={searchShiftName}
+            onChange={(e) => setSearchShiftName(e.target.value)}
+            sx={{ minWidth: 300 }}
+          />
+        </Box>
+        <Button variant="contained" onClick={handleAddClick}>Tạo mới</Button>
+        <Popup title="Tạo mới nhóm phòng" openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
+          <AddShift setOpenPopUp={setOpenPopUp} onSuccess={handleAddSuccess} />
+        </Popup>
       </Box>
+
 
       {loading ? (
         <Typography>Đang tải dữ liệu...</Typography>
@@ -211,7 +218,7 @@ export default function ShiftListView() {
                   <TableCell align="center">
                     <IconButton onClick={() => handleOpenEditDialog(shift)}>
                       <EditIcon />
-                    </IconButton>
+                    </IconButton>       
                   </TableCell>
                 </TableRow>
               ))}
@@ -292,7 +299,11 @@ export default function ShiftListView() {
           </Button>
         </DialogActions>
       </Dialog>
-
+      <SnackbarComponent
+        status={snackbarSeverity as 'success' | 'error' | 'info' | 'warning'}
+        open={openSnackbar}
+        message={snackbarMessage}
+      />
     </Container>
   );
 }
