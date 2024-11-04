@@ -15,6 +15,7 @@
 
     public class ResponsibleTagDto
     {
+        public string Id { get; set; }
         public string GroupName { get; set; }
         public string TagName { get; set; }
         public string LastName { get; set; }

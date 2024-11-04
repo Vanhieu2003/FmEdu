@@ -41,11 +41,13 @@ namespace Project.Repository
             var result = await _context.Set<ResponsibleTagDto>()
                .FromSqlRaw(@"
   SELECT 
+    u.Id,
     u.UserName,
     u.FirstName,
     u.LastName,
     u.Email,
     t.TagName,
+   
     ISNULL(STRING_AGG(rg.GroupName, ', '), 'Không có nhóm phòng') AS GroupName
 FROM 
     UserPerTag upt
@@ -60,7 +62,7 @@ LEFT JOIN
 WHERE 
     upt.TagId = {0}
 GROUP BY 
-    u.UserName, u.FirstName, u.LastName, u.Email, t.TagName;", tagId)
+   u.Id, u.UserName, u.FirstName, u.LastName, u.Email, t.TagName;", tagId)
                .ToListAsync();
 
             return result;

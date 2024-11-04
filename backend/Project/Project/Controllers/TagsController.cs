@@ -48,10 +48,6 @@ namespace Project.Controllers
         public async Task<IActionResult> GetGroupInfoByTagId(string tagId)
         {
             var result = await _repo.GetGroupInfoByTagId(tagId);
-            if (result == null || !result.Any())
-            {
-                return NotFound("No users found for the given tag.");
-            }
             return Ok(result);
         }
 
