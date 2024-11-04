@@ -29,22 +29,22 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CriteriasPerForm>>> GetCriteriasPerForms()
         {
-          if (_context.CriteriasPerForms == null)
-          {
-              return NotFound();
-          }
+            if (_context.CriteriasPerForms == null)
+            {
+                return NotFound();
+            }
             return await _context.CriteriasPerForms.ToListAsync();
         }
 
 
         // GET: api/CriteriasPerForms/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CriteriasPerForm>> GetCriteriasPerForm(string id)
+        public async Task<ActionResult<CriteriasPerForm>> GetCriteriasPerForm([FromQuery] string id)
         {
-          if (_context.CriteriasPerForms == null)
-          {
-              return NotFound();
-          }
+            if (_context.CriteriasPerForms == null)
+            {
+                return NotFound();
+            }
             var criteriasPerForm = await _context.CriteriasPerForms.FindAsync(id);
 
             if (criteriasPerForm == null)
@@ -55,8 +55,9 @@ namespace Project.Controllers
             return criteriasPerForm;
         }
 
-        [HttpGet("ByFormId/{formId}")]
-        public async Task<IActionResult> GetCriteriaByFormId(string formId)
+        // GET: api/CriteriasPerForms/ByFormId/{formId}
+        [HttpGet("ByFormId")]
+        public async Task<IActionResult> GetCriteriaByFormId([FromQuery] string formId)
         {
             var criteria = await _repo.GetCriteriaByFormId(formId);
 
@@ -68,11 +69,12 @@ namespace Project.Controllers
             return Ok(criteria);
         }
 
-
         // PUT: api/CriteriasPerForms/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCriteriasPerForm(string id, CriteriasPerForm criteriasPerForm)
+        // PUT: api/CriteriasPerForms
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut]
+        public async Task<IActionResult> PutCriteriasPerForm([FromQuery] string id, [FromBody] CriteriasPerForm criteriasPerForm)
         {
             if (id != criteriasPerForm.Id)
             {
@@ -99,6 +101,7 @@ namespace Project.Controllers
 
             return NoContent();
         }
+
 
         [HttpPut("edit")]
         public async Task<ActionResult> EditForm([FromBody] EditFormDto formData)
@@ -137,10 +140,10 @@ namespace Project.Controllers
         [HttpPost]
         public async Task<ActionResult<CriteriasPerForm>> PostCriteriasPerForm(CriteriasPerForm criteriasPerForm)
         {
-          if (_context.CriteriasPerForms == null)
-          {
-              return Problem("Entity set 'HcmUeQTTB_DevContext.CriteriasPerForms'  is null.");
-          }
+            if (_context.CriteriasPerForms == null)
+            {
+                return Problem("Entity set 'HcmUeQTTB_DevContext.CriteriasPerForms'  is null.");
+            }
             if (string.IsNullOrEmpty(criteriasPerForm.Id))
             {
                 criteriasPerForm.Id = Guid.NewGuid().ToString();
@@ -186,8 +189,8 @@ namespace Project.Controllers
         }
 
         // DELETE: api/CriteriasPerForms/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCriteriasPerForm(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCriteriasPerForm([FromQuery] string id)
         {
             if (_context.CriteriasPerForms == null)
             {

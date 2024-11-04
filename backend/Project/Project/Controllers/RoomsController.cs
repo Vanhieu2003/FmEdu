@@ -23,15 +23,15 @@ namespace Project.Controllers
             _context = context;
             _repo = repo;
         }
-
-        // GET: api/Rooms/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetRoom(string id)
+        // GET: api/Rooms?id=5
+        [HttpGet]
+        public async Task<ActionResult<Room>> GetRoom([FromQuery] string id)
         {
             if (_context.Rooms == null)
             {
                 return NotFound();
             }
+
             var room = await _context.Rooms.FindAsync(id);
 
             if (room == null)
@@ -39,27 +39,31 @@ namespace Project.Controllers
                 return NotFound();
             }
 
-            return room;
+            return Ok(room);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllRooms()
+
+        [HttpGet("All")]
+        public async Task<IActionResult> GetAllRooms([FromQuery] int pageSize = 50)
         {
-            var rooms = await _context.Rooms.Take(50).ToListAsync();
-            if(rooms == null)
+            var rooms = await _context.Rooms.Take(pageSize).ToListAsync();
+
+            if (rooms == null || !rooms.Any())
             {
                 return NotFound();
             }
+
             return Ok(rooms);
         }
+
 
 
         [HttpGet("By-Floor&Block")]
         public async Task<IActionResult> GetRoomsByFloorIdAndBlockId([FromQuery] string floorId,
      [FromQuery] string blockId)
         {
-            var rooms = await _repo.GetRoomByFloorIdAndBlockId(floorId,blockId);
-            
+            var rooms = await _repo.GetRoomByFloorIdAndBlockId(floorId, blockId);
+
             if (rooms == null || rooms.Count == 0)
             {
                 return NotFound();
@@ -81,8 +85,9 @@ namespace Project.Controllers
 
             return Ok(rooms);
         }
-        [HttpGet("SearchRoom/{roomName}")] 
-        public async Task<IActionResult> SearchRoom (string roomName)
+        // search Roomname
+        [HttpGet("SearchRoom")]
+        public async Task<IActionResult> SearchRoom([FromQuery] string roomName)
         {
             var rooms = await _repo.SearchRoom(roomName);
             return Ok(rooms);
@@ -92,13 +97,13 @@ namespace Project.Controllers
         [HttpGet("GetRoomByBlocksAndCampus")]
         public async Task<IActionResult> GetRoomsByBlockAndCampus([FromQuery] string blockId, [FromQuery] string campusId)
         {
-            
+
             if (string.IsNullOrEmpty(blockId) || string.IsNullOrEmpty(campusId))
             {
                 return BadRequest("BlockId và CampusId không được bỏ trống.");
             }
 
-           
+
             var rooms = await _repo.GetRoomsByBlockAndCampusAsync(blockId, campusId);
 
             if (rooms == null || rooms.Count == 0)
@@ -106,7 +111,7 @@ namespace Project.Controllers
                 return NotFound("Không tìm thấy phòng nào cho block và campus được chỉ định.");
             }
 
-            
+
             return Ok(rooms);
         }
 

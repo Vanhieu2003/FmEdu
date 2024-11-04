@@ -39,8 +39,8 @@ namespace Project.Controllers
         }
 
         // GET: api/CleaningReports/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CleaningReportDetailsDto>> GetCleaningReport(string id)
+        [HttpGet("GetById")]
+        public async Task<ActionResult<CleaningReportDetailsDto>> GetCleaningReport([FromQuery] string id)
         {
             if (_context.CleaningReports == null)
             {
@@ -56,9 +56,9 @@ namespace Project.Controllers
             return cleaningReport;
         }
 
-
-        [HttpGet("ByCleaningForm/{formId}")]
-        public async Task<IActionResult> GetCleaningReportByCleaningForm(string formId)
+        // GET: api/CleaningReports/ByCleaningForm
+        [HttpGet("GetByCleaningForm")]
+        public async Task<IActionResult> GetCleaningReportByCleaningForm([FromQuery] string formId)
         {
             var reports = await _repo.GetCleaningReportByCleaningForm(formId);
             if (reports == null)
@@ -68,6 +68,7 @@ namespace Project.Controllers
             return Ok(reports);
         }
 
+        // GET: api/CleaningReports/GetAllInfo
         [HttpGet("GetAllInfo")]
         public async Task<IActionResult> GetAllCleaningReport([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -96,10 +97,11 @@ namespace Project.Controllers
             return Ok(response);
         }
 
-        [HttpGet("ByReportId/{ReportId}")]
-        public async Task<IActionResult> GetReportInfoByReportId(string ReportId)
+        // GET: api/CleaningReports/GetReportInfo
+        [HttpGet("GetReportInfo")]
+        public async Task<IActionResult> GetReportInfoByReportId([FromQuery] string reportId)
         {
-            var report = await _repo.GetInfoByReportId(ReportId);
+            var report = await _repo.GetInfoByReportId(reportId);
             if (report == null)
             {
                 return NotFound();
@@ -107,8 +109,9 @@ namespace Project.Controllers
             return Ok(report);
         }
 
-        [HttpGet("GetFullInfo/{ReportId}")]
-        public async Task<ActionResult> GetReportDetails(string ReportId)
+
+        [HttpGet("GetFullInfo")]
+        public async Task<ActionResult> GetReportDetails([FromQuery] string ReportId)
         {
             // Lấy báo cáo từ ReportId
             var report = await _context.CleaningReports.FirstOrDefaultAsync(x => x.Id == ReportId);
@@ -191,7 +194,7 @@ namespace Project.Controllers
             // Tìm danh sách người dùng dựa vào shiftId, roomId và criteriaIds
             var criteriaIds = criteriaPerReport.Select(c => c.CriteriaId).ToList();
 
-          
+
 
             // Bước 3: Tìm kiếm trong bảng ScheduleDetail các scheduleId và roomId trùng khớp
             var userIds = await _context.UserScores
@@ -289,8 +292,6 @@ namespace Project.Controllers
 
             return Ok(result);
         }
-
-      
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateCriteriaAndCleaningReport([FromBody] UpdateCleaningReportRequest request)
@@ -434,16 +435,16 @@ namespace Project.Controllers
                 CreateAt = DateTime.UtcNow,
                 UpdateAt = DateTime.UtcNow
             };
-                    var existingReport = await _context.CleaningReports
-            .Where(cr => cr.FormId == request.FormId
-                         && cr.ShiftId == request.ShiftId
-                         && EF.Functions.DateDiffDay(cr.CreateAt, DateTime.UtcNow) == 0)
-            .FirstOrDefaultAsync();
+            var existingReport = await _context.CleaningReports
+    .Where(cr => cr.FormId == request.FormId
+                 && cr.ShiftId == request.ShiftId
+                 && EF.Functions.DateDiffDay(cr.CreateAt, DateTime.UtcNow) == 0)
+    .FirstOrDefaultAsync();
 
-                    if (existingReport != null)
-                    {
-                        return BadRequest("Form đã được đánh giá hôm nay.");
-                    }
+            if (existingReport != null)
+            {
+                return BadRequest("Form đã được đánh giá hôm nay.");
+            }
 
             // 2. Lưu CleaningReport vào database
             _context.CleaningReports.Add(cleaningReport);
@@ -503,13 +504,13 @@ namespace Project.Controllers
 
             await _context.SaveChangesAsync();
 
-            
+
             return Ok(cleaningReport);
         }
 
         // DELETE: api/CleaningReports/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCleaningReport(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCleaningReport([FromQuery] string id)
         {
             if (_context.CleaningReports == null)
             {

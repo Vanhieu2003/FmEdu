@@ -59,7 +59,7 @@ namespace Project.Controllers
             {
                 return NotFound();
             }
-            var criteria = await _context.Criteria.Where(c=>c.Status == "ENABLE").ToListAsync();
+            var criteria = await _context.Criteria.Where(c => c.Status == "ENABLE").ToListAsync();
 
             if (criteria == null)
             {
@@ -71,7 +71,7 @@ namespace Project.Controllers
 
         // GET: api/Criteria/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Criteria>> GetCriteria(string id)
+        public async Task<ActionResult<Criteria>> GetCriteria([FromQuery] string id)
         {
             if (_context.Criteria == null)
             {
@@ -86,8 +86,9 @@ namespace Project.Controllers
 
             return criteria;
         }
-        [HttpGet("ByRoom/{RoomCategoricalId}")]
-        public async Task<IActionResult> GetCriteriasByRoomCategoricalId(string RoomCategoricalId)
+
+        [HttpGet("ByRoom")]
+        public async Task<IActionResult> GetCriteriasByRoomCategoricalId([FromQuery] string RoomCategoricalId)
         {
             var criteriaList = await _repo.GetCriteriasByRoomsCategoricalId(RoomCategoricalId);
             if (criteriaList == null)
@@ -96,8 +97,8 @@ namespace Project.Controllers
             }
             return Ok(criteriaList);
         }
-        [HttpGet("ByRoomId/{RoomId}")]
-        public async Task<IActionResult> GetCriteriasByRoomId(string RoomId)
+        [HttpGet("ByRoomId")]
+        public async Task<IActionResult> GetCriteriasByRoomId([FromQuery] string RoomId)
         {
             var criteriaList = await _repo.GetCriteriasByRoomId(RoomId);
             if (criteriaList == null)
@@ -121,7 +122,7 @@ namespace Project.Controllers
         // PUT: api/Criteria/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> DisableCriteria(string id)
+        public async Task<IActionResult> DisableCriteria([FromQuery] string id)
         {
             // Kiểm tra nếu _context.Criteria null
             if (_context.Criteria == null)
@@ -154,7 +155,7 @@ namespace Project.Controllers
         {
             // Kiểm tra CriteriaName có trùng lặp không
             var existingCriteria = await _context.Criteria
-                .FirstOrDefaultAsync(c => c.CriteriaName == criteriaDto.CriteriaName && c.Status=="ENABLE");
+                .FirstOrDefaultAsync(c => c.CriteriaName == criteriaDto.CriteriaName && c.Status == "ENABLE");
 
             if (existingCriteria != null)
             {
@@ -213,8 +214,8 @@ namespace Project.Controllers
 
 
         // DELETE: api/Criteria/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCriteria(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCriteria([FromQuery] string id)
         {
             if (_context.Criteria == null)
             {

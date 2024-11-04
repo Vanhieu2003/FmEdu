@@ -19,7 +19,7 @@ namespace Project.Controllers
         private readonly IScheduleRepository _repo;
         private readonly HcmUeQTTB_DevContext _context;
 
-        public SchedulesController(HcmUeQTTB_DevContext context,IScheduleRepository repo)
+        public SchedulesController(HcmUeQTTB_DevContext context, IScheduleRepository repo)
         {
             _repo = repo;
             _context = context;
@@ -126,15 +126,15 @@ namespace Project.Controllers
 
             return Ok(result);
         }
-
-        // GET: api/Schedules/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Schedule>> GetSchedule(string id)
+        // GET: api/Schedules
+        [HttpGet("GetSchedule")]
+        public async Task<ActionResult<Schedule>> GetSchedule([FromQuery] string id)
         {
-          if (_context.Schedules == null)
-          {
-              return NotFound();
-          }
+            if (_context.Schedules == null)
+            {
+                return NotFound();
+            }
+
             var schedule = await _context.Schedules.FindAsync(id);
 
             if (schedule == null)
@@ -145,13 +145,9 @@ namespace Project.Controllers
             return schedule;
         }
 
-
-       
-        // PUT: api/Schedules/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-
-        [HttpGet("/GetRoomsList/{RoomType}")]
-        public async Task<IActionResult> GetRoomsListByRoomType(string RoomType)
+        // GET: api/Schedules/GetRoomsList
+        [HttpGet("GetRoomsList")]
+        public async Task<IActionResult> GetRoomsListByRoomType([FromQuery] string RoomType)
         {
             var rooms = await _repo.GetListRoomByRoomType(RoomType);
             return Ok(rooms);
@@ -161,7 +157,7 @@ namespace Project.Controllers
         [HttpGet]
         [Route("get-users-by-shift-room-and-criteria")]
         public async Task<IActionResult> GetUsersByShiftRoomAndCriteria(
-    
+
      [FromQuery] QRDto place,
      [FromQuery] List<string> criteriaIds)
         {
@@ -228,7 +224,7 @@ namespace Project.Controllers
                 // Thêm kết quả vào danh sách
                 result.Add(new
                 {
-                    TagId=tag.Id,
+                    TagId = tag.Id,
                     TagName = tag.TagName,
                     Users = users // Trả về danh sách Users, nếu không có sẽ là danh sách rỗng
                 });
@@ -263,20 +259,20 @@ namespace Project.Controllers
         {
             try
             {
-               
+
                 if (scheduleUpdateDto == null)
                     return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
 
-                
+
                 if (string.IsNullOrEmpty(id))
                     return BadRequest(new { success = false, message = "ID lịch không hợp lệ." });
 
-                
+
                 var existingSchedule = await _context.Schedules.FindAsync(id);
                 if (existingSchedule == null)
                     return NotFound(new { success = false, message = "Lịch không tồn tại." });
 
-                
+
                 existingSchedule.Title = scheduleUpdateDto.Title;
                 existingSchedule.Start = scheduleUpdateDto.StartDate;
                 existingSchedule.End = scheduleUpdateDto.EndDate;
@@ -285,36 +281,36 @@ namespace Project.Controllers
                 existingSchedule.Description = scheduleUpdateDto.Description;
                 existingSchedule.ResponsibleGroupId = scheduleUpdateDto.ResponsibleGroupId;
 
-                
+
                 if (scheduleUpdateDto.Users != null || scheduleUpdateDto.Place != null)
                 {
                     var existingDetails = _context.ScheduleDetails.Where(sd => sd.ScheduleId == existingSchedule.Id);
-                    _context.ScheduleDetails.RemoveRange(existingDetails); 
-    
-                        foreach (var user in scheduleUpdateDto.Users)
+                    _context.ScheduleDetails.RemoveRange(existingDetails);
+
+                    foreach (var user in scheduleUpdateDto.Users)
+                    {
+                        foreach (var place in scheduleUpdateDto.Place)
                         {
-                            foreach (var place in scheduleUpdateDto.Place)
+                            foreach (var room in place.rooms)
                             {
-                                foreach (var room in place.rooms)
+                                var scheduleDetail = new ScheduleDetail
                                 {
-                                    var scheduleDetail = new ScheduleDetail
-                                    {
-                                        Id = Guid.NewGuid().ToString(),
-                                        ScheduleId = existingSchedule.Id,
-                                        UserId = user,
-                                        RoomId = room.Id,
-                                        RoomType = place.level,
-                                    };
-                                    _context.ScheduleDetails.Add(scheduleDetail);
-                                }
+                                    Id = Guid.NewGuid().ToString(),
+                                    ScheduleId = existingSchedule.Id,
+                                    UserId = user,
+                                    RoomId = room.Id,
+                                    RoomType = place.level,
+                                };
+                                _context.ScheduleDetails.Add(scheduleDetail);
                             }
                         }
+                    }
                 }
 
-               
+
                 await _context.SaveChangesAsync();
 
-               
+
                 return Ok(new
                 {
                     success = true,
@@ -334,7 +330,7 @@ namespace Project.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { success = false, message = "Đã xảy ra lỗi khi cập nhật lịch.", error = ex.Message });
             }
         }
@@ -425,8 +421,8 @@ namespace Project.Controllers
 
 
 
-        [HttpDelete("{scheduleId}")]
-        public async Task<IActionResult> DeleteSchedule(string scheduleId)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSchedule([FromQuery] string scheduleId)
         {
             try
             {
@@ -459,11 +455,6 @@ namespace Project.Controllers
             }
         }
 
-
-
-
-
-       
 
 
         private bool ScheduleExists(string id)

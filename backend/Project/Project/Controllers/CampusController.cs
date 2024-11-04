@@ -17,11 +17,9 @@ namespace Project.Controllers
     {
         private readonly HcmUeQTTB_DevContext _context;
 
-
         public CampusController(HcmUeQTTB_DevContext context)
         {
             _context = context;
- 
         }
 
         // GET: api/Campus
@@ -46,8 +44,9 @@ namespace Project.Controllers
             return Ok(await sortedCampuses.ToListAsync());
         }
 
+        // API lấy thông tin campus theo id, dùng query parameter
         [HttpGet("{id}")]
-        public async Task<ActionResult<Campus>> GetCampus(string id)
+        public async Task<ActionResult<Campus>> GetCampusById([FromQuery] string id)
         {
             if (_context.Campuses == null)
             {

@@ -20,73 +20,21 @@ namespace Project.Controllers
             _context = context;
             _repo = chartRepository;
         }
+        //mới làm
         [HttpGet("average-values")]
         public async Task<IActionResult> GetAverageValues(string campusId)
         {
-            var result = await _context.Set<CampusAverageValueDto>()
-        .FromSqlRaw(@"
-            SELECT 
-                C.CampusName AS CampusName,
-                DATEPART(DAY, CR.UpdateAt) AS DAY,
-                AVG(CR.Value) AS AverageValue
-            FROM 
-                CleaningReport CR
-            JOIN 
-                CleaningForm CF ON CR.FormId = CF.Id
-            JOIN 
-                Rooms R ON CF.RoomId = R.Id
-            JOIN 
-                Blocks B ON R.BlockId = B.Id
-            JOIN 
-                Campus C ON B.CampusId = C.Id
-            WHERE 
-                C.Id = {0}
-            GROUP BY 
-                C.CampusName,
-                DATEPART(DAY, CR.UpdateAt)
-            ORDER BY 
-                C.CampusName,
-                DAY;", campusId)
-        .ToListAsync();
-
+            var result = await _repo.GetAverageValues(campusId);
             return Ok(result);
         }
+        //mới làm
         [HttpGet("GetTopCriteriaValuesByCampus")]
-        public async Task<IActionResult> GetTopCriteriaValuesByCampus([FromQuery] string? campusId = null)
+        public async Task<IActionResult> GetTopCriteriaValuesByCampus([FromQuery] string campusId = null)
         {
-            var query = _context.Set<CriteriaValueDto>()
-                .FromSqlRaw(@"
-     SELECT TOP 5 
-         ca.CampusName,
-         cr.CriteriaName,
-         CEILING(
-             CASE 
-                 WHEN cr.CriteriaType = 'RATING' THEN 
-                     (SUM(crr.Value) / (COUNT(crr.Value) * 5.0)) * 100 
-                 WHEN cr.CriteriaType = 'BINARY' THEN 
-                     (SUM(crr.Value) / (COUNT(crr.Value) * 2.0)) * 100
-                 ELSE 0
-             END) AS Value
-     FROM 
-         CleaningForm cf
-         JOIN CriteriaReport crr ON cf.Id = crr.FormId
-         JOIN Criteria cr ON crr.CriteriaId = cr.Id
-         JOIN Rooms r ON cf.RoomId = r.Id
-         JOIN Blocks b ON r.BlockId = b.Id
-         JOIN Campus ca ON b.CampusId = ca.Id
-     " + (string.IsNullOrEmpty(campusId) ? "" : "WHERE ca.Id = {0}") + @"
-     GROUP BY 
-         ca.CampusName, 
-         cr.CriteriaName, 
-         cr.CriteriaType
-     ORDER BY 
-         Value DESC;",
-                    campusId);
-
-            var result = await query.ToListAsync();
-
+            var result = await _repo.GetTopCriteriaValuesByCampus(campusId);
             return Ok(result);
         }
+
 
         [HttpGet("GetCleaningReportCount")]
         public async Task<IActionResult> GetCleaningReportCount()
@@ -116,37 +64,19 @@ namespace Project.Controllers
 
             return Ok(cleaningReportCount);
         }
-
+        // mới làm
         [HttpGet("GetReportInADay")]
         public async Task<IActionResult> GetReportInADay()
         {
-            // Thực hiện truy vấn SQL và ánh xạ vào DTO
-            var result = await _context.Set<ReportInADayValueDto>()
-                .FromSqlRaw(@"
-           SELECT 
-    (SELECT COUNT(*) 
-     FROM CleaningForm 
-     ) AS TotalRooms,
+            var result = await _repo.GetReportInADayAsync();
 
-    -- Đếm số report đã đánh giá trong ngày hôm nay
-    (SELECT COUNT(DISTINCT FormId) 
-     FROM CleaningReport 
-     WHERE CAST(UpdateAt AS DATE) = CAST(GETDATE() AS DATE)) AS TotalReports;
-        ")
-                .ToListAsync();
-
-            // Kiểm tra xem có kết quả hay không
-            if (result == null || !result.Any())
+            if (result == null)
             {
                 return NotFound("No reports found.");
             }
 
-            // Lấy giá trị từ kết quả truy vấn
-            var cleaningReportCount = result.First();
-
-            return Ok(cleaningReportCount);
+            return Ok(result);
         }
-
 
 
 
@@ -352,54 +282,16 @@ ORDER BY
             return Ok(result);
         }
 
-
+        //mới làm
         [HttpGet("GetBlockReports")]
-        public async Task<IActionResult> GetBlockReports(string campusId, DateTime? targetDate = null)
+        public async Task<IActionResult> GetBlockReports([FromQuery] string campusId, [FromQuery] DateTime? targetDate = null)
         {
-            DateTime dateToUse = targetDate ?? DateTime.Today; // Nếu không có ngày truyền vào, sử dụng ngày hiện tại
-
-            var sql = @"
-        SELECT  
-            B.BlockName,
-            COUNT(R.Id) AS TotalRooms, 
-            COUNT(DISTINCT CASE 
-                WHEN CR.UpdateAt = @date AND CR.Value IS NOT NULL 
-                THEN R.Id END) AS TotalEvaluatedRooms, 
-            ROUND(COALESCE(AVG(CR.Value), 0), 2) AS AverageCompletionValue,  
-            CAST(ROUND(CASE 
-                WHEN COUNT(R.Id) = 0 THEN 0
-                ELSE COUNT(DISTINCT CASE 
-                    WHEN CR.UpdateAt = @date AND CR.Value IS NOT NULL 
-                    THEN R.Id END) * 100.0 / COUNT(R.Id) 
-            END, 0) AS INT) AS CompletionPercentage  
-        FROM 
-            Blocks B
-        INNER JOIN 
-            Rooms R ON B.Id = R.BlockId
-        LEFT JOIN 
-            CleaningForm F ON R.Id = F.RoomId
-        LEFT JOIN 
-            CleaningReport CR ON F.Id = CR.FormId 
-            AND CR.UpdateAt = @date 
-        WHERE 
-            B.CampusId = @campusId
-        GROUP BY 
-            B.Id, B.BlockName
-        ORDER BY 
-            CompletionPercentage DESC;";
-
-            var parameters = new[]
-            {
-            new SqlParameter("@campusId", campusId),
-            new SqlParameter("@date", dateToUse)
-        };
-
-            var result = await _context.Set<BlockReportDto>()
-                .FromSqlRaw(sql, parameters)
-                .ToListAsync();
-
+            var result = await _repo.GetBlockReportsAsync(campusId, targetDate);
             return Ok(result);
         }
+
+
+
         [HttpGet("average-score/{tagId}")]
         public async Task<ActionResult<IEnumerable<UserScoreDto>>> GetAverageScoreByTag(string tagId)
         {

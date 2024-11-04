@@ -39,21 +39,26 @@ namespace Project.Controllers
                          };
 
             var sortedBlocks = blocks.OrderBy(b => b.SortOrder)
-                                          .Select(b => new BlockDto
-                                          {
-                                              Id = b.Id,
-                                              BlockName = b.BlockName,
-                                              CampusId = b.CampusId,
-                                              CampusName = b.CampusName
-                                          });
+                                     .Select(b => new BlockDto
+                                     {
+                                         Id = b.Id,
+                                         BlockName = b.BlockName,
+                                         CampusId = b.CampusId,
+                                         CampusName = b.CampusName
+                                     });
 
             return Ok(await sortedBlocks.ToListAsync());
         }
 
-
-        [HttpGet("ByCampus/{campusId}")]
-        public async Task<IActionResult> GetBlocksByCampusId(string campusId)
+        // Định nghĩa route theo dạng ByCampus/campusId và nhận campusId từ query string
+        [HttpGet("ByCampus")]
+        public async Task<IActionResult> GetBlocksByCampusId([FromQuery] string campusId)
         {
+            if (string.IsNullOrEmpty(campusId))
+            {
+                return BadRequest("CampusId là bắt buộc.");
+            }
+
             var blocks = await _repo.GetBlocksByCampusIdAsync(campusId);
             if (blocks == null || !blocks.Any())
             {
@@ -64,7 +69,7 @@ namespace Project.Controllers
 
         // GET: api/Blocks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Block>> GetBlock(string id)
+        public async Task<ActionResult<Block>> GetBlock([FromQuery] string id)
         {
             if (_context.Blocks == null)
             {

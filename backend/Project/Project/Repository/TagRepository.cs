@@ -18,52 +18,46 @@ namespace Project.Repository
             return tags;
         }
 
-
+        //mới sửa
         public async Task<IEnumerable<TagGroupDto>> GetTagGroupsWithUserCountAsync()
         {
-            var query = @"
-            SELECT t.Id, t.TagName, COUNT(upt.UserId) AS NumberOfUsers
-            FROM Tag t
-            LEFT JOIN UserPerTag upt ON t.Id = upt.TagId
-            GROUP BY t.Id, t.TagName;
-        ";
+            var query = from tag in _context.Tags
+                        join userTag in _context.UserPerTags on tag.Id equals userTag.TagId into tagUsers
+                        from userTag in tagUsers.DefaultIfEmpty()
+                        group userTag by new { tag.Id, tag.TagName } into grouped
+                        select new TagGroupDto
+                        {
+                            Id = grouped.Key.Id,
+                            TagName = grouped.Key.TagName,
+                            NumberOfUsers = grouped.Count(ut => ut != null)
+                        };
 
-            // Sử dụng raw SQL để thực thi truy vấn
-            var result = await _context.TagGroupDtos
-                .FromSqlRaw(query)
-                .ToListAsync();
-
-            return result;
+            return await query.ToListAsync();
         }
+        //mới sửa
 
         public async Task<List<ResponsibleTagDto>> GetGroupInfoByTagId(string tagId)
         {
-            var result = await _context.Set<ResponsibleTagDto>()
-               .FromSqlRaw(@"
-  SELECT 
-    u.Id,
-    u.UserName,
-    u.FirstName,
-    u.LastName,
-    u.Email,
-    t.TagName,
-   
-    ISNULL(STRING_AGG(rg.GroupName, ', '), 'Không có nhóm phòng') AS GroupName
-FROM 
-    UserPerTag upt
-LEFT JOIN 
-    [User] u ON upt.UserId = u.Id
-LEFT JOIN 
-    [Tag] t ON upt.TagId = t.Id
-LEFT JOIN 
-    UserPerResGroup uprg ON u.Id = uprg.UserId
-LEFT JOIN 
-    ResponsibleGroup rg ON uprg.ResponsiableGroupId = rg.Id
-WHERE 
-    upt.TagId = {0}
-GROUP BY 
-   u.Id, u.UserName, u.FirstName, u.LastName, u.Email, t.TagName;", tagId)
-               .ToListAsync();
+            var result = await (from upt in _context.UserPerTags
+                                join u in _context.Users on upt.UserId equals u.Id
+                                join t in _context.Tags on upt.TagId equals t.Id
+                                join uprg in _context.UserPerResGroups on u.Id equals uprg.UserId into userGroups
+                                from uprg in userGroups.DefaultIfEmpty()
+                                join rg in _context.ResponsibleGroups on uprg.ResponsiableGroupId equals rg.Id into groupNames
+                                from rg in groupNames.DefaultIfEmpty()
+                                where upt.TagId == tagId
+                                group rg by new { u.Id, u.UserName, u.FirstName, u.LastName, u.Email, t.TagName } into grouped
+                                select new ResponsibleTagDto
+                                {
+                                    Id = grouped.Key.Id,
+                                    UserName = grouped.Key.UserName,
+                                    FirstName = grouped.Key.FirstName,
+                                    LastName = grouped.Key.LastName,
+                                    Email = grouped.Key.Email,
+                                    TagName = grouped.Key.TagName,
+                                    GroupName = string.Join(", ", grouped.Select(g => g != null ? g.GroupName : "Không có nhóm phòng"))
+                                })
+                                .ToListAsync();
 
             return result;
         }

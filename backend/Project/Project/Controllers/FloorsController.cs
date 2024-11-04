@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Project.Entities;
 using Project.Interface;
 
-
 namespace Project.Controllers
 {
     [Route("api/[controller]")]
@@ -24,9 +23,9 @@ namespace Project.Controllers
             _repo = repo;
         }
 
-
-        [HttpGet("Block/{BlockId}")]
-        public async Task<IActionResult> GetFloorByBlockId(string BlockId)
+        // API lấy Floor theo BlockId, dùng query parameter
+        [HttpGet("Block")]
+        public async Task<IActionResult> GetFloorByBlockId([FromQuery] string BlockId)
         {
             var floor = await _repo.GetFloorByBlockId(BlockId);
             if (floor == null)
@@ -34,11 +33,11 @@ namespace Project.Controllers
                 return NotFound();
             }
             return Ok(floor);
-
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Floor>> GetFloor(string id)
+        // API lấy Floor theo id, dùng query parameter
+        [HttpGet]
+        public async Task<ActionResult<Floor>> GetFloor([FromQuery] string id)
         {
             if (_context.Floors == null)
             {
@@ -53,6 +52,5 @@ namespace Project.Controllers
 
             return floor;
         }
-
     }
 }

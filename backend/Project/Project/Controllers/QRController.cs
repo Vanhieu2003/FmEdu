@@ -11,14 +11,15 @@ namespace Project.Controllers
         private readonly HcmUeQTTB_DevContext _context;
         private readonly IQRScannerRepository _repo;
 
-        public QRController(HcmUeQTTB_DevContext context, IQRScannerRepository repo) {
+        public QRController(HcmUeQTTB_DevContext context, IQRScannerRepository repo)
+        {
             _context = context;
             _repo = repo;
-        
+
         }
 
         [HttpGet("GetInfo")]
-        public async Task<IActionResult> getInfoByQR (string roomCode)
+        public async Task<IActionResult> getInfoByQR([FromQuery] string roomCode)
         {
             try
             {

@@ -34,7 +34,7 @@ namespace Project.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, int pageSize = 10)
         {
             var result = await _repo.GetAll(pageNumber, pageSize);
             return Ok(result);
@@ -44,7 +44,7 @@ namespace Project.Controllers
 
         // GET: api/ResponsibleGroups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponsiableGroupDto>> GetResponsibleGroup(string id)
+        public async Task<ActionResult<ResponsiableGroupDto>> GetResponsibleGroup([FromQuery] string id)
         {
             var result = await _repo.GetAllResponsiableGroupById(id);
 
@@ -117,7 +117,7 @@ namespace Project.Controllers
         }
 
 
-   
+
         [HttpPost]
         public async Task<IActionResult> CreateResponsiableGroupWithUser([FromBody] ResponsiableGroupDto dto)
         {
@@ -169,8 +169,8 @@ namespace Project.Controllers
         }
 
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResponsibleGroup(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteResponsibleGroup([FromQuery] string id)
         {
             if (_context.ResponsibleGroups == null)
             {

@@ -26,7 +26,6 @@ namespace Project.Controllers
 
         // GET: api/RoomCategories
         [HttpGet]
-        [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomCategory>>> GetRoomCategories()
         {
             var category = from rc in _context.RoomCategories
@@ -41,12 +40,12 @@ namespace Project.Controllers
 
         // GET: api/RoomCategories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoomCategory>> GetRoomCategory(string id)
+        public async Task<ActionResult<RoomCategory>> GetRoomCategory([FromQuery] string id)
         {
-          if (_context.RoomCategories == null)
-          {
-              return NotFound();
-          }
+            if (_context.RoomCategories == null)
+            {
+                return NotFound();
+            }
             var roomCategory = await _context.RoomCategories.FindAsync(id);
 
             if (roomCategory == null)
@@ -56,9 +55,9 @@ namespace Project.Controllers
 
             return roomCategory;
         }
-
-        [HttpGet("criteria/{criteriaId}")]
-        public async Task<ActionResult<RoomCategory>> GetRoomCategoriesbyCriteriaId(string criteriaId)
+        //lấy theo criteriaId
+        [HttpGet("criteria")]
+        public async Task<ActionResult<RoomCategory>> GetRoomCategoriesbyCriteriaId([FromQuery] string criteriaId)
         {
             var roomCategory = await _repo.GetRoomCategoriesbyCriteriaId(criteriaId);
 
@@ -72,8 +71,8 @@ namespace Project.Controllers
 
         // PUT: api/RoomCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoomCategory(string id, RoomCategory roomCategory)
+        [HttpPut]
+        public async Task<IActionResult> PutRoomCategory([FromQuery] string id, [FromQuery] RoomCategory roomCategory)
         {
             if (id != roomCategory.Id)
             {
@@ -104,12 +103,12 @@ namespace Project.Controllers
         // POST: api/RoomCategories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<RoomCategory>> PostRoomCategory(RoomCategory roomCategory)
+        public async Task<ActionResult<RoomCategory>> PostRoomCategory([FromBody] RoomCategory roomCategory)
         {
-          if (_context.RoomCategories == null)
-          {
-              return Problem("Entity set 'HcmUeQTTB_DevContext.RoomCategories'  is null.");
-          }
+            if (_context.RoomCategories == null)
+            {
+                return Problem("Entity set 'HcmUeQTTB_DevContext.RoomCategories'  is null.");
+            }
             _context.RoomCategories.Add(roomCategory);
             try
             {
@@ -131,8 +130,8 @@ namespace Project.Controllers
         }
 
         // DELETE: api/RoomCategories/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoomCategory(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRoomCategory([FromQuery] string id)
         {
             if (_context.RoomCategories == null)
             {

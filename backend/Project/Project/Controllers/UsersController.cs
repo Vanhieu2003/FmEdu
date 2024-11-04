@@ -37,14 +37,14 @@ namespace Project.Controllers
             return await user.ToListAsync();
         }
 
-        // GET: api/Users/5
+        // GET: api/Users?id=5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<User>> GetUser([FromQuery] string id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
@@ -55,10 +55,10 @@ namespace Project.Controllers
             return user;
         }
 
-        // PUT: api/Users/5
+        // PUT: api/Users?id=5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User user)
+        [HttpPut]
+        public async Task<IActionResult> PutUser([FromQuery] string id, [FromBody] User user)
         {
             if (id != user.Id)
             {
@@ -89,12 +89,12 @@ namespace Project.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser([FromBody] User user)
         {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'HcmUeQTTB_DevContext.Users'  is null.");
-          }
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'HcmUeQTTB_DevContext.Users'  is null.");
+            }
             _context.Users.Add(user);
             try
             {
@@ -115,9 +115,9 @@ namespace Project.Controllers
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
-        // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        // DELETE: api/Users?id=5
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser([FromQuery] string id)
         {
             if (_context.Users == null)
             {

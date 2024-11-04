@@ -30,6 +30,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -48,7 +53,7 @@
   {
     "ContainingType": "Project.Controllers.BlocksController",
     "Method": "GetBlocksByCampusId",
-    "RelativePath": "api/Blocks/ByCampus/{campusId}",
+    "RelativePath": "api/Blocks/ByCampus",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -56,7 +61,7 @@
       {
         "Name": "campusId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -83,7 +88,7 @@
   },
   {
     "ContainingType": "Project.Controllers.CampusController",
-    "Method": "GetCampus",
+    "Method": "GetCampusById",
     "RelativePath": "api/Campus/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -92,6 +97,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -396,6 +406,27 @@
   },
   {
     "ContainingType": "Project.Controllers.CleaningFormsController",
+    "Method": "PutCleaningForm",
+    "RelativePath": "api/CleaningForms",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "cleaningForm",
+        "Type": "Project.Entities.CleaningForm",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CleaningFormsController",
     "Method": "PostCleaningForm",
     "RelativePath": "api/CleaningForms",
     "HttpMethod": "POST",
@@ -431,6 +462,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -448,29 +484,8 @@
   },
   {
     "ContainingType": "Project.Controllers.CleaningFormsController",
-    "Method": "PutCleaningForm",
-    "RelativePath": "api/CleaningForms/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "cleaningForm",
-        "Type": "Project.Entities.CleaningForm",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CleaningFormsController",
     "Method": "GetFormByRoomId",
-    "RelativePath": "api/CleaningForms/ByRoomId/{RoomId}",
+    "RelativePath": "api/CleaningForms/ByRoomId",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -478,7 +493,7 @@
       {
         "Name": "RoomId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -502,7 +517,7 @@
   {
     "ContainingType": "Project.Controllers.CleaningFormsController",
     "Method": "GetCriteriaByFormId",
-    "RelativePath": "api/CleaningForms/criteria/{formId}",
+    "RelativePath": "api/CleaningForms/criteria",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -510,7 +525,7 @@
       {
         "Name": "formId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -518,7 +533,7 @@
   {
     "ContainingType": "Project.Controllers.CleaningFormsController",
     "Method": "GetFormDetails",
-    "RelativePath": "api/CleaningForms/GetFullInfo/{formId}",
+    "RelativePath": "api/CleaningForms/GetFullInfo",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -526,7 +541,7 @@
       {
         "Name": "formId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -553,34 +568,8 @@
   },
   {
     "ContainingType": "Project.Controllers.CleaningReportsController",
-    "Method": "GetCleaningReport",
-    "RelativePath": "api/CleaningReports/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "Project.Dto.CleaningReportDetailsDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "Project.Controllers.CleaningReportsController",
     "Method": "DeleteCleaningReport",
-    "RelativePath": "api/CleaningReports/{id}",
+    "RelativePath": "api/CleaningReports",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -588,39 +577,7 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CleaningReportsController",
-    "Method": "GetCleaningReportByCleaningForm",
-    "RelativePath": "api/CleaningReports/ByCleaningForm/{formId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "formId",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CleaningReportsController",
-    "Method": "GetReportInfoByReportId",
-    "RelativePath": "api/CleaningReports/ByReportId/{ReportId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ReportId",
-        "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -674,8 +631,50 @@
   },
   {
     "ContainingType": "Project.Controllers.CleaningReportsController",
+    "Method": "GetCleaningReportByCleaningForm",
+    "RelativePath": "api/CleaningReports/GetByCleaningForm",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "formId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CleaningReportsController",
+    "Method": "GetCleaningReport",
+    "RelativePath": "api/CleaningReports/GetById",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Dto.CleaningReportDetailsDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Project.Controllers.CleaningReportsController",
     "Method": "GetReportDetails",
-    "RelativePath": "api/CleaningReports/GetFullInfo/{ReportId}",
+    "RelativePath": "api/CleaningReports/GetFullInfo",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -683,7 +682,23 @@
       {
         "Name": "ReportId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CleaningReportsController",
+    "Method": "GetReportInfoByReportId",
+    "RelativePath": "api/CleaningReports/GetReportInfo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reportId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -753,6 +768,22 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriaController",
+    "Method": "DeleteCriteria",
+    "RelativePath": "api/Criteria",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CriteriaController",
     "Method": "GetCriteria",
     "RelativePath": "api/Criteria/{id}",
     "HttpMethod": "GET",
@@ -762,6 +793,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -788,22 +824,11 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriaController",
-    "Method": "DeleteCriteria",
-    "RelativePath": "api/Criteria/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
+        "IsRequired": false
+      },
       {
         "Name": "id",
-        "Type": "System.String",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -812,7 +837,7 @@
   {
     "ContainingType": "Project.Controllers.CriteriaController",
     "Method": "GetCriteriasByRoomCategoricalId",
-    "RelativePath": "api/Criteria/ByRoom/{RoomCategoricalId}",
+    "RelativePath": "api/Criteria/ByRoom",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -820,7 +845,7 @@
       {
         "Name": "RoomCategoricalId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -828,7 +853,7 @@
   {
     "ContainingType": "Project.Controllers.CriteriaController",
     "Method": "GetCriteriasByRoomId",
-    "RelativePath": "api/Criteria/ByRoomId/{RoomId}",
+    "RelativePath": "api/Criteria/ByRoomId",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -836,7 +861,7 @@
       {
         "Name": "RoomId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -915,6 +940,72 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriaReportsController",
+    "Method": "PutCriteriaReport",
+    "RelativePath": "api/CriteriaReports",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CriteriaId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FormId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Value",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Note",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ReportId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CreateAt",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "UpdateAt",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImageUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "UserId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CriteriaReportsController",
     "Method": "PostCriteriaReport",
     "RelativePath": "api/CriteriaReports",
     "HttpMethod": "POST",
@@ -922,9 +1013,54 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "criteriaReport",
-        "Type": "Project.Entities.CriteriaReport",
-        "IsRequired": true
+        "Name": "Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CriteriaId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FormId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Value",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Note",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ReportId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CreateAt",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "UpdateAt",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImageUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "UserId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -950,6 +1086,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -967,29 +1108,8 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriaReportsController",
-    "Method": "PutCriteriaReport",
-    "RelativePath": "api/CriteriaReports/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "criteriaReport",
-        "Type": "Project.Entities.CriteriaReport",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriaReportsController",
     "Method": "GetReportByCriteriaId",
-    "RelativePath": "api/CriteriaReports/Criteria/{criteriaId}",
+    "RelativePath": "api/CriteriaReports/Criteria",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -997,7 +1117,7 @@
       {
         "Name": "criteriaId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1021,6 +1141,27 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "Project.Controllers.CriteriasPerFormsController",
+    "Method": "PutCriteriasPerForm",
+    "RelativePath": "api/CriteriasPerForms",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "criteriasPerForm",
+        "Type": "Project.Entities.CriteriasPerForm",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.CriteriasPerFormsController",
@@ -1050,6 +1191,22 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriasPerFormsController",
+    "Method": "DeleteCriteriasPerForm",
+    "RelativePath": "api/CriteriasPerForms",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.CriteriasPerFormsController",
     "Method": "GetCriteriasPerForm",
     "RelativePath": "api/CriteriasPerForms/{id}",
     "HttpMethod": "GET",
@@ -1059,6 +1216,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -1076,45 +1238,8 @@
   },
   {
     "ContainingType": "Project.Controllers.CriteriasPerFormsController",
-    "Method": "PutCriteriasPerForm",
-    "RelativePath": "api/CriteriasPerForms/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "criteriasPerForm",
-        "Type": "Project.Entities.CriteriasPerForm",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriasPerFormsController",
-    "Method": "DeleteCriteriasPerForm",
-    "RelativePath": "api/CriteriasPerForms/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.CriteriasPerFormsController",
     "Method": "GetCriteriaByFormId",
-    "RelativePath": "api/CriteriasPerForms/ByFormId/{formId}",
+    "RelativePath": "api/CriteriasPerForms/ByFormId",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1122,7 +1247,7 @@
       {
         "Name": "formId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1226,7 +1351,7 @@
   {
     "ContainingType": "Project.Controllers.FloorsController",
     "Method": "GetFloor",
-    "RelativePath": "api/Floors/{id}",
+    "RelativePath": "api/Floors",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1234,7 +1359,7 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1252,7 +1377,7 @@
   {
     "ContainingType": "Project.Controllers.FloorsController",
     "Method": "GetFloorByBlockId",
-    "RelativePath": "api/Floors/Block/{BlockId}",
+    "RelativePath": "api/Floors/Block",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1260,7 +1385,7 @@
       {
         "Name": "BlockId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1298,6 +1423,27 @@
   },
   {
     "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "UpdateRoomGroup",
+    "RelativePath": "api/GroupRooms",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "dto",
+        "Type": "Project.Dto.RoomGroupUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
     "Method": "CreateGroupWithRooms",
     "RelativePath": "api/GroupRooms",
     "HttpMethod": "POST",
@@ -1314,6 +1460,22 @@
   },
   {
     "ContainingType": "Project.Controllers.GroupRoomsController",
+    "Method": "DeleteGroupRoom",
+    "RelativePath": "api/GroupRooms",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.GroupRoomsController",
     "Method": "GetRoomGroupById",
     "RelativePath": "api/GroupRooms/{id}",
     "HttpMethod": "GET",
@@ -1323,6 +1485,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -1337,43 +1504,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "Project.Controllers.GroupRoomsController",
-    "Method": "UpdateRoomGroup",
-    "RelativePath": "api/GroupRooms/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "Project.Dto.RoomGroupUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.GroupRoomsController",
-    "Method": "DeleteGroupRoom",
-    "RelativePath": "api/GroupRooms/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.ResponsibleGroupsController",
@@ -1403,6 +1533,22 @@
   },
   {
     "ContainingType": "Project.Controllers.ResponsibleGroupsController",
+    "Method": "DeleteResponsibleGroup",
+    "RelativePath": "api/ResponsibleGroups",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
     "Method": "GetResponsibleGroup",
     "RelativePath": "api/ResponsibleGroups/{id}",
     "HttpMethod": "GET",
@@ -1412,6 +1558,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -1443,22 +1594,6 @@
       {
         "Name": "dto",
         "Type": "Project.Dto.ResponsibleGroupUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ResponsibleGroupsController",
-    "Method": "DeleteResponsibleGroup",
-    "RelativePath": "api/ResponsibleGroups/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -1507,6 +1642,52 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomCategoriesController",
+    "Method": "PutRoomCategory",
+    "RelativePath": "api/RoomCategories",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CategoryCode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CategoryName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "CreatedAt",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "UpdatedAt",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Rooms",
+        "Type": "System.Collections.Generic.ICollection\u00601[[Project.Entities.Room, Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.RoomCategoriesController",
     "Method": "PostRoomCategory",
     "RelativePath": "api/RoomCategories",
     "HttpMethod": "POST",
@@ -1533,6 +1714,22 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomCategoriesController",
+    "Method": "DeleteRoomCategory",
+    "RelativePath": "api/RoomCategories",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.RoomCategoriesController",
     "Method": "GetRoomCategory",
     "RelativePath": "api/RoomCategories/{id}",
     "HttpMethod": "GET",
@@ -1542,6 +1739,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -1559,45 +1761,8 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomCategoriesController",
-    "Method": "PutRoomCategory",
-    "RelativePath": "api/RoomCategories/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "roomCategory",
-        "Type": "Project.Entities.RoomCategory",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.RoomCategoriesController",
-    "Method": "DeleteRoomCategory",
-    "RelativePath": "api/RoomCategories/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.RoomCategoriesController",
     "Method": "GetRoomCategoriesbyCriteriaId",
-    "RelativePath": "api/RoomCategories/criteria/{criteriaId}",
+    "RelativePath": "api/RoomCategories/criteria",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1605,7 +1770,7 @@
       {
         "Name": "criteriaId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1622,18 +1787,8 @@
   },
   {
     "ContainingType": "Project.Controllers.RoomsController",
-    "Method": "GetAllRooms",
-    "RelativePath": "api/Rooms",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.RoomsController",
     "Method": "GetRoom",
-    "RelativePath": "api/Rooms/{id}",
+    "RelativePath": "api/Rooms",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1641,7 +1796,7 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1655,6 +1810,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "Project.Controllers.RoomsController",
+    "Method": "GetAllRooms",
+    "RelativePath": "api/Rooms/All",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.RoomsController",
@@ -1738,7 +1909,7 @@
   {
     "ContainingType": "Project.Controllers.RoomsController",
     "Method": "SearchRoom",
-    "RelativePath": "api/Rooms/SearchRoom/{roomName}",
+    "RelativePath": "api/Rooms/SearchRoom",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1746,7 +1917,7 @@
       {
         "Name": "roomName",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1789,29 +1960,19 @@
   },
   {
     "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "GetSchedule",
-    "RelativePath": "api/Schedules/{id}",
-    "HttpMethod": "GET",
+    "Method": "DeleteSchedule",
+    "RelativePath": "api/Schedules",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "scheduleId",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "Project.Entities.Schedule",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.SchedulesController",
@@ -1829,22 +1990,6 @@
       {
         "Name": "scheduleUpdateDto",
         "Type": "Project.Dto.ScheduleUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "DeleteSchedule",
-    "RelativePath": "api/Schedules/{scheduleId}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "scheduleId",
-        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -1892,6 +2037,48 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Project.Controllers.SchedulesController",
+    "Method": "GetRoomsListByRoomType",
+    "RelativePath": "api/Schedules/GetRoomsList",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "RoomType",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.SchedulesController",
+    "Method": "GetSchedule",
+    "RelativePath": "api/Schedules/GetSchedule",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Project.Entities.Schedule",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "Project.Controllers.ShiftsController",
     "Method": "GetShifts",
     "RelativePath": "api/Shifts",
@@ -1924,6 +2111,27 @@
   },
   {
     "ContainingType": "Project.Controllers.ShiftsController",
+    "Method": "PutShift",
+    "RelativePath": "api/Shifts",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "shiftDto",
+        "Type": "Project.Dto.ShiftUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ShiftsController",
     "Method": "PostShift",
     "RelativePath": "api/Shifts",
     "HttpMethod": "POST",
@@ -1950,8 +2158,40 @@
   },
   {
     "ContainingType": "Project.Controllers.ShiftsController",
-    "Method": "GetShift",
-    "RelativePath": "api/Shifts/{id}",
+    "Method": "DeleteShift",
+    "RelativePath": "api/Shifts",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ShiftsController",
+    "Method": "GetShiftsByRoomId",
+    "RelativePath": "api/Shifts/ByRoomId",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.ShiftsController",
+    "Method": "GetShiftById",
+    "RelativePath": "api/Shifts/details",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1959,7 +2199,7 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1973,59 +2213,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "Project.Controllers.ShiftsController",
-    "Method": "PutShift",
-    "RelativePath": "api/Shifts/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "shiftDto",
-        "Type": "Project.Dto.ShiftUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ShiftsController",
-    "Method": "DeleteShift",
-    "RelativePath": "api/Shifts/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ShiftsController",
-    "Method": "GetShiftsByRoomId",
-    "RelativePath": "api/Shifts/ByRoomId/{RoomId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "RoomId",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.TagsController",
@@ -2075,8 +2262,50 @@
   },
   {
     "ContainingType": "Project.Controllers.TagsController",
+    "Method": "GetTagAverageRatings",
+    "RelativePath": "api/Tags/average-ratings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsController",
+    "Method": "DeleteTag",
+    "RelativePath": "api/Tags/DeleteTag",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsController",
+    "Method": "GetGroupInfoByTagId",
+    "RelativePath": "api/Tags/GetGroupInfoByTagId",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tagId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsController",
     "Method": "GetTag",
-    "RelativePath": "api/Tags/{id}",
+    "RelativePath": "api/Tags/GetTag",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2084,7 +2313,7 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -2101,45 +2330,18 @@
   },
   {
     "ContainingType": "Project.Controllers.TagsController",
-    "Method": "PutTag",
-    "RelativePath": "api/Tags/{id}",
-    "HttpMethod": "PUT",
+    "Method": "GetTagGroupsWithUserCount",
+    "RelativePath": "api/Tags/GetTagGroups",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "tag",
-        "Type": "Project.Entities.Tag",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.TagsController",
-    "Method": "DeleteTag",
-    "RelativePath": "api/Tags/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.TagsController",
     "Method": "GetCriteriaTagByTag",
-    "RelativePath": "api/Tags/{tagId}/tagspercriteria",
+    "RelativePath": "api/Tags/tagspercriteria",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2154,38 +2356,23 @@
   },
   {
     "ContainingType": "Project.Controllers.TagsController",
-    "Method": "GetTagAverageRatings",
-    "RelativePath": "api/Tags/average-ratings",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.TagsController",
-    "Method": "GetGroupInfoByTagId",
-    "RelativePath": "api/Tags/GetGroupInfoByTagId/{tagId}",
-    "HttpMethod": "GET",
+    "Method": "PutTag",
+    "RelativePath": "api/Tags/UpdateTag",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "tagId",
+        "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "tag",
+        "Type": "Project.Entities.Tag",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.TagsController",
-    "Method": "GetTagGroupsWithUserCount",
-    "RelativePath": "api/Tags/GetTagGroups",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -2207,6 +2394,27 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsPerCriteriasController",
+    "Method": "PutTagsPerCriteria",
+    "RelativePath": "api/TagsPerCriterias",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "tagsPerCriteria",
+        "Type": "Project.Entities.TagsPerCriteria",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.TagsPerCriteriasController",
@@ -2236,8 +2444,40 @@
   },
   {
     "ContainingType": "Project.Controllers.TagsPerCriteriasController",
+    "Method": "DeleteTagsPerCriteria",
+    "RelativePath": "api/TagsPerCriterias",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsPerCriteriasController",
+    "Method": "GetTagsByCriteriaId",
+    "RelativePath": "api/TagsPerCriterias/criteria",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "criteriaId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.TagsPerCriteriasController",
     "Method": "GetTagsPerCriteria",
-    "RelativePath": "api/TagsPerCriterias/{id}",
+    "RelativePath": "api/TagsPerCriterias/details",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2245,7 +2485,7 @@
       {
         "Name": "id",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -2259,59 +2499,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "Project.Controllers.TagsPerCriteriasController",
-    "Method": "PutTagsPerCriteria",
-    "RelativePath": "api/TagsPerCriterias/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "tagsPerCriteria",
-        "Type": "Project.Entities.TagsPerCriteria",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.TagsPerCriteriasController",
-    "Method": "DeleteTagsPerCriteria",
-    "RelativePath": "api/TagsPerCriterias/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.TagsPerCriteriasController",
-    "Method": "GetTagsByCriteriaId",
-    "RelativePath": "api/TagsPerCriterias/Criteria/{criteriaId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "criteriaId",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.TagsPerCriteriasController",
@@ -2351,6 +2538,27 @@
   },
   {
     "ContainingType": "Project.Controllers.UsersController",
+    "Method": "PutUser",
+    "RelativePath": "api/Users",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "user",
+        "Type": "Project.Entities.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
     "Method": "PostUser",
     "RelativePath": "api/Users",
     "HttpMethod": "POST",
@@ -2377,6 +2585,22 @@
   },
   {
     "ContainingType": "Project.Controllers.UsersController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/Users",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Project.Controllers.UsersController",
     "Method": "GetUser",
     "RelativePath": "api/Users/{id}",
     "HttpMethod": "GET",
@@ -2386,6 +2610,11 @@
       {
         "Name": "id",
         "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -2400,43 +2629,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "Project.Controllers.UsersController",
-    "Method": "PutUser",
-    "RelativePath": "api/Users/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "user",
-        "Type": "Project.Entities.User",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.UsersController",
-    "Method": "DeleteUser",
-    "RelativePath": "api/Users/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.UsersPerTagController",
@@ -2466,22 +2658,6 @@
         "Name": "roomCode",
         "Type": "System.String",
         "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.SchedulesController",
-    "Method": "GetRoomsListByRoomType",
-    "RelativePath": "GetRoomsList/{RoomType}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "RoomType",
-        "Type": "System.String",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []

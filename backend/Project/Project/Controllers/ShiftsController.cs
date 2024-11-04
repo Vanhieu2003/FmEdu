@@ -26,9 +26,12 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetShifts(int pageNumber = 1, int pageSize = 10, string? shiftName = null, string? categoryName = null)
+        public async Task<ActionResult> GetShifts(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? shiftName = null,
+            [FromQuery] string? categoryName = null)
         {
-
             var shifts = from s in _context.Shifts
                          join roomCategory in _context.RoomCategories
                          on s.RoomCategoryId equals roomCategory.Id
@@ -43,18 +46,15 @@ namespace Project.Controllers
                              Status = s.Status,
                          };
 
-
             if (!string.IsNullOrEmpty(shiftName))
             {
                 shifts = shifts.Where(s => s.ShiftName.Contains(shiftName));
             }
 
-
             if (!string.IsNullOrEmpty(categoryName))
             {
                 shifts = shifts.Where(s => s.CategoryName.Contains(categoryName));
             }
-
 
             var totalRecords = await shifts.CountAsync();
 
@@ -63,7 +63,6 @@ namespace Project.Controllers
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
-
 
             return Ok(new
             {
@@ -74,11 +73,9 @@ namespace Project.Controllers
             });
         }
 
-
-
-        // GET: api/Shifts/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Shift>> GetShift(string id)
+        // API lấy thông tin ca làm việc theo id, dùng query parameter
+        [HttpGet("details")]
+        public async Task<ActionResult<Shift>> GetShiftById([FromQuery] string id)
         {
             if (_context.Shifts == null)
             {
@@ -93,10 +90,11 @@ namespace Project.Controllers
 
             return shift;
         }
-        [HttpGet("ByRoomId/{RoomId}")]
-        public async Task<IActionResult> GetShiftsByRoomId(string RoomId)
+
+        [HttpGet("ByRoomId")]
+        public async Task<IActionResult> GetShiftsByRoomId([FromQuery] string roomId)
         {
-            var shifts = await _repo.GetShiftsByRoomId(RoomId);
+            var shifts = await _repo.GetShiftsByRoomId(roomId);
             if (shifts == null)
             {
                 return NotFound();
@@ -104,10 +102,8 @@ namespace Project.Controllers
             return Ok(shifts);
         }
 
-
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutShift(string id, ShiftUpdateDto shiftDto)
+        [HttpPut]
+        public async Task<IActionResult> PutShift([FromQuery] string id, [FromBody] ShiftUpdateDto shiftDto)
         {
             var shift = await _context.Shifts.FindAsync(id);
             if (shift == null)
@@ -128,7 +124,6 @@ namespace Project.Controllers
                 return BadRequest(new { success = false, message = "EndTime không hợp lệ." });
             }
 
-
             var duplicateShiftName = await _context.Shifts
                 .Where(s => s.RoomCategoryId == shift.RoomCategoryId && s.ShiftName == shiftDto.ShiftName && s.Id != id)
                 .FirstOrDefaultAsync();
@@ -137,7 +132,6 @@ namespace Project.Controllers
             {
                 return Conflict(new { success = false, message = "Tên ca đã tồn tại trong khu vực này." });
             }
-
 
             var overlappingShift = await _context.Shifts
                 .Where(s => s.RoomCategoryId == shift.RoomCategoryId && s.Id != id)
@@ -149,12 +143,10 @@ namespace Project.Controllers
                 return Conflict(new { success = false, message = "Ca làm việc đã tồn tại trong khoảng thời gian này cho khu vực này." });
             }
 
-
             shift.ShiftName = shiftDto.ShiftName;
             shift.StartTime = startTime;
             shift.EndTime = endTime;
             shift.UpdateAt = DateTime.Now;
-
 
             shift.Status = !string.IsNullOrEmpty(shiftDto.Status) ? shiftDto.Status : "ENABLE";
 
@@ -179,15 +171,8 @@ namespace Project.Controllers
             return Ok(new { success = true, message = "Cập nhật ca làm thành công.", shift });
         }
 
-
-
-
-
-
-
-
         [HttpPost]
-        public async Task<ActionResult<Shift>> PostShift(ShiftCreateDto shiftDto)
+        public async Task<ActionResult<Shift>> PostShift([FromBody] ShiftCreateDto shiftDto)
         {
             TimeSpan startTime;
             TimeSpan endTime;
@@ -207,7 +192,6 @@ namespace Project.Controllers
                 return BadRequest(new { success = false, message = "Category không hợp lệ." });
             }
 
-
             var duplicateShiftName = await _context.Shifts
                 .Where(s => shiftDto.Category.Contains(s.RoomCategoryId))
                 .Where(s => s.ShiftName == shiftDto.ShiftName)
@@ -217,7 +201,6 @@ namespace Project.Controllers
             {
                 return Conflict(new { success = false, message = "Tên ca đã tồn tại trong khu vực này." });
             }
-
 
             var overlappingShift = await _context.Shifts
                 .Where(s => shiftDto.Category.Contains(s.RoomCategoryId))
@@ -259,17 +242,12 @@ namespace Project.Controllers
                 return Conflict(new { success = false, message = "Có lỗi khi tạo ca." });
             }
 
-            return CreatedAtAction("GetShift", new { id = shiftsToCreate.First().Id }, new { success = true, message = "Tạo ca làm thành công.", shifts = shiftsToCreate });
+            return CreatedAtAction("GetShiftById", new { id = shiftsToCreate.First().Id }, new { success = true, message = "Tạo ca làm thành công.", shifts = shiftsToCreate });
         }
 
-
-
-
-
-
-        // DELETE: api/Shifts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShift(string id)
+        // DELETE: api/Shifts
+        [HttpDelete]
+        public async Task<IActionResult> DeleteShift([FromQuery] string id)
         {
             if (_context.Shifts == null)
             {

@@ -9,7 +9,6 @@ using Project.Dto;
 using Project.Entities;
 using Project.Interface;
 
-
 namespace Project.Controllers
 {
     [Route("api/[controller]")]
@@ -29,13 +28,12 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tag>>> GetTags()
         {
-          if (_context.Tags == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tags == null)
+            {
+                return NotFound();
+            }
             return await _context.Tags.ToListAsync();
         }
-
 
         [HttpGet("GetTagGroups")]
         public async Task<IActionResult> GetTagGroupsWithUserCount()
@@ -44,21 +42,21 @@ namespace Project.Controllers
             return Ok(tagGroups);
         }
 
-        [HttpGet("GetGroupInfoByTagId/{tagId}")]
-        public async Task<IActionResult> GetGroupInfoByTagId(string tagId)
+        [HttpGet("GetGroupInfoByTagId")]
+        public async Task<IActionResult> GetGroupInfoByTagId([FromQuery] string tagId)
         {
             var result = await _repo.GetGroupInfoByTagId(tagId);
             return Ok(result);
         }
 
-        // GET: api/Tags/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Tag>> GetTag(string id)
+        // GET: api/Tags
+        [HttpGet("GetTag")]
+        public async Task<ActionResult<Tag>> GetTag([FromQuery] string id)
         {
-          if (_context.Tags == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tags == null)
+            {
+                return NotFound();
+            }
             var tag = await _context.Tags.FindAsync(id);
 
             if (tag == null)
@@ -69,8 +67,8 @@ namespace Project.Controllers
             return tag;
         }
 
-        [HttpGet("{{tagId}}/tagspercriteria")]
-        public async Task<IActionResult> GetCriteriaTagByTag(string tagId)
+        [HttpGet("tagspercriteria")]
+        public async Task<IActionResult> GetCriteriaTagByTag([FromQuery] string tagId)
         {
             var tags = await _repo.GetTagsPerCriteriaByTag(tagId);
             if (tags == null)
@@ -80,7 +78,6 @@ namespace Project.Controllers
             return Ok(tags);
         }
 
-
         [HttpGet("average-ratings")]
         public async Task<IActionResult> GetTagAverageRatings()
         {
@@ -88,13 +85,9 @@ namespace Project.Controllers
             return Ok(result);
         }
 
-
-
-
-        // PUT: api/Tags/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTag(string id, Tag tag)
+        // PUT: api/Tags
+        [HttpPut("UpdateTag")]
+        public async Task<IActionResult> PutTag([FromQuery] string id, [FromBody] Tag tag)
         {
             if (id != tag.Id)
             {
@@ -123,10 +116,8 @@ namespace Project.Controllers
         }
 
         // POST: api/Tags
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // POST: api/Tags
         [HttpPost]
-        public async Task<ActionResult<Tag>> PostTag(Tag tag)
+        public async Task<ActionResult<Tag>> PostTag([FromBody] Tag tag)
         {
             if (_context.Tags == null)
             {
@@ -172,9 +163,9 @@ namespace Project.Controllers
             return CreatedAtAction("GetTag", new { id = tag.Id }, tag);
         }
 
-        // DELETE: api/Tags/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTag(string id)
+        // DELETE: api/Tags
+        [HttpDelete("DeleteTag")]
+        public async Task<IActionResult> DeleteTag([FromQuery] string id)
         {
             if (_context.Tags == null)
             {

@@ -37,10 +37,10 @@ namespace Project.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
             }
         }
-
+        // lấy theo id
         // GET: api/GroupRooms/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoomGroupViewDto>> GetRoomGroupById(string id)
+        public async Task<ActionResult<RoomGroupViewDto>> GetRoomGroupById([FromQuery] string id)
         {
             var result = await _roomRepository.GetRoomGroupById(id);
 
@@ -52,7 +52,7 @@ namespace Project.Controllers
             return Ok(result);  // Trả về thông tin nhóm chịu trách nhiệm và người dùng
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> UpdateRoomGroup(string id, [FromBody] RoomGroupUpdateDto dto)
         {
             try
@@ -77,7 +77,7 @@ namespace Project.Controllers
                 // Cập nhật các trường thông tin
                 group.GroupName = dto.GroupName;
                 group.Description = dto.Description;
-       
+
 
                 // Xóa tất cả người dùng hiện tại khỏi nhóm
                 var existingRoomsInGroup = _context.RoomByGroups.Where(rbg => rbg.GroupRoomId == id);
@@ -155,8 +155,8 @@ namespace Project.Controllers
 
 
         // DELETE: api/GroupRooms/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGroupRoom(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteGroupRoom([FromQuery] string id)
         {
             if (_context.GroupRooms == null)
             {

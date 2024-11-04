@@ -28,21 +28,21 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CriteriaReport>>> GetCriteriaReports()
         {
-          if (_context.CriteriaReports == null)
-          {
-              return NotFound();
-          }
+            if (_context.CriteriaReports == null)
+            {
+                return NotFound();
+            }
             return await _context.CriteriaReports.ToListAsync();
         }
 
         // GET: api/CriteriaReports/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CriteriaReport>> GetCriteriaReport(string id)
+        public async Task<ActionResult<CriteriaReport>> GetCriteriaReport([FromQuery] string id)
         {
-          if (_context.CriteriaReports == null)
-          {
-              return NotFound();
-          }
+            if (_context.CriteriaReports == null)
+            {
+                return NotFound();
+            }
             var criteriaReport = await _context.CriteriaReports.FindAsync(id);
 
             if (criteriaReport == null)
@@ -53,12 +53,12 @@ namespace Project.Controllers
             return criteriaReport;
         }
 
-        [HttpGet("Criteria/{criteriaId}")]
-        public async Task<IActionResult> GetReportByCriteriaId(string criteriaId)
+        [HttpGet("Criteria")]
+        public async Task<IActionResult> GetReportByCriteriaId([FromQuery] string criteriaId)
         {
             var reports = await _repo.GetReportByCriteriaId(criteriaId);
 
-            if (reports == null)
+            if (reports == null || !reports.Any())
             {
                 return NotFound();
             }
@@ -66,10 +66,11 @@ namespace Project.Controllers
             return Ok(reports);
         }
 
+
         // PUT: api/CriteriaReports/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCriteriaReport(string id, CriteriaReport criteriaReport)
+        [HttpPut]
+        public async Task<IActionResult> PutCriteriaReport([FromQuery] string id, [FromQuery] CriteriaReport criteriaReport)
         {
             if (id != criteriaReport.Id)
             {
@@ -97,10 +98,10 @@ namespace Project.Controllers
             return NoContent();
         }
 
-        
+
 
         [HttpPost]
-        public async Task<ActionResult<CriteriaReport>> PostCriteriaReport(CriteriaReport criteriaReport)
+        public async Task<ActionResult<CriteriaReport>> PostCriteriaReport([FromQuery] CriteriaReport criteriaReport)
         {
             if (_context.CriteriaReports == null)
             {
@@ -146,9 +147,9 @@ namespace Project.Controllers
             return CreatedAtAction("GetCriteriaReport", new { id = criteriaReport.Id }, criteriaReport);
         }
 
-      
 
-      
+
+
 
         private bool CriteriaReportExists(string id)
         {

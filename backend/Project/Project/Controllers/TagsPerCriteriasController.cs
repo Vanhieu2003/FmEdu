@@ -29,21 +29,21 @@ namespace Project.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagsPerCriteria>>> GetTagsPerCriteria()
         {
-          if (_context.TagsPerCriteria == null)
-          {
-              return NotFound();
-          }
+            if (_context.TagsPerCriteria == null)
+            {
+                return NotFound();
+            }
             return await _context.TagsPerCriteria.ToListAsync();
         }
 
-        // GET: api/TagsPerCriterias/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TagsPerCriteria>> GetTagsPerCriteria(string id)
+        // GET: api/TagsPerCriterias
+        [HttpGet("details")]
+        public async Task<ActionResult<TagsPerCriteria>> GetTagsPerCriteria([FromQuery] string id)
         {
-          if (_context.TagsPerCriteria == null)
-          {
-              return NotFound();
-          }
+            if (_context.TagsPerCriteria == null)
+            {
+                return NotFound();
+            }
             var tagsPerCriteria = await _context.TagsPerCriteria.FindAsync(id);
 
             if (tagsPerCriteria == null)
@@ -54,8 +54,8 @@ namespace Project.Controllers
             return tagsPerCriteria;
         }
 
-        [HttpGet("Criteria/{criteriaId}")]
-        public async Task<IActionResult> GetTagsByCriteriaId(string criteriaId)
+        [HttpGet("criteria")]
+        public async Task<IActionResult> GetTagsByCriteriaId([FromQuery] string criteriaId)
         {
             var tags = await _repo.GetTagsByCriteriaId(criteriaId);
 
@@ -67,10 +67,10 @@ namespace Project.Controllers
             return Ok(tags);
         }
 
-        // PUT: api/TagsPerCriterias/5
+        // PUT: api/TagsPerCriterias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTagsPerCriteria(string id, TagsPerCriteria tagsPerCriteria)
+        [HttpPut]
+        public async Task<IActionResult> PutTagsPerCriteria([FromQuery] string id, [FromBody] TagsPerCriteria tagsPerCriteria)
         {
             if (id != tagsPerCriteria.Id)
             {
@@ -101,13 +101,12 @@ namespace Project.Controllers
         // POST: api/TagsPerCriterias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TagsPerCriteria>> PostTagsPerCriteria(TagsPerCriteria tagsPerCriteria)
+        public async Task<ActionResult<TagsPerCriteria>> PostTagsPerCriteria([FromBody] TagsPerCriteria tagsPerCriteria)
         {
-          if (_context.TagsPerCriteria == null)
-          {
-              return Problem("Entity set 'HcmUeQTTB_DevContext.TagsPerCriteria'  is null.");
-          }
-
+            if (_context.TagsPerCriteria == null)
+            {
+                return Problem("Entity set 'HcmUeQTTB_DevContext.TagsPerCriteria' is null.");
+            }
 
             if (string.IsNullOrEmpty(tagsPerCriteria.Id))
             {
@@ -131,10 +130,11 @@ namespace Project.Controllers
                 }
             }
 
-            return CreatedAtAction("GetTagsPerCriteria", new { id = tagsPerCriteria.Id }, tagsPerCriteria);
+            return CreatedAtAction(nameof(GetTagsPerCriteria), new { id = tagsPerCriteria.Id }, tagsPerCriteria);
         }
+
         [HttpPost("newCriteria")]
-        public async Task<ActionResult> AddTagsForCriteria([FromBody]CriteriaDto newCriteria)
+        public async Task<ActionResult> AddTagsForCriteria([FromBody] CriteriaDto newCriteria)
         {
             foreach (var tag in newCriteria.Tag)
             {
@@ -153,9 +153,9 @@ namespace Project.Controllers
             return Ok();
         }
 
-        // DELETE: api/TagsPerCriterias/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTagsPerCriteria(string id)
+        // DELETE: api/TagsPerCriterias
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTagsPerCriteria([FromQuery] string id)
         {
             if (_context.TagsPerCriteria == null)
             {
