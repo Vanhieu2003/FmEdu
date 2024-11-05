@@ -36,7 +36,7 @@ namespace Project.Controllers
         }
 
         // GET: api/CriteriaReports/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<CriteriaReport>> GetCriteriaReport([FromQuery] string id)
         {
             if (_context.CriteriaReports == null)
@@ -70,7 +70,7 @@ namespace Project.Controllers
         // PUT: api/CriteriaReports/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutCriteriaReport([FromQuery] string id, [FromQuery] CriteriaReport criteriaReport)
+        public async Task<IActionResult> PutCriteriaReport([FromQuery] string id, [FromBody] CriteriaReport criteriaReport)
         {
             if (id != criteriaReport.Id)
             {
@@ -101,7 +101,7 @@ namespace Project.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<CriteriaReport>> PostCriteriaReport([FromQuery] CriteriaReport criteriaReport)
+        public async Task<ActionResult<CriteriaReport>> PostCriteriaReport([FromBody] CriteriaReport criteriaReport)
         {
             if (_context.CriteriaReports == null)
             {

@@ -38,7 +38,7 @@ namespace Project.Controllers
         }
 
         // GET: api/Users?id=5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<User>> GetUser([FromQuery] string id)
         {
             if (_context.Users == null)

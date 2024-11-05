@@ -39,7 +39,7 @@ namespace Project.Controllers
         }
         // lấy theo id
         // GET: api/GroupRooms/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<RoomGroupViewDto>> GetRoomGroupById([FromQuery] string id)
         {
             var result = await _roomRepository.GetRoomGroupById(id);
@@ -53,7 +53,7 @@ namespace Project.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateRoomGroup(string id, [FromBody] RoomGroupUpdateDto dto)
+        public async Task<IActionResult> UpdateRoomGroup([FromQuery] string id, [FromBody] RoomGroupUpdateDto dto)
         {
             try
             {

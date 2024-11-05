@@ -70,7 +70,7 @@ namespace Project.Controllers
         }
 
         // GET: api/Criteria/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<Criteria>> GetCriteria([FromQuery] string id)
         {
             if (_context.Criteria == null)
@@ -121,7 +121,7 @@ namespace Project.Controllers
 
         // PUT: api/Criteria/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> DisableCriteria([FromQuery] string id)
         {
             // Kiểm tra nếu _context.Criteria null

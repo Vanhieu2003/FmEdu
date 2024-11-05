@@ -38,7 +38,7 @@ namespace Project.Controllers
 
 
         // GET: api/CriteriasPerForms/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<CriteriasPerForm>> GetCriteriasPerForm([FromQuery] string id)
         {
             if (_context.CriteriasPerForms == null)
@@ -138,7 +138,7 @@ namespace Project.Controllers
         // POST: api/CriteriasPerForms
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CriteriasPerForm>> PostCriteriasPerForm(CriteriasPerForm criteriasPerForm)
+        public async Task<ActionResult<CriteriasPerForm>> PostCriteriasPerForm([FromBody] CriteriasPerForm criteriasPerForm)
         {
             if (_context.CriteriasPerForms == null)
             {

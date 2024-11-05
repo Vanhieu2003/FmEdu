@@ -43,7 +43,7 @@ namespace Project.Controllers
 
 
         // GET: api/ResponsibleGroups/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<ResponsiableGroupDto>> GetResponsibleGroup([FromQuery] string id)
         {
             var result = await _repo.GetAllResponsiableGroupById(id);
@@ -57,8 +57,8 @@ namespace Project.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateResponsibleGroup(string id, [FromBody] ResponsibleGroupUpdateDto dto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateResponsibleGroup([FromQuery] string id, [FromBody] ResponsibleGroupUpdateDto dto)
         {
             try
             {

@@ -254,8 +254,8 @@ namespace Project.Controllers
 
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSchedule(string id, [FromBody] ScheduleUpdateDto scheduleUpdateDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateSchedule([FromQuery] string id, [FromBody] ScheduleUpdateDto scheduleUpdateDto)
         {
             try
             {

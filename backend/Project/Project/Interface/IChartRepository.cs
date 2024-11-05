@@ -9,10 +9,10 @@ namespace Project.Interface
         public Task<List<ResponsibleTagReportDto>> GetResponsibleTagReportByCampus(string? campusId);
         public Task<List<RoomGroupReportDto>> GetRoomGroupReportByCampus(string? campusId);
         public Task<List<CampusDetailReportDto>> GetCampusDetailReportById(string? campusId);
-        public Task<IEnumerable<ShiftEvaluationSummaryDto>> GetShiftEvaluationsAsync(string campusId);
+        public Task<IEnumerable<ShiftEvaluationSummaryDto>> GetShiftEvaluationsAsync(string? campusId);
         //
-        public Task<List<CampusAverageValueDto>> GetAverageValues(string campusId);
-        public Task<List<CriteriaValueDto>> GetTopCriteriaValuesByCampus(string campusId);
+        public Task<List<CampusAverageValueDto>> GetAverageValues(string? campusId);
+        public Task<List<CriteriaValueDto>> GetTopCriteriaValuesByCampus(string? campusId);
         public Task<CleaningReportSummaryDto> GetReportInADayAsync();
         public Task<List<CleaningReportDto>> GetCleaningReportsByYearAsync();
         public Task<List<BlockReportDto>> GetBlockReportsAsync(string campusId, DateTime? targetDate = null);

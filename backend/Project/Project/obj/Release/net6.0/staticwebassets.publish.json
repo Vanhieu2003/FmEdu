@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "UplwzEynYNaxApmLE8tIAT9zkVrJkssuKARyt3gb338=",
+  "Hash": "5nPFRVtkzFCmMyappSJaY2jSnSHYUpUfMBlzNonjK78=",
   "Source": "Project",
   "BasePath": "_content/Project",
   "Mode": "Default",
@@ -34,25 +34,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\uploads\\638621884162660887.png"
-    },
-    {
-      "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621887757457174.jpg",
-      "SourceId": "Project",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\",
-      "BasePath": "_content/Project",
-      "RelativePath": "uploads/638621887757457174.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\638621887757457174.jpg"
     },
     {
       "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621889874728231.png",
@@ -93,25 +74,6 @@
       "OriginalItemSpec": "wwwroot\\uploads\\638622536832977215.jpg"
     },
     {
-      "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638622555493254819.jpg",
-      "SourceId": "Project",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\",
-      "BasePath": "_content/Project",
-      "RelativePath": "uploads/638622555493254819.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\638622555493254819.jpg"
-    },
-    {
       "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638661418676179446.jpg",
       "SourceId": "Project",
       "SourceType": "Discovered",
@@ -129,6 +91,44 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\uploads\\638661418676179446.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638663982197440212.jpg",
+      "SourceId": "Project",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\",
+      "BasePath": "_content/Project",
+      "RelativePath": "uploads/638663982197440212.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\638663982197440212.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638663982759752106.jpg",
+      "SourceId": "Project",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\",
+      "BasePath": "_content/Project",
+      "RelativePath": "uploads/638663982759752106.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\638663982759752106.jpg"
     }
   ]
 }

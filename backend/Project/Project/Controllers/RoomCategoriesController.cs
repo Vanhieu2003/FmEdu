@@ -39,7 +39,7 @@ namespace Project.Controllers
         }
 
         // GET: api/RoomCategories/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<RoomCategory>> GetRoomCategory([FromQuery] string id)
         {
             if (_context.RoomCategories == null)
@@ -72,7 +72,7 @@ namespace Project.Controllers
         // PUT: api/RoomCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut]
-        public async Task<IActionResult> PutRoomCategory([FromQuery] string id, [FromQuery] RoomCategory roomCategory)
+        public async Task<IActionResult> PutRoomCategory([FromQuery] string id, [FromBody] RoomCategory roomCategory)
         {
             if (id != roomCategory.Id)
             {

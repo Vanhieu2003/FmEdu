@@ -74,7 +74,7 @@ namespace Project.Controllers
         }
 
         // API lấy thông tin ca làm việc theo id, dùng query parameter
-        [HttpGet("details")]
+        [HttpGet("id")]
         public async Task<ActionResult<Shift>> GetShiftById([FromQuery] string id)
         {
             if (_context.Shifts == null)

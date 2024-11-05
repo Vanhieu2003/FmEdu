@@ -68,7 +68,7 @@ namespace Project.Controllers
         }
 
         // GET: api/Blocks/5
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<Block>> GetBlock([FromQuery] string id)
         {
             if (_context.Blocks == null)

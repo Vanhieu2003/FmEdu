@@ -55,7 +55,7 @@ namespace Project.Controllers
         }
 
         // GET: api/CleaningForms?id={id}
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<CleaningForm>> GetCleaningForm([FromQuery] string id)
         {
             if (_context.CleaningForms == null)

@@ -5,10 +5,6 @@
       "PackagePath": "staticwebassets\\uploads\\638621884162660887.png"
     },
     {
-      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621887757457174.jpg",
-      "PackagePath": "staticwebassets\\uploads\\638621887757457174.jpg"
-    },
-    {
       "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621889874728231.png",
       "PackagePath": "staticwebassets\\uploads\\638621889874728231.png"
     },
@@ -17,12 +13,16 @@
       "PackagePath": "staticwebassets\\uploads\\638622536832977215.jpg"
     },
     {
-      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638622555493254819.jpg",
-      "PackagePath": "staticwebassets\\uploads\\638622555493254819.jpg"
-    },
-    {
       "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638661418676179446.jpg",
       "PackagePath": "staticwebassets\\uploads\\638661418676179446.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638663982197440212.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638663982197440212.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638663982759752106.jpg",
+      "PackagePath": "staticwebassets\\uploads\\638663982759752106.jpg"
     },
     {
       "Id": "obj\\Release\\net6.0\\staticwebassets\\msbuild.Project.Microsoft.AspNetCore.StaticWebAssets.props",

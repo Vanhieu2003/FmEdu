@@ -45,6 +45,6 @@
         public string Id { get; set; }
         public int? Value { get; set; }
         public string? Note { get; set; }
-        public string? Images { get; set; }
+        public Dictionary<string,string>? Images { get; set; }
     }
 }

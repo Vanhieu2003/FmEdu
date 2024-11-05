@@ -307,7 +307,7 @@ namespace Project.Repository
             return results.OrderBy(x => x.Day).ToList();
         }
 
-        public async Task<List<CriteriaValueDto>> GetTopCriteriaValuesByCampus(string campusId)
+        public async Task<List<CriteriaValueDto>> GetTopCriteriaValuesByCampus(string? campusId)
         {
             var query = from cf in _context.CleaningForms
                         join crr in _context.CriteriaReports on cf.Id equals crr.FormId

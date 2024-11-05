@@ -37,7 +37,7 @@ namespace Project.Controllers
         }
 
         // GET: api/TagsPerCriterias
-        [HttpGet("details")]
+        [HttpGet("id")]
         public async Task<ActionResult<TagsPerCriteria>> GetTagsPerCriteria([FromQuery] string id)
         {
             if (_context.TagsPerCriteria == null)

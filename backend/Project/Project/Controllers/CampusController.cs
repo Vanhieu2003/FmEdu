@@ -45,7 +45,7 @@ namespace Project.Controllers
         }
 
         // API lấy thông tin campus theo id, dùng query parameter
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<ActionResult<Campus>> GetCampusById([FromQuery] string id)
         {
             if (_context.Campuses == null)
