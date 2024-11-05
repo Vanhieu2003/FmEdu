@@ -20,9 +20,9 @@ import AddCriteria from 'src/sections/components/form/AddCriteria';
 import CriteriaService from 'src/@core/service/criteria';
 import TagService from 'src/@core/service/tag';
 import RoomCategoryService from 'src/@core/service/RoomCategory';
-import { throttle } from 'lodash';
 import SnackbarComponent from '../components/snackBar';
-
+import { useSettingsContext } from 'src/components/settings/context';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 dayjs.locale('vi');
 
 type Criteria = {
@@ -42,6 +42,7 @@ type Tag = {
 
 
 export default function FiveView() {
+  const settings = useSettingsContext();
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
   const [selectedCriteria, setSelectedCriteria] = useState<Criteria | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,11 +90,16 @@ export default function FiveView() {
       });
     }
     if (filteredCriteria && filteredCriteria?.length > 0) {
-      var totalPages = Math.ceil(filteredCriteria.length / 10);
+      var totalPagesAfterFilter = Math.ceil(filteredCriteria.length / 10);
       const startIndex = (page - 1) * 10;
       const endIndex = startIndex + 10;
-      setTotalPages(totalPages);
-      setPage(page);
+      setTotalPages(totalPagesAfterFilter);
+      if (totalPages !== totalPagesAfterFilter) {
+        setPage(1)
+      }
+      else {
+        setPage(page);
+      }
       setFilterCriteriaList(filteredCriteria.slice(startIndex, endIndex));
     } else {
       setTotalPages(1);
@@ -206,7 +212,7 @@ export default function FiveView() {
 
  
   return (
-    <Container>
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
@@ -294,7 +300,7 @@ export default function FiveView() {
                   )}
                 </TableCell>
                 <TableCell align="center">
-                  <DeleteIcon sx={{ marginRight: '5px', color: 'black', cursor: 'pointer' }} onClick={() => HandleRemoveCriteria(criteria.id)} />
+                  <DeleteOutlineOutlinedIcon sx={{ marginRight: '5px', cursor: 'pointer' }} onClick={() => HandleRemoveCriteria(criteria.id)} />
                 </TableCell>
               </TableRow>
             ))}

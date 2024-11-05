@@ -7,11 +7,11 @@ export class TagService{
  }
 
  getGroupInfoByTagId = async (id:string) =>{
-  return axios.get(`${API_ENDPOINT}/api/Tags/GetGroupInfoByTagId/${id}`);
+  return axios.get(`${API_ENDPOINT}/api/Tags/GetGroupInfoByTagId?tagId=${id}`);
 }
 
  getTagsByCriteriaId = async(criteriaId:string) =>{
-   return axios.get(`${API_ENDPOINT}/api/TagsPerCriterias/Criteria/${criteriaId}`);
+   return axios.get(`${API_ENDPOINT}/api/TagsPerCriterias/Criteria?criteriaId=${criteriaId}`);
  }
  postTagsPerCriteria = async(data: { criteriaId: string|undefined, Tag: object[] }) =>{
    return axios.post(`${API_ENDPOINT}/api/TagsPerCriterias/newCriteria`, data);

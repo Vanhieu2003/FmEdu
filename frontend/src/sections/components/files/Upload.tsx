@@ -9,13 +9,14 @@ import React from 'react';
 
 interface UploadProps {
     onImagesChange: (images: { [criteriaId: string]: string[] }) => void;
+    onImagesDelete?: (imagesUrl:string) => void;
     criteriaId:string;
     images?:string[];
   }
 
 
-export default function Upload({ onImagesChange,criteriaId,images}: UploadProps) {
-    const [imageUrls, setImageUrls] = useState<string[]>(images?.length?images:[]);
+export default function Upload({ onImagesChange,onImagesDelete,criteriaId,images}: UploadProps) {
+    const [temporaryUrls, setTemporaryUrls] = useState<string[]>(images?.length?images:[]);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [openModal, setOpenModal] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -31,38 +32,25 @@ export default function Upload({ onImagesChange,criteriaId,images}: UploadProps)
 
 
     // Hàm xử lý khi người dùng chọn file ảnh
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            if (e.target.files && e.target.files.length > 0) {
-                const formData = new FormData();
-
-                for (let i = 0; i < e.target.files.length; i++) {
-                    formData.append('files', e.target.files[i]);
-                }
-                const res = await FileService.PostFile(formData);
-                const newUrls = [...imageUrls, ...res.data.fileUrls];
-                setImageUrls(newUrls);
-                onImagesChange({ [criteriaId]: newUrls });
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newTemporaryUrls = Array.from(e.target.files).map(file => URL.createObjectURL(file));
+            setTemporaryUrls(prev => [...prev, ...newTemporaryUrls]); // Thêm URL tạm thời vào state
+            onImagesChange({ [criteriaId]: [...temporaryUrls, ...newTemporaryUrls] }); // Gửi URL tạm thời về component cha
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
             }
-        } catch (error) {
-            console.error('Upload error:', error);
         }
     };
-    
-    const handleRemoveImage = async (urlToRemove: string) => {     
-        const filename = urlToRemove.split('uploads/').pop();
-        if (filename) {
-            const res = await FileService.DeleteFile(filename);
-            console.log(res)
-            const newUrls = imageUrls.filter(url => url !== urlToRemove);
-            setImageUrls(newUrls);
-            onImagesChange({ [criteriaId]: newUrls }); // Thay đổi ở đây
+
+    const handleRemoveImage = (urlToRemove: string) => {
+        const updatedUrls = temporaryUrls.filter(url => url !== urlToRemove);
+        setTemporaryUrls(updatedUrls);
+        onImagesChange({ [criteriaId]: updatedUrls }); // Gửi lại danh sách URL đã cập nhật về component cha
+        if (onImagesDelete) {
+            onImagesDelete(urlToRemove);
         }
     };
- 
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();
@@ -84,11 +72,11 @@ export default function Upload({ onImagesChange,criteriaId,images}: UploadProps)
             >
                 Chọn ảnh
             </Button>
-            {imageUrls.length > 0 && (
+            {temporaryUrls.length > 0 && (
                 <Box>
-                    <h3>Uploaded Images:</h3>
+                    <h3>Ảnh đã tải lên:</h3>
                     <Grid container spacing={2}>
-                        {imageUrls.map((url, index) => (
+                        {temporaryUrls.map((url, index) => (
                             <Grid item key={index}>
                                 <Box sx={{ position: 'relative' }}>
                                     <img src={url} alt={`Uploaded ${index}`} width={100} height={100} style={{ objectFit: 'cover', cursor:'zoom-in' }} onClick={()=>handleImageClick(url)}/>

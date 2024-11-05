@@ -18,11 +18,11 @@ export class ResponsibleGroupRoomService {
     );
   }
   getResponsibleGroupbyId = async (id:string)=>{
-    return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/${id}`);
+    return axios.get(`${API_ENDPOINT}/api/ResponsibleGroups/id?id=${id}`);
   }
   
   updateResponsibleGroup = async (id:string ,data:object)=>{
-    return axios.put(`${API_ENDPOINT}/api/ResponsibleGroups/${id}`,data);
+    return axios.put(`${API_ENDPOINT}/api/ResponsibleGroups?id=${id}`,data);
   }
 }
 

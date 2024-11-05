@@ -32,7 +32,8 @@ const CollapsibleRoomGroup = ({ id }: props) => {
 
     const fetchRoomGroup = async () => {
         try {
-            const response: any = await GroupRoomService.getRoomGroupById(id);
+            const response = await GroupRoomService.getRoomGroupById(id);
+            console.log(response)
             setData(response.data);
         } catch (error: any) {
             console.error('Error fetching responsible group:', error);

@@ -26,8 +26,16 @@ import ResponsibleUserView from '../components/table/Report/responsibleUserView'
 import DeleteIcon from '@mui/icons-material/Delete';
 import Upload from '../components/files/Upload';
 import FileService from 'src/@core/service/files';
+import { API_ENDPOINT } from 'src/config-global';
+import SnackbarComponent from '../components/snackBar';
 dayjs.locale('vi');
 // ----------------------------------------------------------------------
+interface CriteriaEvaluation {
+  criteriaId: string;
+  value: any;
+  note: string;
+  images: { [key: string]: string };
+}
 
 export default function OneView({ reportId }: { reportId: string }) {
 
@@ -40,14 +48,13 @@ export default function OneView({ reportId }: { reportId: string }) {
   const settings = useSettingsContext();
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const [removeImageUrl, setRemoveImageUrl] = useState<string[]>([]);
   const parse = require('html-react-parser').default;
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const handleImageClick = (imageUrl: string) => {
-    console.log(imageUrl);
-    setSelectedImage(imageUrl);
-    setOpenModal(true);
-  };
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarStatus, setSnackbarStatus] = useState('success');
+  const [report, setReport] = useState<any>(null);
+
 
   const parseImageUrls = (imageUrlString: string | null): string[] => {
     try {
@@ -61,39 +68,29 @@ export default function OneView({ reportId }: { reportId: string }) {
     }
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setSelectedImage(null);
-  };
-
-  const [report, setReport] = useState<any>(null);
-  useEffect(()=>{console.log(criteriaImages)},[criteriaImages])
+  const fetchData = async () => {
+    const response = await CleaningReportService.getCleaningReportById(reportId);
+    setReport(response.data);
+    setCriteria(response.data.criteriaList);
+    SetUserPerTags(response.data.usersByTags);
+    const initialImages: { [criteriaId: string]: string[] } = {};
+    response.data.criteriaList.forEach((criteria: any) => {
+      initialImages[criteria.id] = parseImageUrls(criteria.imageUrl);
+    });
+    setCriteriaImages(initialImages);
+    const initialEvaluations = response.data.criteriaList.map((criteria: any) => ({
+      criteriaId: criteria.id,
+      value: criteria.value || 0,
+      note: criteria.note || ''
+    }));
+    setCriteriaEvaluations(initialEvaluations);
+  }
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await CleaningReportService.getCleaningReportById(reportId);
-      setReport(response.data);
-      setCriteria(response.data.criteriaList);
-      SetUserPerTags(response.data.usersByTags);
-      const initialImages: { [criteriaId: string]: string[] } = {};
-      response.data.criteriaList.forEach((criteria: any) => {
-        initialImages[criteria.id] = parseImageUrls(criteria.imageUrl);
-      });
-      setCriteriaImages(initialImages);
-      const initialEvaluations = response.data.criteriaList.map((criteria: any) => ({
-        criteriaId: criteria.id,
-        value: criteria.value || '',
-        note: criteria.note || ''
-      }));
-      setCriteriaEvaluations(initialEvaluations);
-    }
     fetchData();
-  }, [id]);
+  }, []);
   if (!report) {
     return
   }
-
-  
-
 
 
   const updateCriteriaEvaluation = (criteriaId: string, value: any, note: string) => {
@@ -113,30 +110,78 @@ export default function OneView({ reportId }: { reportId: string }) {
   };
 
 
+  const uploadImages = async (temporaryUrls: any) => {
+    const uploadedUrls = await Promise.all(
+      temporaryUrls.map(async (tempUrl: any) => {
+        const blob = await fetch(tempUrl).then(res => res.blob());
+        const file = new File([blob], `image_${Math.random()}.jpg`, { type: blob.type });
+        const formData = new FormData();
+        formData.append("files", file);
+        const res = await FileService.PostFile(formData);
+        return res.data.fileUrls[0]; // Giả sử server trả về URL của file đã upload
+      })
+    );
+    return uploadedUrls;
+  };
+
+  const isExistingServerUrl = (url: string) => {
+    return url.startsWith(API_ENDPOINT as string);
+  };
+
   const handleSubmit = async () => {
-    const reportData = {
-      "reportId": report.id,
-      "criteriaList": criteriaEvaluations.map((criteria: any) => {
-        const images = criteriaImages[criteria.criteriaId] || [];
-        const imagesObject = images.reduce((acc: any, url: string, index: number) => {
-          acc[`image_${index + 1}`] = url;
-          return acc;
-        }, {});
-        return {
-          "criteriaId": criteria.criteriaId,
-          "value": criteria.value,
-          "note": criteria.note,
-          "images": imagesObject
-        }
-      }),
-      "userPerTags": userPerTags,
+    try {
+      const criteriaListWithImages = await Promise.all(
+        criteriaEvaluations.map(async (criteria) => {
+          const images = criteriaImages[criteria.criteriaId] || [];
+
+          const existingImages = images.filter(url => isExistingServerUrl(url));
+
+          const newImages = images.filter(url => !isExistingServerUrl(url));
+          const uploadedImageUrls = newImages.length > 0 ? await uploadImages(newImages) : [];
+
+          const allImageUrls = [...existingImages, ...uploadedImageUrls];
+          removeImageUrl.map(url => {
+            if (!allImageUrls.includes(url)) {
+              const fileName = url.split('uploads/').pop();
+              if (fileName) {
+                FileService.DeleteFile(fileName);
+              }
+            }
+          })
+          const imagesObject = allImageUrls.reduce((acc, url, index) => {
+            acc[`image_${index + 1}`] = url;
+            return acc;
+          }, {});
+
+          return {
+            id: criteria.criteriaId,
+            value: criteria.value,
+            note: criteria.note,
+            images: imagesObject
+          };
+        })
+      );
+      const reportData = {
+        reportId: report.id,
+        criteriaList: criteriaListWithImages,
+        userPerTags: userPerTags,
+      };
+      const response = await CleaningReportService.updateCleaningReport(reportData);
+      if (response.status === 200) {
+        setSnackbarStatus("success");
+        setSnackbarMessage("Chỉnh sửa báo cáo thành công");
+        setSnackbarOpen(true);
+        fetchData();
+        setTimeout(()=>{setSnackbarOpen(false)},3000)
+      }
+    } catch (e) {
+      setSnackbarMessage(e.response?.data || "Đã xảy ra lỗi khi gửi báo cáo");
+      setSnackbarStatus("error");
+      setSnackbarOpen(true);
+      console.error("Submit error:", e);
     }
-    console.log("reportData:", reportData);
-    // const response = await CleaningReportService.updateCleaningReport(reportData);
-    // if (response.status === 200) {
-    //   alert("Chỉnh sửa thành công");
-    //   window.location.href = `/dashboard/two/detail/${reportId}`;
-    // }
+
+
 
   };
 
@@ -157,7 +202,19 @@ export default function OneView({ reportId }: { reportId: string }) {
     }));
   };
 
-  
+  const handleImageRemove = (imageUrl: string) => {
+    if (isExistingServerUrl(imageUrl)) {
+      setRemoveImageUrl([...removeImageUrl, imageUrl]);
+      // const filename = imageUrl.split('uploads/').pop();
+      // if (filename) {
+      //   const res = FileService.DeleteFile(filename);    
+      // }
+    }
+  }
+
+
+
+
 
   //UI of the website
   return (
@@ -307,7 +364,7 @@ export default function OneView({ reportId }: { reportId: string }) {
                           <RenderRatingInput
                             criteriaID={criterion.id}
                             inputRatingType={criterion.criteriaType}
-                            value={evaluation?.value || ''}
+                            value={evaluation?.value || 0}
                             onValueChange={handleValueChange} />
                         </Box>
                       </TableCell>
@@ -321,7 +378,7 @@ export default function OneView({ reportId }: { reportId: string }) {
                           onChange={(e) => handleNoteChange(criterion.id, e.target.value)}
                           value={criteriaEvaluations.find(evaluation => evaluation.criteriaId === criterion.id)?.note || ''}
                         />
-                        <Upload onImagesChange={handleImagesChange} criteriaId={criterion.id} images={criteriaImages[criterion.id]}></Upload>
+                        <Upload onImagesChange={handleImagesChange} criteriaId={criterion.id} images={criteriaImages[criterion.id]} onImagesDelete={handleImageRemove}></Upload>
                       </TableCell>
                     </TableRow>
 
@@ -335,38 +392,18 @@ export default function OneView({ reportId }: { reportId: string }) {
               </TableBody>
             </Table>
           </TableContainer>
-          <Modal open={openModal} onClose={handleCloseModal}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                borderRadius: 2,
-                boxShadow: 24,
-                p: 4,
-                maxHeight: "90%",
-                maxWidth: "90%",
-                overflow: "auto",
-              }}
-            >
-              {selectedImage && (
-                <img
-                  src={selectedImage}
-                  alt="Zoomed"
-                  style={{ width: "100%", height: "auto" }}
-                />
-              )}
-            </Box>
-          </Modal>
         </Box>
         {criteria.length !== 0 &&
           <Button variant="contained" endIcon={<SendIcon />} sx={{ mt: 'auto', alignSelf: 'flex-end', mb: 2, mr: 2 }} onClick={handleSubmit}>
-            Send
+            Cập nhật
           </Button>}
-      </Box>
 
+      </Box>
+      <SnackbarComponent
+        status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+        open={snackbarOpen}
+        message={snackbarMessage}
+      />
     </Container>
   );
 }

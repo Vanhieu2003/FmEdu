@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useCallback } from 'react';
-import { Autocomplete, Box, Button, Container, FormControl, IconButton, InputLabel, Link, Menu, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, alpha } from '@mui/material';
+import { Autocomplete, Box, Button, Collapse, Container, FormControl, IconButton, InputLabel, Link, Menu, MenuItem, Pagination, Paper, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, alpha } from '@mui/material';
 import Dayjs from 'dayjs';
 import Popup from '../components/form/Popup';
 import AddForm from '../components/form/AddForm';
@@ -15,6 +15,9 @@ import RoomService from 'src/@core/service/room';
 import CampusService from 'src/@core/service/campus';
 import CleaningFormService from 'src/@core/service/form';
 import SnackbarComponent from '../components/snackBar';
+import { KeyboardArrowDown } from '@mui/icons-material';
+import { KeyboardArrowUp } from '@mui/icons-material';
+import CollapsibleForm from '../components/table/form/CollapsibleForm';
 interface Campus {
   id: string;
   campusCode: string;
@@ -143,6 +146,7 @@ export default function FourView() {
   const [isEditing, setIsEditing] = useState(false);
   const [mockForm, setMockForm] = useState<Form[]>();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [openRow, setOpenRow] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const open = Boolean(anchorEl);
@@ -187,12 +191,17 @@ export default function FourView() {
     }
 
     if (filteredForm && filteredForm.length > 0) {
+      var totalPagesAfterFilter = Math.ceil(filteredForm.length / 10);
       const startIndex = (page - 1) * 10;
       const endIndex = startIndex + 10;
+      setTotalPages(totalPagesAfterFilter);
+      if (totalPages !== totalPagesAfterFilter) {
+        setPage(1)
+      }
+      else {
+        setPage(page);
+      }
       setFilterFormList(filteredForm.slice(startIndex, endIndex));
-      var totalPages = Math.ceil(filteredForm.length / 10);
-      setPage(page);
-      setTotalPages(totalPages);
     } else {
       setFilterFormList([]);
       setTotalPages(1);
@@ -234,6 +243,9 @@ export default function FourView() {
     setIsEditing(false);
     setOpenPopUp(true);
   }
+  const handleRowClick = (rowId: any) => {
+    setOpenRow(openRow === rowId ? null : rowId);
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -288,7 +300,7 @@ export default function FourView() {
     var floorId = floorId;
 
     try {
-      const response = await RoomService.getRoomsByFloorIdAndBlockId(floorId,selectedBlocks?selectedBlocks:'');
+      const response = await RoomService.getRoomsByFloorIdAndBlockId(floorId, selectedBlocks ? selectedBlocks : '');
       if (response.data.length > 0) {
         setRooms(response.data);
       }
@@ -471,60 +483,42 @@ export default function FourView() {
               </TableHead>
               <TableBody>
                 {filterFormList?.map((form: any, index) => (
-                  <TableRow key={form.id} sx={{ marginTop: '5px' }}>
-                    <TableCell align='center' sx={{ width: '5px' }}>{index + 1 + ((page - 1) * 10)}</TableCell>
-                    <TableCell align='center'>
-                      {form.campusName}
-                    </TableCell>
-                    <TableCell align='center'>
-                      {form.blockName}
-                    </TableCell>
-                    <TableCell align='center'>
-                      {form.floorName}
-                    </TableCell>
-                    <TableCell align='center'>
-                      {form.roomName}
-                    </TableCell>
-                    <TableCell align='center' sx={{ width: '2px' }}>
-                      <div>
+                  <React.Fragment>
+                    <TableRow key={form.id} sx={{ marginTop: '5px' }}>
+                      <TableCell align='center' sx={{ width: '5px' }}>{index + 1 + ((page - 1) * 10)}</TableCell>
+                      <TableCell align='center'>
+                        {form.campusName}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {form.blockName}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {form.floorName}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {form.roomName}
+                      </TableCell>
+                      <TableCell align='right'>
                         <IconButton
-                          aria-label="more"
-                          id="long-button"
-                          aria-controls={open ? 'long-menu' : undefined}
-                          aria-expanded={open ? 'true' : undefined}
-                          aria-haspopup="true"
-                          onClick={(event) => handleClick(event, form)}
+                          aria-label="expand row"
+                          size="small"
+                          onClick={() => handleRowClick(form.id)}
                         >
-                          <MoreVertIcon />
+                          {openRow === form.id ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                         </IconButton>
-                        <Menu
-                          id="long-menu"
-                          MenuListProps={{
-                            'aria-labelledby': 'long-button',
-                          }}
-                          anchorEl={anchorEl}
-                          open={open}
-                          onClose={handleClose}
-                        >
-                          <MenuItem onClick={handleClose}>
-                            <Link href={`/dashboard/group/detail/${currentFormID}`} sx={{ display: 'flex' }} underline='none'>
-                              <VisibilityOutlinedIcon sx={{ marginRight: '5px', color: 'black' }} /> Xem chi tiết
-                            </Link>
-                          </MenuItem>
-                          <MenuItem onClick={() => { handleClose(); handleEditClick() }}>
-                            <Link sx={{ display: 'flex' }} underline='none' onClick={() => setOpenPopUp(true)}   >
-                              <EditOutlinedIcon sx={{ marginRight: '5px', color: 'black' }}>
-                                <Popup title={isEditing ? 'Tạo mới Form' : 'Chỉnh sửa Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} formId={currentFormID} >
-                                  <EditForm formId={currentFormID} setOpenPopup={setOpenPopUp} onSuccess={handleEditFormSuccess} />
-                                </Popup>
-                              </EditOutlinedIcon>
-                              Chỉnh sửa
-                            </Link>
-                          </MenuItem>
-                        </Menu>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                        <Collapse in={openRow === form.id} timeout="auto" unmountOnExit>
+                          <Box margin={1}>
+                            <CollapsibleForm id={form.id}></CollapsibleForm>
+                          </Box>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                  </React.Fragment>
+
                 ))}
               </TableBody>
             </Table>

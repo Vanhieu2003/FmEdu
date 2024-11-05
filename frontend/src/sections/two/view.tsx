@@ -199,11 +199,16 @@ export default function TwoView() {
     }
 
     if (filteredReports && filteredReports?.length > 0) {
-      var totalPages = Math.ceil(filteredReports.length / 10);
+      var totalPagesAfterFilter = Math.ceil(filteredReports.length / 10);
       const startIndex = (page - 1) * 10;
       const endIndex = startIndex + 10;
-      setTotalPages(totalPages);
-      setPage(page);
+      setTotalPages(totalPagesAfterFilter);
+      if(totalPages !== totalPagesAfterFilter){
+        setPage(1)
+      }
+      else{
+        setPage(page);
+      }  
       setfilterReportsList(filteredReports.slice(startIndex, endIndex));
     } else {
       setTotalPages(1);

@@ -12,12 +12,6 @@ export class ChartService {
     );
   };
 
-  GetBlockReports = async (campusId: string) => {
-    return axios.get(
-      `${API_ENDPOINT}/api/Chart/GetBlockReports/${campusId}`
-    );
-  };
-
   GetCleaningReportBy10Days = async ()=>{
     return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsByLast10Days`)
   }

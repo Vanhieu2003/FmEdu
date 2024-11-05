@@ -23,11 +23,11 @@ export class ScheduleService {
     return axios.get(url);
   }
   deleteSchedule = async (id: string) => {
-    return axios.delete(`${API_ENDPOINT}/api/Schedules/${id}`);
+    return axios.delete(`${API_ENDPOINT}/api/Schedules?scheduleId=${id}`);
   }
 
   editSchedule = async (id: string, data: object) => {
-    return axios.put(`${API_ENDPOINT}/api/Schedules/${id}`, data);
+    return axios.put(`${API_ENDPOINT}/api/Schedules?id=${id}`, data);
   }
 }
 

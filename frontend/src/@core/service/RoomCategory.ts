@@ -3,7 +3,7 @@ import { API_ENDPOINT } from "src/config-global";
 
 export class RoomCategoryService{
  getRoomCategoryById = async(Id:string) => {
-    return axios.get(`${API_ENDPOINT}/api/RoomCategories/${Id}`);
+    return axios.get(`${API_ENDPOINT}/api/RoomCategories?id=${Id}`);
  }
  getAllRoomCategory = async() => {
     return axios.get(`${API_ENDPOINT}/api/RoomCategories`);

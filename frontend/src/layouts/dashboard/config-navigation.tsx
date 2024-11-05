@@ -82,7 +82,6 @@ export function useNavData() {
             icon: ICONS.lock,
             children: [
               { title: 'Danh sách nhóm', path: paths.dashboard.roomgroup.list },
-              { title: 'Tạo nhóm', path: paths.dashboard.roomgroup.create },
             ],
           },
 
@@ -92,8 +91,7 @@ export function useNavData() {
             icon: ICONS.lock,
             children: [
               { title: 'Danh sách nhóm', path: paths.dashboard.responsiblegroup.list },
-              { title: 'Tạo nhóm', path: paths.dashboard.responsiblegroup.create },
-              { title: 'Tạo tag cho người chịu trách nhiệm', path: paths.dashboard.responsiblegroup.createUserPerTag},
+              { title: 'Danh sách tag', path: paths.dashboard.responsiblegroup.createUserPerTag},
             ],
           },
 
@@ -103,7 +101,6 @@ export function useNavData() {
             icon: ICONS.menuItem,
             children: [
               { title: 'Danh sách ca', path: paths.dashboard.shift.list },
-              { title: 'Tạo ca', path: paths.dashboard.shift.create },
             ],
           },
         ],

@@ -3,7 +3,7 @@ import { API_ENDPOINT } from "src/config-global";
 
 export class CampusService {
      getCampusById = async(CampusId: string) => {
-        return axios.get(`${API_ENDPOINT}/api/Campus/${CampusId}`);
+        return axios.get(`${API_ENDPOINT}/api/Campus?id=${CampusId}`);
     };
      getAllCampus = async() => {
         return axios.get(`${API_ENDPOINT}/api/Campus`);

@@ -34,6 +34,7 @@ import ScheduleService from 'src/@core/service/schedule';
 import responsibleUserView from '../components/table/Report/responsibleUserView';
 import ResponsibleUserView from '../components/table/Report/responsibleUserView';
 import QRCodeScanner from '../components/QRScanner';
+import FileService from 'src/@core/service/files';
 
 type Floor = {
   id: string,
@@ -100,6 +101,13 @@ type Criteria = {
   createAt: string,
   updateAt: string
 };
+interface CriteriaEvaluation {
+  criteriaId: string;
+  value: any;
+  note: string;
+  images: { [key: string]: string };
+}
+
 
 
 // ----------------------------------------------------------------------
@@ -126,7 +134,7 @@ export default function OneView() {
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
 
-  
+
   const [isSending, setIsSending] = useState(false);
 
 
@@ -227,7 +235,7 @@ export default function OneView() {
   const handleFloorSelect = async (floorId: string) => {
     setSelectedFloor(floorId);
     try {
-      const response = await RoomService.getRoomsByFloorIdAndBlockIdIfExistForm(floorId,selectedBlocks);
+      const response = await RoomService.getRoomsByFloorIdAndBlockIdIfExistForm(floorId, selectedBlocks);
       if (response.data.length > 0) {
         setRooms(response.data);
         setSelectedRoom(null);
@@ -292,60 +300,90 @@ export default function OneView() {
     }
   };
 
+  const uploadImages = async (temporaryUrls: any) => {
+
+    const uploadedUrls = await Promise.all(
+      temporaryUrls.map(async (tempUrl: any) => {
+        const blob = await fetch(tempUrl).then(res => res.blob());
+        const file = new File([blob], `image_${Math.random()}.jpg`, { type: blob.type });
+        const formData = new FormData();
+        formData.append("files", file);
+        const res = await FileService.PostFile(formData);
+
+        return res.data.fileUrls[0]; // Giả sử server trả về URL của file đã upload
+      })
+    );
+    return uploadedUrls;
+  };
+
   const handleSubmit = async () => {
-    const reportData = {
-      "formId": form.id,
-      "shiftId": selectedShift,
-      "value": 0,
-      "userId": "abc",
-      "criteriaList": criteriaEvaluations.map((criteria: any) => {
-        const images = criteriaImages[criteria.criteriaId] || [];
-        const imagesObject = images.reduce((acc: any, url: string, index: number) => {
-          acc[`image_${index + 1}`] = url;
-          return acc;
-        }, {});
-        return {
-          "criteriaId": criteria.criteriaId,
-          "value": criteria.value,
-          "note": criteria.note,
-          "images": imagesObject
-        }
-      }),
-      "userPerTags": data
-    }
+    const reportData: {
+      formId: string;
+      shiftId: string;
+      value: number;
+      userId: string;
+      criteriaList: CriteriaEvaluation[];
+      userPerTags: any;
+  } = {
+      formId: form.id,
+      shiftId: selectedShift,
+      value: 0,
+      userId: "abc",
+      criteriaList: [],
+      userPerTags: data
+  };
 
     if (criteriaEvaluations.length < criteria.length) {
       setSnackbarMessage("Vui lòng đánh giá đầy đủ các tiêu chí");
       setSnackbarStatus('error');
       setSnackbarOpen(true);
+      return;
     }
-    else {
-      try {
-        const response = await CleaningReportService.PostReport(reportData);
-        if (response.status === 200) {
-          const reportId = response.data.id;
-          try {
-            const response = await CleaningReportService.AddUserScore({ ...reportData, reportId });
-            if (response.status === 200) {
-              setIsSending(true);
-              setSnackbarMessage("Đã gửi thành công");
-              setSnackbarStatus("success");
-              setSnackbarOpen(true);
-            }
-          }
-          catch (e) {
-            (e);
-          }
+
+    try {
+      const criteriaListWithUploadedImages = await Promise.all(
+        criteriaEvaluations.map(async (criteria) => {
+          const images = criteriaImages[criteria.criteriaId] || [];
+
+          // Gọi hàm uploadImages để upload và lấy URL thực
+          const uploadedImageUrls = await uploadImages(images);
+
+          const imagesObject = uploadedImageUrls.reduce((acc, url, index) => {
+            acc[`image_${index + 1}`] = url;
+            return acc;
+          }, {});
+
+          return {
+            criteriaId: criteria.criteriaId,
+            value: criteria.value,
+            note: criteria.note,
+            images: imagesObject
+          };
+        })
+      );
+
+      reportData.criteriaList = criteriaListWithUploadedImages;
+
+      const response = await CleaningReportService.PostReport(reportData);
+      if (response.status === 200) {
+        const reportId = response.data.id;
+        const addUserScoreResponse = await CleaningReportService.AddUserScore({ ...reportData, reportId });
+        if (addUserScoreResponse.status === 200) {
+          setIsSending(true);
+          setSnackbarMessage("Đã gửi thành công");
+          setSnackbarStatus("success");
+          setSnackbarOpen(true);
         }
       }
-      catch (e) {
-        setIsSending(false);
-        setSnackbarMessage(e.response.data);
-        setSnackbarStatus("error");
-        setSnackbarOpen(true);
-      }
+    } catch (e) {
+      setIsSending(false);
+      setSnackbarMessage(e.response?.data || "Đã xảy ra lỗi khi gửi báo cáo");
+      setSnackbarStatus("error");
+      setSnackbarOpen(true);
+      console.error("Submit error:", e);
     }
   };
+
 
   const handleValueChange = (criteriaId: string, value: number | null) => {
     const existingEvaluation = criteriaEvaluations.find(evaluation => evaluation.criteriaId === criteriaId);
@@ -538,10 +576,10 @@ export default function OneView() {
               getOptionLabel={(option: any) => `${option.shiftName} (${option.startTime.substring(0, 5)} - ${option.endTime.substring(0, 5)})`}
               value={shifts.find(shift => shift.id === selectedShift) || null}
               onChange={(event, newValue) => {
-                if(newValue){
+                if (newValue) {
                   handleShiftSelect(newValue ? newValue.id : '');
                 }
-                else{
+                else {
                   setSelectedShift(null);
                 }
               }}
@@ -618,7 +656,7 @@ export default function OneView() {
               onClick={handleSubmit}
               disabled={isSending}
             >
-              Send
+              Gửi
             </Button>
             <SnackbarComponent
               status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}

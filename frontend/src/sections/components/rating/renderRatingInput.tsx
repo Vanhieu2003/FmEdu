@@ -12,6 +12,7 @@ interface Props {
 }
 
 const RenderRatingInput = ({ criteriaID, inputRatingType, disabled = false, value, onValueChange }: Props) => {
+  console.log("RenderRatingCall",typeof(value),value);
   const [newValue,setNewValue] = useState<number | string |null>(null);
   const handleChange = (ratingValue: number | null | string) => {
     console.log(ratingValue);

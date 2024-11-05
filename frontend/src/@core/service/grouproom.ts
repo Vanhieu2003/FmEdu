@@ -7,11 +7,11 @@ export class GroupRoomService {
     return axios.post(`${API_ENDPOINT}/api/GroupRooms`, data); 
   };
   getRoomGroupById = async (id:string)=>{
-    return axios.get(`${API_ENDPOINT}/api/GroupRooms/${id}`);
+    return axios.get(`${API_ENDPOINT}/api/GroupRooms/id?id=${id}`);
   }
 
   updateRoomGroup = async (id:string ,data:object)=>{
-    return axios.put(`${API_ENDPOINT}/api/GroupRooms/${id}`,data);
+    return axios.put(`${API_ENDPOINT}/api/GroupRooms?id=${id}`,data);
   }
 
   getAllGroupRooms = async (pageNumber: number = 1, pageSize: number = 10)=>{

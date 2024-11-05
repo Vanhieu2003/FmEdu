@@ -4,11 +4,11 @@ import { API_ENDPOINT } from "src/config-global";
 
 export class CriteriaService {
   getCriteriaByRoomCategoryId = async (roomCategoricalId: string) => {
-    return axios.get(`${API_ENDPOINT}/api/Criteria/ByRoom/${roomCategoricalId}`);
+    return axios.get(`${API_ENDPOINT}/api/Criteria/ByRoom?RoomCategoricalId=${roomCategoricalId}`);
   }
   
   getCriteriaByRoomId = async (roomId: string) => {
-    return axios.get(`${API_ENDPOINT}/api/Criteria/ByRoomId/${roomId}`);
+    return axios.get(`${API_ENDPOINT}/api/Criteria/ByRoomId?RoomId=${roomId}`);
   }
 
  // Lấy tất cả tiêu chí và hỗ trợ phân trang
@@ -19,7 +19,7 @@ export class CriteriaService {
 }
   
   getCriteriaByFormId = async (formId: string) => {
-    return axios.get(`${API_ENDPOINT}/api/CriteriasPerForms/ByFormId/${formId}`);
+    return axios.get(`${API_ENDPOINT}/api/CriteriasPerForms/ByFormId?formId=${formId}`);
   }
 
   getAllCriterias = async()=>{
@@ -31,7 +31,7 @@ export class CriteriaService {
   }
 
   disableCriteria = async (criteriaId: string) => {
-    return axios.put(`${API_ENDPOINT}/api/Criteria/${criteriaId}`);
+    return axios.put(`${API_ENDPOINT}/api/Criteria?id=${criteriaId}`);
   }
   searchCriteria = async (search:string)=>{
     return axios.get(`${API_ENDPOINT}/api/Criteria/search?keyword=${search}`)
