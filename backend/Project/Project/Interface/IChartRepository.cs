@@ -16,5 +16,7 @@ namespace Project.Interface
         public Task<CleaningReportSummaryDto> GetReportInADayAsync();
         public Task<List<CleaningReportDto>> GetCleaningReportsByYearAsync();
         public Task<List<BlockReportDto>> GetBlockReportsAsync(string campusId, DateTime? targetDate = null);
+
+        public Task<List<CleaningReportDto>> GetCleaningReportsByQuarter();
     }
 }

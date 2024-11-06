@@ -29,77 +29,106 @@ namespace Project.Controllers
             return Ok(result);
         }
 
-
-
-
-      cc
-
-        [HttpGet("GetCleaningReportsByYear")]
-        public async Task<IActionResult> GetCleaningReportsByYear()
+        [HttpGet("GetCleaningReportsByQuarter")]
+        public async Task<IActionResult> GetCleaningReportsByQuarter()
         {
-            var result = await _context.Set<CleaningReportDto>()
-                .FromSqlRaw(@"
-    WITH MonthsInYear AS (
-        SELECT 
-            MONTH(DATEADD(MONTH, n, DATEFROMPARTS(YEAR(GETDATE()), 1, 1))) AS MonthNum,
-            YEAR(GETDATE()) AS YearNum
-        FROM 
-            (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11) AS Numbers
-    )
-    SELECT 
-        C.CampusName AS CampusName,
-        RIGHT('0' + CAST(M.MonthNum AS VARCHAR(2)), 2) + '-' + CAST(M.YearNum AS VARCHAR(4)) AS ReportTime,  
-        COALESCE(AVG(CR.Value), 0) AS AverageValue
-    FROM 
-        MonthsInYear M
-    CROSS JOIN Campus C 
-    LEFT JOIN Blocks B ON B.CampusId = C.Id
-    LEFT JOIN Rooms R ON R.BlockId = B.Id
-    LEFT JOIN CleaningForm CF ON CF.RoomId = R.Id
-    LEFT JOIN CleaningReport CR ON CF.Id = CR.FormId 
-        AND MONTH(CR.UpdateAt) = M.MonthNum 
-        AND YEAR(CR.UpdateAt) = M.YearNum
-    GROUP BY 
-        C.CampusName, M.YearNum, M.MonthNum
-    ORDER BY 
-        M.YearNum DESC, M.MonthNum ASC;")
-                .ToListAsync();
+            var result = await _repo.GetCleaningReportsByQuarter();
+            return Ok(result);
+        }
+
+
+        [HttpGet("GetCleaningReportsByMonth")]
+        public async Task<IActionResult> GetCleaningReportsByMonth(int? month = null, int? year = null)
+        {
+            // Sử dụng tháng và năm hiện tại nếu không có tham số truyền vào
+            int currentMonth = month ?? DateTime.Now.Month;
+            int currentYear = year ?? DateTime.Now.Year;
+
+            // Tạo danh sách tất cả các ngày trong tháng đã chọn
+            var daysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(currentYear, currentMonth))
+                .Select(day => new DateTime(currentYear, currentMonth, day))
+                .ToList();
+
+            var campuses = await _context.Campuses.ToListAsync();
+            var blocks = await _context.Blocks.ToListAsync();
+            var rooms = await _context.Rooms.ToListAsync();
+            var cleaningForms = await _context.CleaningForms.ToListAsync();
+            var cleaningReports = await _context.CleaningReports.ToListAsync();
+
+            var result = daysInMonth
+                .Select(day => new
+                {
+                    ReportDate = day,
+                    CampusData = campuses.Select(c => new
+                    {
+                        CampusName = c.CampusName,
+                        AverageValue = (
+                            from cr in cleaningReports
+                            join cf in cleaningForms on cr.FormId equals cf.Id
+                            join r in rooms on cf.RoomId equals r.Id
+                            join b in blocks on r.BlockId equals b.Id
+                            where b.CampusId == c.Id &&
+                                  cr.UpdateAt.HasValue &&
+                                  cr.UpdateAt.Value.Date == day  // Lọc theo từng ngày trong tháng
+                            select cr.Value
+                        ).Average(crValue => (double?)crValue) ?? 0
+                    })
+                })
+                .SelectMany(x => x.CampusData.Select(cd => new CleaningReportDto
+                {
+                    CampusName = cd.CampusName,
+                    ReportTime = x.ReportDate.ToString("dd-MM-yyyy"),
+                    AverageValue = (int)cd.AverageValue
+                }))
+                .OrderBy(x => x.ReportTime)  // Sắp xếp kết quả theo thứ tự ngày từ đầu đến cuối tháng
+                .ToList();
 
             return Ok(result);
         }
+
 
 
         [HttpGet("GetCleaningReportsByLast10Days")]
-        public async Task<IActionResult> GetCleaningReportsByLast10Day()
+        public async Task<IActionResult> GetCleaningReportsByLast10Days()
         {
-            var result = await _context.Set<CleaningReportDto>()
-                .FromSqlRaw(@"
-     WITH Last10Days AS (
-    SELECT CAST(GETDATE() - n AS DATE) AS ReportDate
-    FROM (VALUES (0), (1), (2), (3), (4), (5), (6), (7), (8), (9)) AS Numbers(n)
-)
-SELECT 
-    C.CampusName AS CampusName,
-     FORMAT(L.ReportDate, 'dd-MM-yyyy') AS ReportTime,  
-    COALESCE(AVG(CR.Value), 0) AS AverageValue 
-FROM 
-    Last10Days L  
-CROSS JOIN 
-    Campus C  
-LEFT JOIN 
-    Blocks B ON B.CampusId = C.Id
-LEFT JOIN 
-    Rooms R ON R.BlockId = B.Id
-LEFT JOIN 
-    CleaningForm CF ON CF.RoomId = R.Id
-LEFT JOIN 
-    CleaningReport CR ON CF.Id = CR.FormId 
-    AND CAST(CR.UpdateAt AS DATE) = L.ReportDate   
-GROUP BY 
-    C.CampusName, L.ReportDate 
-ORDER BY 
-    L.ReportDate ASC;")
-                .ToListAsync();
+            var last10Days = Enumerable.Range(0, 10)
+                .Select(i => DateTime.Now.Date.AddDays(-i))
+                .OrderBy(d => d)
+                .ToList();
+
+            var campuses = await _context.Campuses.ToListAsync();
+            var blocks = await _context.Blocks.ToListAsync();
+            var rooms = await _context.Rooms.ToListAsync();
+            var cleaningForms = await _context.CleaningForms.ToListAsync();
+            var cleaningReports = await _context.CleaningReports.ToListAsync();
+
+            var result = last10Days
+                .Select(day => new
+                {
+                    ReportDate = day,
+                    CampusData = campuses.Select(c => new
+                    {
+                        CampusName = c.CampusName,
+                        AverageValue = (
+                            from cr in cleaningReports
+                            join cf in cleaningForms on cr.FormId equals cf.Id
+                            join r in rooms on cf.RoomId equals r.Id
+                            join b in blocks on r.BlockId equals b.Id
+                            where b.CampusId == c.Id &&
+                                  cr.UpdateAt.HasValue &&
+                                  cr.UpdateAt.Value.Date == day
+                            select cr.Value
+                        ).Average(crValue => (double?)crValue) ?? 0
+                    })
+                })
+                .SelectMany(x => x.CampusData.Select(cd => new CleaningReportDto
+                {
+                    CampusName = cd.CampusName,
+                    ReportTime = x.ReportDate.ToString("dd-MM-yyyy"),
+                    AverageValue = (int)cd.AverageValue
+                }))
+                .OrderBy(x => x.ReportTime)
+                .ToList();
 
             return Ok(result);
         }
@@ -107,9 +136,9 @@ ORDER BY
 
 
 
-  
 
- 
+
+
 
         //mới làm
         [HttpGet("GetBlockReports")]

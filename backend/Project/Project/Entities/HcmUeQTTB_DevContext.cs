@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Project.Dto;
 
 namespace Project.Entities
 {
@@ -91,7 +90,6 @@ namespace Project.Entities
         public virtual DbSet<UserRole> UserRoles { get; set; } = null!;
         public virtual DbSet<UserScore> UserScores { get; set; } = null!;
         public virtual DbSet<Visitor> Visitors { get; set; } = null!;
-        public virtual DbSet<TagGroupDto> TagGroupDtos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -105,19 +103,6 @@ namespace Project.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Latin1_General_CI_AS");
-
-            modelBuilder.Entity<GroupWithRoomsViewDto>().HasNoKey();
-            modelBuilder.Entity<CleaningReportYearDto>().HasNoKey();
-            modelBuilder.Entity<BlockReportDto>().HasNoKey();
-            modelBuilder.Entity<CleaningReportCountDto>().HasNoKey();
-            modelBuilder.Entity<CleaningReportDto>().HasNoKey();
-            modelBuilder.Entity<ReportInADayValueDto>().HasNoKey();
-            modelBuilder.Entity<CampusAverageValueDto>().HasNoKey();
-            modelBuilder.Entity<ResponsiableGroupViewDto>().HasNoKey();
-            modelBuilder.Entity<CriteriaValueDto>().HasNoKey();
-            modelBuilder.Entity<TagGroupDto>().HasNoKey();
-            modelBuilder.Entity<ResponsibleTagDto>().HasNoKey();
-            modelBuilder.Entity<UserScoreDto>().HasNoKey();
 
             modelBuilder.Entity<Block>(entity =>
             {
@@ -241,10 +226,6 @@ namespace Project.Entities
                 entity.Property(e => e.Note).HasMaxLength(450);
 
                 entity.Property(e => e.ReportId).HasMaxLength(450);
-
-                entity.Property(e => e.UserId)
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<CriteriasPerForm>(entity =>

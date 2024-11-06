@@ -162,7 +162,7 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetCleaningReportsByLast10Day",
+    "Method": "GetCleaningReportsByLast10Days",
     "RelativePath": "api/Chart/GetCleaningReportsByLast10Days",
     "HttpMethod": "GET",
     "IsController": true,
@@ -172,18 +172,29 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetCleaningReportsByQuarter",
-    "RelativePath": "api/Chart/GetCleaningReportsByQuarter",
+    "Method": "GetCleaningReportsByMonth",
+    "RelativePath": "api/Chart/GetCleaningReportsByMonth",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "month",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "year",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetCleaningReportsByYear",
-    "RelativePath": "api/Chart/GetCleaningReportsByYear",
+    "Method": "GetCleaningReportsByQuarter",
+    "RelativePath": "api/Chart/GetCleaningReportsByQuarter",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

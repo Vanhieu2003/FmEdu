@@ -423,5 +423,58 @@ namespace Project.Repository
             return await query.OrderByDescending(x => x.CompletionPercentage).ToListAsync();
         }
 
+
+        public async Task<List<CleaningReportDto>> GetCleaningReportsByQuarter()
+        {
+            var endDate = DateTime.Now;
+            var quarters = Enumerable.Range(0, 4)
+                .Select(i => new
+                {
+                    QuarterNum = (endDate.AddMonths(-3 * i).Month - 1) / 3 + 1,
+                    YearNum = endDate.AddMonths(-3 * i).Year
+                })
+                .ToList();
+
+
+            var campuses = await _context.Campuses.ToListAsync();
+            var blocks = await _context.Blocks.ToListAsync();
+            var rooms = await _context.Rooms.ToListAsync();
+            var cleaningForms = await _context.CleaningForms.ToListAsync();
+            var cleaningReports = await _context.CleaningReports.ToListAsync();
+
+            // Truy vấn dữ liệu
+            var result = quarters
+                .Select(q => new
+                {
+                    QuarterNum = q.QuarterNum,
+                    YearNum = q.YearNum,
+                    CampusData = campuses.Select(c => new
+                    {
+                        CampusName = c.CampusName,
+                        AverageValue = (
+                                   from cr in cleaningReports
+                                   join cf in cleaningForms on cr.FormId equals cf.Id
+                                   join r in rooms on cf.RoomId equals r.Id
+                                   join b in blocks on r.BlockId equals b.Id
+                                   where b.CampusId == c.Id &&
+                                         cr.UpdateAt.HasValue &&
+                                         cr.UpdateAt.Value.Year == q.YearNum &&
+                                         (cr.UpdateAt.Value.Month - 1) / 3 + 1 == q.QuarterNum
+                                   select cr.Value
+                               ).Average(crValue => (double?)crValue) ?? 0
+                    })
+                })
+                .SelectMany(x => x.CampusData.Select(cd => new CleaningReportDto
+                {
+                    CampusName = cd.CampusName,
+                    ReportTime = $"Q{x.QuarterNum}-{x.YearNum}",
+                    AverageValue = (int)cd.AverageValue
+                }))
+                .OrderBy(x => x.ReportTime)
+                .ToList();
+
+            return result;
+        }
+
     }
 }

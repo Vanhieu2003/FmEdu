@@ -3,6 +3,30 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\entities\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\entities\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\schedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\schedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\entities\\hcmueqttb_devcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\entities\\hcmueqttb_devcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\chartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\chartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\interface\\ichartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\interface\\ichartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\chartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\chartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -29,10 +53,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\shiftscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\shiftscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\schedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\schedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\responsiblegroupscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -79,14 +99,6 @@
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\interface\\iblockrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\chartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\chartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\interface\\ichartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\interface\\ichartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\filescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\filescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -102,37 +114,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "TagsPerCriteriasController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsPerCriteriasController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\TagsPerCriteriasController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsPerCriteriasController.cs",
-              "RelativeToolTip": "Project\\Controllers\\TagsPerCriteriasController.cs",
-              "ViewState": "AQIAAJQAAAAAAAAAAAAgwLUAAAAAAAAA",
+              "DocumentIndex": 0,
+              "Title": "Schedule.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\Schedule.cs",
+              "RelativeDocumentMoniker": "Project\\Entities\\Schedule.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\Schedule.cs",
+              "RelativeToolTip": "Project\\Entities\\Schedule.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAXAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:51:33.915Z",
+              "WhenOpened": "2024-11-06T04:03:06.225Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "TagsController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\TagsController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsController.cs",
-              "RelativeToolTip": "Project\\Controllers\\TagsController.cs",
-              "ViewState": "AQIAAJ4AAAAAAAAAAAAgwL8AAAAAAAAA",
+              "DocumentIndex": 2,
+              "Title": "HcmUeQTTB_DevContext.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\HcmUeQTTB_DevContext.cs",
+              "RelativeDocumentMoniker": "Project\\Entities\\HcmUeQTTB_DevContext.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\HcmUeQTTB_DevContext.cs",
+              "RelativeToolTip": "Project\\Entities\\HcmUeQTTB_DevContext.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAAACAGAAAvAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:51:26.42Z",
+              "WhenOpened": "2024-11-06T03:59:25.014Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\appsettings.json",
+              "RelativeDocumentMoniker": "Project\\appsettings.json",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\appsettings.json",
+              "RelativeToolTip": "Project\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAClAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-11-06T03:57:56.949Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "ShiftsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ShiftsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\ShiftsController.cs",
@@ -145,20 +170,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "SchedulesController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\SchedulesController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\SchedulesController.cs",
               "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\SchedulesController.cs",
               "RelativeToolTip": "Project\\Controllers\\SchedulesController.cs",
-              "ViewState": "AQIAAOoBAAAAAAAAAAAgwAsCAAAAAAAA",
+              "ViewState": "AQIAAJsAAAAAAAAAAAAhwKsAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-05T07:51:04.196Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 7,
               "Title": "RoomsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\RoomsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\RoomsController.cs",
@@ -166,12 +191,11 @@
               "RelativeToolTip": "Project\\Controllers\\RoomsController.cs",
               "ViewState": "AQIAAA8AAAAAAAAAAAA7wC4AAABNAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:50:54.763Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:50:54.763Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "RoomCategoriesController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\RoomCategoriesController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\RoomCategoriesController.cs",
@@ -179,12 +203,74 @@
               "RelativeToolTip": "Project\\Controllers\\RoomCategoriesController.cs",
               "ViewState": "AQIAAHwAAAAAAAAAAAAgwJ0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:50:42.987Z",
+              "WhenOpened": "2024-11-05T07:50:42.987Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ChartController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ChartController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\ChartController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ChartController.cs",
+              "RelativeToolTip": "Project\\Controllers\\ChartController.cs",
+              "ViewState": "AQIAAGQAAAAAAAAAAAAgwHgAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T07:35:28.929Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 5,
+              "Title": "IChartRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IChartRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Interface\\IChartRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IChartRepository.cs",
+              "RelativeToolTip": "Project\\Interface\\IChartRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAABtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T07:41:01.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ChartRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ChartRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Repository\\ChartRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ChartRepository.cs",
+              "RelativeToolTip": "Project\\Repository\\ChartRepository.cs",
+              "ViewState": "AQIAALsBAAAAAAAAAAAgwNwBAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T07:40:25.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TagsController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\TagsController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsController.cs",
+              "RelativeToolTip": "Project\\Controllers\\TagsController.cs",
+              "ViewState": "AQIAAJ4AAAAAAAAAAAAgwL8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T07:51:26.42Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "TagsPerCriteriasController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsPerCriteriasController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\TagsPerCriteriasController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsPerCriteriasController.cs",
+              "RelativeToolTip": "Project\\Controllers\\TagsPerCriteriasController.cs",
+              "ViewState": "AQIAAJQAAAAAAAAAAAAgwLUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T07:51:33.915Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "ResponsibleGroupsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ResponsibleGroupsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\ResponsibleGroupsController.cs",
@@ -197,20 +283,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ChartController.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ChartController.cs",
-              "RelativeDocumentMoniker": "Project\\Controllers\\ChartController.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\ChartController.cs",
-              "RelativeToolTip": "Project\\Controllers\\ChartController.cs",
-              "ViewState": "AQIAACIAAAAAAAAAAAAAACIAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:35:28.929Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "UsersController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\UsersController.cs",
@@ -218,12 +291,11 @@
               "RelativeToolTip": "Project\\Controllers\\UsersController.cs",
               "ViewState": "AQIAAG4AAAAAAAAAAAAgwI8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:51:41.907Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:51:41.907Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "FloorsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\FloorsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\FloorsController.cs",
@@ -231,12 +303,11 @@
               "RelativeToolTip": "Project\\Controllers\\FloorsController.cs",
               "ViewState": "AQIAABcAAAAAAAAAAAAgwDgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:50:13.971Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:50:13.971Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 17,
               "Title": "CriteriaReportsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\CriteriaReportsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CriteriaReportsController.cs",
@@ -244,12 +315,11 @@
               "RelativeToolTip": "Project\\Controllers\\CriteriaReportsController.cs",
               "ViewState": "AQIAAH4AAAAAAAAAAAAgwJ8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:49:58.165Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:49:58.165Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 18,
               "Title": "CriteriaController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\CriteriaController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CriteriaController.cs",
@@ -257,12 +327,11 @@
               "RelativeToolTip": "Project\\Controllers\\CriteriaController.cs",
               "ViewState": "AQIAANEAAAAAAAAAAAAgwPIAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:49:50.626Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:49:50.626Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 21,
               "Title": "CampusController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\CampusController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CampusController.cs",
@@ -270,12 +339,11 @@
               "RelativeToolTip": "Project\\Controllers\\CampusController.cs",
               "ViewState": "AQIAACAAAAAAAAAAAAAgwEEAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:49:23.683Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:49:23.683Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 22,
               "Title": "BlocksController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\BlocksController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\BlocksController.cs",
@@ -283,12 +351,11 @@
               "RelativeToolTip": "Project\\Controllers\\BlocksController.cs",
               "ViewState": "AQIAADcAAAAAAAAAAAAgwEUAAAAcAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:49:08.812Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:49:08.812Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "GroupRoomsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\GroupRoomsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\GroupRoomsController.cs",
@@ -301,7 +368,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 23,
               "Title": "IBlockRepository.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IBlockRepository.cs",
               "RelativeDocumentMoniker": "Project\\Interface\\IBlockRepository.cs",
@@ -309,12 +376,11 @@
               "RelativeToolTip": "Project\\Interface\\IBlockRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:49:02.767Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T07:49:02.767Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 16,
               "Title": "CriteriasPerFormsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\CriteriasPerFormsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CriteriasPerFormsController.cs",
@@ -327,7 +393,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 20,
               "Title": "CleaningFormsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\CleaningFormsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CleaningFormsController.cs",
@@ -335,12 +401,11 @@
               "RelativeToolTip": "Project\\Controllers\\CleaningFormsController.cs",
               "ViewState": "AQIAAA4BAAAAAAAAAAAiwC8BAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T06:18:02.962Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T06:18:02.962Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 19,
               "Title": "CleaningReportsController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\CleaningReportsController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\CleaningReportsController.cs",
@@ -353,33 +418,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "ChartRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ChartRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Repository\\ChartRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\ChartRepository.cs",
-              "RelativeToolTip": "Project\\Repository\\ChartRepository.cs",
-              "ViewState": "AQIAACIBAAAAAAAAAAAAwDUBAABWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:40:25.965Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "IChartRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IChartRepository.cs",
-              "RelativeDocumentMoniker": "Project\\Interface\\IChartRepository.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\IChartRepository.cs",
-              "RelativeToolTip": "Project\\Interface\\IChartRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAABbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T07:41:01.716Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 24,
               "Title": "FilesController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\FilesController.cs",
               "RelativeDocumentMoniker": "Project\\Controllers\\FilesController.cs",
@@ -387,12 +426,11 @@
               "RelativeToolTip": "Project\\Controllers\\FilesController.cs",
               "ViewState": "AQIAAFYAAAAAAAAAAAAIwHoAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T04:10:42.309Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T04:10:42.309Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 25,
               "Title": "CleaningReportDto.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Dto\\CleaningReportDto.cs",
               "RelativeDocumentMoniker": "Project\\Dto\\CleaningReportDto.cs",
