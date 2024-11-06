@@ -266,46 +266,6 @@ namespace Project.Repository
                                .ThenBy(dto => dto.ShiftName)
                                .ToListAsync();
         }
-        public async Task<List<CampusAverageValueDto>> GetAverageValues(string campusId)
-        {
-            var currentYear = DateTime.Now.Year;
-            var currentMonth = DateTime.Now.Month;
-            var daysInMonth = DateTime.DaysInMonth(currentYear, currentMonth);
-
-            var query = from cr in _context.CleaningReports
-                        join cf in _context.CleaningForms on cr.FormId equals cf.Id
-                        join r in _context.Rooms on cf.RoomId equals r.Id
-                        join b in _context.Blocks on r.BlockId equals b.Id
-                        join c in _context.Campuses on b.CampusId equals c.Id
-                        where (campusId == null || c.Id == campusId)
-                              && cr.UpdateAt.HasValue
-                              && cr.UpdateAt.Value.Year == currentYear
-                              && cr.UpdateAt.Value.Month == currentMonth
-                        group cr by new { c.CampusName, Day = cr.UpdateAt.Value.Day } into grouped
-                        select new CampusAverageValueDto
-                        {
-                            CampusName = grouped.Key.CampusName,
-                            Day = grouped.Key.Day,
-                            AverageValue = (int?)grouped.Where(x => x.Value.HasValue).Average(x => x.Value.Value)
-                        };
-
-            var averageValues = await query.ToListAsync();
-
-            // Tạo danh sách kết quả để bao gồm tất cả các ngày trong tháng
-            var results = new List<CampusAverageValueDto>();
-            for (int day = 1; day <= daysInMonth; day++)
-            {
-                var value = averageValues.FirstOrDefault(x => x.Day == day);
-                results.Add(new CampusAverageValueDto
-                {
-                    CampusName = value?.CampusName ?? "Không có dữ liệu", // Tùy chỉnh tên cơ sở
-                    Day = day,
-                    AverageValue = value?.AverageValue ?? 0 // Đặt 0 nếu không có giá trị trung bình
-                });
-            }
-
-            return results.OrderBy(x => x.Day).ToList();
-        }
 
         public async Task<List<CriteriaValueDto>> GetTopCriteriaValuesByCampus(string? campusId)
         {
@@ -361,67 +321,7 @@ namespace Project.Repository
 
             return result;
         }
-        public async Task<List<CleaningReportDto>> GetCleaningReportsByYearAsync()
-        {
-            var currentYear = DateTime.Now.Year;
-
-            // Tạo danh sách tháng từ 1 đến 12
-            var months = Enumerable.Range(1, 12).ToList();
-
-            // Thực hiện truy vấn LINQ
-            var query = from month in months
-                        from campus in _context.Campuses
-                        join block in _context.Blocks on campus.Id equals block.CampusId into campusBlocks
-                        from block in campusBlocks.DefaultIfEmpty()
-                        join room in _context.Rooms on block.Id equals room.BlockId into blockRooms
-                        from room in blockRooms.DefaultIfEmpty()
-                        join cleaningForm in _context.CleaningForms on room.Id equals cleaningForm.RoomId into roomForms
-                        from cleaningForm in roomForms.DefaultIfEmpty()
-                        join cleaningReport in _context.CleaningReports on cleaningForm.Id equals cleaningReport.FormId into formReports
-                        from cleaningReport in formReports.DefaultIfEmpty()
-                        where cleaningReport != null
-                              && cleaningReport.UpdateAt.HasValue // Kiểm tra có giá trị không
-                              && cleaningReport.UpdateAt.Value.Year == currentYear
-                              && cleaningReport.UpdateAt.Value.Month == month
-                        group cleaningReport by new { CampusName = campus.CampusName, Month = month, Year = currentYear } into grouped
-                        select new CleaningReportDto
-                        {
-                            CampusName = grouped.Key.CampusName,
-                            ReportTime = $"{grouped.Key.Month:D2}-{grouped.Key.Year}",
-                            // Tính giá trị trung bình, cần đảm bảo rằng nó không null
-                            AverageValue = grouped.Any() ? (int?)grouped.Average(cr => cr.Value) : null
-                        };
-
-            // Chuyển đổi về IQueryable trước khi gọi ToListAsync
-            var result = await query.AsQueryable().OrderBy(r => r.ReportTime).ToListAsync();
-
-            return result;
-        }
-        public async Task<List<BlockReportDto>> GetBlockReportsAsync(string campusId, DateTime? targetDate = null)
-        {
-            DateTime dateToUse = targetDate ?? DateTime.Today;
-
-            var query = from block in _context.Blocks
-                        join room in _context.Rooms on block.Id equals room.BlockId into blockRooms
-                        from room in blockRooms.DefaultIfEmpty()
-                        join form in _context.CleaningForms on room.Id equals form.RoomId into roomForms
-                        from form in roomForms.DefaultIfEmpty()
-                        join report in _context.CleaningReports on form.Id equals report.FormId into formReports
-                        from report in formReports.DefaultIfEmpty()
-                        where block.CampusId == campusId
-                              && (report == null || report.UpdateAt.Value.Date == dateToUse.Date)
-                        group new { room, report } by new { block.Id, block.BlockName } into grouped
-                        select new BlockReportDto
-                        {
-                            BlockName = grouped.Key.BlockName,
-                            TotalRooms = grouped.Count(x => x.room != null),
-                            TotalEvaluatedRooms = grouped.Count(x => x.report != null && x.report.UpdateAt.HasValue && x.report.UpdateAt.Value.Date == dateToUse.Date),
-                            AverageCompletionValue = (int)Math.Round(grouped.Average(x => x.report != null ? x.report.Value : 0) ?? 0, 2),
-                            CompletionPercentage = (int)Math.Round(grouped.Count(x => x.report != null && x.report.UpdateAt.HasValue && x.report.UpdateAt.Value.Date == dateToUse.Date) * 100.0 / grouped.Count(x => x.room != null))
-                        };
-
-            return await query.OrderByDescending(x => x.CompletionPercentage).ToListAsync();
-        }
+       
 
 
         public async Task<List<CleaningReportDto>> GetCleaningReportsByQuarter()
@@ -433,16 +333,85 @@ namespace Project.Repository
                     QuarterNum = (endDate.AddMonths(-3 * i).Month - 1) / 3 + 1,
                     YearNum = endDate.AddMonths(-3 * i).Year
                 })
+                .Select(q => (q.QuarterNum, q.YearNum))
                 .ToList();
 
+            return await GetCampusDataByQuarter(quarters);
+        }
 
+
+        public async Task<List<CleaningReportDto>> GetCleaningReportsByLast10Days()
+        {
+            var last10Days = Enumerable.Range(0, 10)
+                .Select(i => DateTime.Now.Date.AddDays(-i))
+                .OrderBy(d => d)
+                .ToList();
+
+            return await GetCampusDataByDates(last10Days);
+        }
+
+
+
+        public async Task<List<CleaningReportDto>> GetCleaningReportsByMonth(int? month = null, int? year = null)
+        {
+            int currentMonth = month ?? DateTime.Now.Month;
+            int currentYear = year ?? DateTime.Now.Year;
+
+            var daysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(currentYear, currentMonth))
+                .Select(day => new DateTime(currentYear, currentMonth, day))
+                .ToList();
+
+            return await GetCampusDataByDates(daysInMonth);
+        }
+
+
+        private async Task<List<CleaningReportDto>> GetCampusDataByDates(List<DateTime> dates)
+        {
             var campuses = await _context.Campuses.ToListAsync();
             var blocks = await _context.Blocks.ToListAsync();
             var rooms = await _context.Rooms.ToListAsync();
             var cleaningForms = await _context.CleaningForms.ToListAsync();
             var cleaningReports = await _context.CleaningReports.ToListAsync();
 
-            // Truy vấn dữ liệu
+            var result = dates
+                .Select(day => new
+                {
+                    ReportDate = day,
+                    CampusData = campuses.Select(c => new
+                    {
+                        CampusName = c.CampusName,
+                        AverageValue = (
+                            from cr in cleaningReports
+                            join cf in cleaningForms on cr.FormId equals cf.Id
+                            join r in rooms on cf.RoomId equals r.Id
+                            join b in blocks on r.BlockId equals b.Id
+                            where b.CampusId == c.Id &&
+                                  cr.UpdateAt.HasValue &&
+                                  cr.UpdateAt.Value.Date == day
+                            select cr.Value
+                        ).Average(crValue => (double?)crValue) ?? 0
+                    })
+                })
+                .SelectMany(x => x.CampusData.Select(cd => new CleaningReportDto
+                {
+                    CampusName = cd.CampusName,
+                    ReportTime = x.ReportDate.ToString("dd-MM-yyyy"),
+                    AverageValue = (int)cd.AverageValue
+                }))
+                .OrderBy(x => x.ReportTime)
+                .ToList();
+
+            return result;
+        }
+
+        private async Task<List<CleaningReportDto>> GetCampusDataByQuarter(List<(int QuarterNum, int YearNum)> quarters)
+        {
+            var campuses = await _context.Campuses.ToListAsync();
+            var blocks = await _context.Blocks.ToListAsync();
+            var rooms = await _context.Rooms.ToListAsync();
+            var cleaningForms = await _context.CleaningForms.ToListAsync();
+            var cleaningReports = await _context.CleaningReports.ToListAsync();
+
             var result = quarters
                 .Select(q => new
                 {
@@ -452,16 +421,16 @@ namespace Project.Repository
                     {
                         CampusName = c.CampusName,
                         AverageValue = (
-                                   from cr in cleaningReports
-                                   join cf in cleaningForms on cr.FormId equals cf.Id
-                                   join r in rooms on cf.RoomId equals r.Id
-                                   join b in blocks on r.BlockId equals b.Id
-                                   where b.CampusId == c.Id &&
-                                         cr.UpdateAt.HasValue &&
-                                         cr.UpdateAt.Value.Year == q.YearNum &&
-                                         (cr.UpdateAt.Value.Month - 1) / 3 + 1 == q.QuarterNum
-                                   select cr.Value
-                               ).Average(crValue => (double?)crValue) ?? 0
+                            from cr in cleaningReports
+                            join cf in cleaningForms on cr.FormId equals cf.Id
+                            join r in rooms on cf.RoomId equals r.Id
+                            join b in blocks on r.BlockId equals b.Id
+                            where b.CampusId == c.Id &&
+                                  cr.UpdateAt.HasValue &&
+                                  cr.UpdateAt.Value.Year == q.YearNum &&
+                                  (cr.UpdateAt.Value.Month - 1) / 3 + 1 == q.QuarterNum
+                            select cr.Value
+                        ).Average(crValue => (double?)crValue) ?? 0
                     })
                 })
                 .SelectMany(x => x.CampusData.Select(cd => new CleaningReportDto
@@ -475,6 +444,7 @@ namespace Project.Repository
 
             return result;
         }
+
 
     }
 }
