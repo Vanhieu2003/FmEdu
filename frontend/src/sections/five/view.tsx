@@ -123,7 +123,8 @@ export default function FiveView() {
         try {
           const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
           const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
-          return { ...criteria, tags: tagsResponse.data, roomName: roomCategoryResponse.data.categoryName };
+          console.log(roomCategoryResponse);
+          return { ...criteria, tags: tagsResponse.data, roomCategoryName: roomCategoryResponse.data.categoryName };
         } catch (tagError) {
           console.error(`Lỗi khi lấy tags cho criteria ${criteria.id}:`, tagError);
           return { ...criteria, tags: [] };
@@ -133,7 +134,7 @@ export default function FiveView() {
         try {
           const tagsResponse = await TagService.getTagsByCriteriaId(criteria.id);
           const roomCategoryResponse = await RoomCategoryService.getRoomCategoryById(criteria.roomCategoryId);
-          return { ...criteria, tags: tagsResponse.data, roomName: roomCategoryResponse.data.categoryName };
+          return { ...criteria, tags: tagsResponse.data, roomCategoryName: roomCategoryResponse.data.categoryName };
         } catch (tagError) {
           console.error(`Lỗi khi lấy tags cho criteria ${criteria.id}:`, tagError);
           return { ...criteria, tags: [] };
@@ -152,6 +153,7 @@ export default function FiveView() {
   };
   useEffect(() => {
     setFilterCriteriaList(criteriaList);
+    console.log(criteriaList)
   }, [criteriaList]);
 
   useEffect(() => {
@@ -273,7 +275,7 @@ export default function FiveView() {
                     <RenderRatingInput criteriaID={criteria.id} inputRatingType={criteria.criteriaType} disabled={true} />
                   </Box>
                 </TableCell>
-                <TableCell align="center">{criteria.roomName}</TableCell>
+                <TableCell align="center">{criteria.roomCategoryName}</TableCell>
                 <TableCell>
                   <Stack direction='row' spacing={1}>
                     {criteria.tags?.map((tag:any) =>

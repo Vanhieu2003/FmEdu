@@ -147,7 +147,14 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
   const fetchRooms = useCallback(async (input: string) => {
     setLoading(true);
     try {
-      const response = await RoomService.searchRooms(input);
+      let response:any
+      if(input.trim().length>1){
+        response = await RoomService.searchRooms(input);
+      }
+      else{
+        response = await RoomService.getAllRooms();
+      }
+      // const response = await RoomService.searchRooms(input);
       // Kết hợp kết quả tìm kiếm với các phòng đã chọn
       const searchResults = response.data;
       const selectedRoomIds = new Set(selectedRooms.map(room => room.id));
@@ -168,6 +175,9 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
     debounce((input: string) => {
       if (input.trim().length >= 1) {
         fetchRooms(input);
+      }
+      else{
+        fetchRooms('');
       }
     }, 500),
     [fetchRooms]
