@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "RUivrw1gzD+hGATUxveI82sjWsB7pacAXp1fdEWwe+Y=",
+  "Hash": "B6u9ZZeHekbeV91BIrYr/KYO57fq50B8fw6gASEeTos=",
   "Source": "Project",
   "BasePath": "_content/Project",
   "Mode": "Default",
@@ -16,25 +16,6 @@
     }
   ],
   "Assets": [
-    {
-      "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621884162660887.png",
-      "SourceId": "Project",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\",
-      "BasePath": "_content/Project",
-      "RelativePath": "uploads/638621884162660887.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\638621884162660887.png"
-    },
     {
       "Identity": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621889874728231.png",
       "SourceId": "Project",

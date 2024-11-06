@@ -141,37 +141,6 @@
   },
   {
     "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetBlockReports",
-    "RelativePath": "api/Chart/GetBlockReports",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "campusId",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "targetDate",
-        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ChartController",
-    "Method": "GetCleaningReportsByLast10Days",
-    "RelativePath": "api/Chart/GetCleaningReportsByLast10Days",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Project.Controllers.ChartController",
     "Method": "GetCleaningReportsByMonth",
     "RelativePath": "api/Chart/GetCleaningReportsByMonth",
     "HttpMethod": "GET",
