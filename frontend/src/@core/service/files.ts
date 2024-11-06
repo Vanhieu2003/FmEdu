@@ -10,7 +10,7 @@ export class FileService{
     });
  }
  DeleteFile = async(fileName:string) => {
-    return axios.delete(`${API_ENDPOINT}/api/Files/DeleteFile?fileName=${fileName}`);
+    return axios.delete(`${API_ENDPOINT}/api/Files/DeleteFile?filename=${fileName}`);
  }
 }
 export default new FileService();

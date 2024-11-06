@@ -1,4 +1,5 @@
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Box, Card, TablePagination } from '@mui/material'
+
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Box, Card, TablePagination, useTheme } from '@mui/material'
 import React, { useState } from 'react'
 
 interface props {
@@ -17,6 +18,7 @@ const getBackGroundColor = (status: string) => {
 }
 
 const ResponsibleGroupForChart = ({ data }: props) => {
+    const theme = useTheme();
     const [page, setPage] = useState(0);
     const rowsPerPage = 5;
 
@@ -35,7 +37,7 @@ const ResponsibleGroupForChart = ({ data }: props) => {
                             <TableCell
                                 align='center'
                                 colSpan={5}
-                                sx={{ fontSize: '20px', color: '#000' }}
+                                sx={{ fontSize: '20px', color:theme.palette.text.primary }}
                             >
                                 Bảng thống kê theo nhóm phòng
                             </TableCell>

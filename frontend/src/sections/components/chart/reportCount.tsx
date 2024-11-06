@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography } from '@mui/material'
+import { Box, Card, CardContent, Typography, useTheme } from '@mui/material'
 import React from 'react'
 
 
@@ -20,25 +20,56 @@ const getColorByStatus = (status: string) => {
 };
 
 const ReportCount = ({ data }: props) => {
+    const theme = useTheme();
     const reportCounts = data?.reportCounts ? Array.from(data.reportCounts).reverse() : [];
     return (
         <Card variant="outlined"
             sx={{
-                backgroundColor: '#fff',
+                backgroundColor: theme.palette.background.paper,
             }}>
             <CardContent sx={{ display: 'flex', height: '100%', justifyContent: 'space-evenly', gap: '30px' }}>
                 <Box sx={{ textAlign: 'center' }}>
-                    <Typography sx={{ color: "#666666", fontWeight: '700', fontSize: '20px' }}>Tổng số báo cáo</Typography>
-                    <Typography sx={{ fontStyle: 'bold', fontWeight: '900', fontSize: '40px', marginTop: '10px' }}>{data.totalReportsToday}</Typography>
+                    <Typography sx={{
+                        color: "#666666", fontWeight: '700', fontSize: {
+                            xs: '0.5rem',    
+                            sm: '0.75rem',  
+                            md: '1rem',  
+                            lg: '1.25rem'
+
+                        }
+                    }}>Tổng số báo cáo</Typography>
+                    <Typography  sx={{
+                        fontStyle: 'bold', fontWeight: '900', marginTop: '10px', fontSize: {
+                            xs: '2rem',    
+                            sm: '2.5rem',  
+                            md: '3rem',    
+                            lg: '3.5rem'  
+                        }
+                    }}>{data.totalReportsToday}</Typography>
                 </Box>
                 {reportCounts.map((report: any) => (<>
                     <Box sx={{ height: "auto", width: '1px', backgroundColor: "#000", opacity: "0.3" }}></Box>
                     <Box sx={{ textAlign: 'center' }}>
-                        <Typography sx={{ color: "#666666", fontWeight: '700', fontSize: '20px' }}>{report.status}</Typography>
-                        <Typography sx={{ color: getColorByStatus(report.status), fontWeight: '900', fontSize: '40px' , marginTop: '10px'}}>{report.count}</Typography>
+                        <Typography sx={{
+                            color: "#666666", fontWeight: '700', fontSize: {
+                                xs: '0.5rem',    // for extra-small screens
+                                sm: '0.75rem',  // for small screens
+                                md: '1rem',    // for medium screens
+                                lg: '1.25rem'
+
+                            }
+                        }}>{report.status}</Typography>
+                        <Typography sx={{
+                            color: getColorByStatus(report.status), fontWeight: '900', marginTop: '10px', fontSize: {
+                                xs: '2rem',    // for extra-small screens
+                                sm: '2.5rem',  // for small screens
+                                md: '3rem',    // for medium screens
+                                lg: '3.5rem'   // for large screens
+                            }
+                        }}>{report.count}</Typography>
                     </Box>
-                    
-                    </>))}
+
+                </>))}
             </CardContent>
         </Card>
     )

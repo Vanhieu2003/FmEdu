@@ -54,6 +54,7 @@ export default function OneView({ reportId }: { reportId: string }) {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [report, setReport] = useState<any>(null);
+  const [allURL,setAllURL] = useState<string[]>([]);
 
 
   const parseImageUrls = (imageUrlString: string | null): string[] => {
@@ -130,24 +131,19 @@ export default function OneView({ reportId }: { reportId: string }) {
 
   const handleSubmit = async () => {
     try {
+      let allCurrentImages: string[] = [];
       const criteriaListWithImages = await Promise.all(
         criteriaEvaluations.map(async (criteria) => {
-          const images = criteriaImages[criteria.criteriaId] || [];
+          const images = await criteriaImages[criteria.criteriaId] || [];
 
-          const existingImages = images.filter(url => isExistingServerUrl(url));
+          const existingImages = await images.filter(url => isExistingServerUrl(url));
 
-          const newImages = images.filter(url => !isExistingServerUrl(url));
-          const uploadedImageUrls = newImages.length > 0 ? await uploadImages(newImages) : [];
+          const newImages =  await images.filter(url => !isExistingServerUrl(url));
+          const uploadedImageUrls = await newImages.length > 0 ? await uploadImages(newImages) : [];
 
-          const allImageUrls = [...existingImages, ...uploadedImageUrls];
-          removeImageUrl.map(url => {
-            if (!allImageUrls.includes(url)) {
-              const fileName = url.split('uploads/').pop();
-              if (fileName) {
-                FileService.DeleteFile(fileName);
-              }
-            }
-          })
+          const allImageUrls =await [...existingImages, ...uploadedImageUrls];
+          allCurrentImages = [...allCurrentImages, ...allImageUrls];
+         
           const imagesObject = allImageUrls.reduce((acc, url, index) => {
             acc[`image_${index + 1}`] = url;
             return acc;
@@ -161,6 +157,17 @@ export default function OneView({ reportId }: { reportId: string }) {
           };
         })
       );
+      console.log("abc",allCurrentImages);
+      removeImageUrl.map(url => {
+          if (!allCurrentImages.includes(url)) {
+            const fileName = url.split('uploads/').pop();
+            console.log(fileName);
+            if (fileName) {
+              const response = FileService.DeleteFile(fileName);
+              console.log(response);
+            }
+          }
+        })
       const reportData = {
         reportId: report.id,
         criteriaList: criteriaListWithImages,
@@ -168,6 +175,7 @@ export default function OneView({ reportId }: { reportId: string }) {
       };
       const response = await CleaningReportService.updateCleaningReport(reportData);
       if (response.status === 200) {
+      
         setSnackbarStatus("success");
         setSnackbarMessage("Chỉnh sửa báo cáo thành công");
         setSnackbarOpen(true);
@@ -180,10 +188,8 @@ export default function OneView({ reportId }: { reportId: string }) {
       setSnackbarOpen(true);
       console.error("Submit error:", e);
     }
-
-
-
   };
+  
 
   const handleValueChange: (criteriaId: string, value: any) => void = (criteriaId, value) => {
     const existingEvaluation = criteriaEvaluations.find(evaluation => evaluation.criteriaId === criteriaId);
@@ -205,10 +211,6 @@ export default function OneView({ reportId }: { reportId: string }) {
   const handleImageRemove = (imageUrl: string) => {
     if (isExistingServerUrl(imageUrl)) {
       setRemoveImageUrl([...removeImageUrl, imageUrl]);
-      // const filename = imageUrl.split('uploads/').pop();
-      // if (filename) {
-      //   const res = FileService.DeleteFile(filename);    
-      // }
     }
   }
 

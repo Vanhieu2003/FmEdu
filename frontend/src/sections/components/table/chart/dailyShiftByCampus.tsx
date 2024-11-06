@@ -1,4 +1,4 @@
-import { Box, TableContainer, Card, Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from '@mui/material'
+import { Box, TableContainer, Card, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, useTheme } from '@mui/material'
 import React, { useState } from 'react'
 
 interface props {
@@ -8,6 +8,7 @@ interface props {
 
 
 const DailyShiftByCampus = ({ data, campusName }: props) => {
+    const theme= useTheme();
     const [page, setPage] = useState(0);
     const rowsPerPage = 5;
 
@@ -26,7 +27,7 @@ const DailyShiftByCampus = ({ data, campusName }: props) => {
                             <TableCell
                                 align='center'
                                 colSpan={5}
-                                sx={{fontSize:'20px',color:'#000'}}
+                                sx={{fontSize:'20px',color:theme.palette.text.primary}}
                             >
                                 Bảng thống kê điểm số theo ca trong ngày của {campusName}
                             </TableCell>

@@ -1,28 +1,26 @@
-const MONTHS = [
-    'Tháng 1',
-    'Tháng 2',
-    'Tháng 3',
-    'Tháng 4',
-    'Tháng 5',
-    'Tháng 6',
-    'Tháng 7',
-    'Tháng 8',
-    'Tháng 9',
-    'Tháng 10',
-    'Tháng 11',
-    'Tháng 12'
+export const MONTHS = [
+    { Name: 'Tháng 1', Value: '1' },
+    { Name: 'Tháng 2', Value: '2' },
+    { Name: 'Tháng 3', Value: '3' },
+    { Name: 'Tháng 4', Value: '4' },
+    { Name: 'Tháng 5', Value: '5' },
+    { Name: 'Tháng 6', Value: '6' },
+    { Name: 'Tháng 7', Value: '7' },
+    { Name: 'Tháng 8', Value: '8' },
+    { Name: 'Tháng 9', Value: '9' },
+    { Name: 'Tháng 10', Value: '10' },
+    { Name: 'Tháng 11', Value: '11' },
+    { Name: 'Tháng 12', Value: '12' }
 ]
 
-export const months = (config: any) => {
-    const cfg = config || {};
-    const count = cfg.count || 12;
-    const section = cfg.section;
-    const values = [];
-    let i,value;
+export const YEARS = [
+    { Name: 'Năm 2023', Value: '2023' },
+    { Name: 'Năm 2024', Value: '2024' },
+    { Name: 'Năm 2025', Value: '2025' },
+    { Name: 'Năm 2026', Value: '2026' },
+    { Name: 'Năm 2027', Value: '2027' },
+    { Name: 'Năm 2028', Value: '2028' },
+    { Name: 'Năm 2029', Value: '2029' },
+  
+]
 
-    for (i=0;i<count;++i){
-        value = MONTHS[Math.ceil(i) % 12];
-        values.push(value.substring(0, section));
-    }
-    return values;
-};

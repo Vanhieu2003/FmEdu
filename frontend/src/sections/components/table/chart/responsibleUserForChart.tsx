@@ -1,4 +1,4 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Card, TablePagination } from '@mui/material'
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Card, TablePagination, useTheme } from '@mui/material'
 import React, { useState } from 'react'
 
 interface props {
@@ -99,6 +99,7 @@ const getBackGroundColor = (status: string) => {
 }
 
 const ResponsibleUserForChart = ({ data }: props) => {
+    const theme = useTheme();
     const [page, setPage] = useState(0);
     const rowsPerPage = 5;
 
@@ -117,7 +118,7 @@ const ResponsibleUserForChart = ({ data }: props) => {
                             <TableCell
                                 align='center'
                                 colSpan={5}
-                                sx={{fontSize:'20px',color:'#000'}}
+                                sx={{fontSize:'20px',color:theme.palette.text.primary}}
                             >
                                 Bảng thống kê người chịu trách nhiệm
                             </TableCell>

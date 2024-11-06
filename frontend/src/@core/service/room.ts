@@ -25,7 +25,7 @@ export class RoomService {
       return axios.get(`${API_ENDPOINT}/api/Rooms/GetRoomByBlocksAndCampus?blockId=${blockId}&campusId=${campusId}`);
    }
    getRoomListByRoomType = async (roomType: string) => {
-      return axios.get(`${API_ENDPOINT}/GetRoomsList?RoomType=${roomType}`);
+      return axios.get(`${API_ENDPOINT}/api/Schedules/GetRoomsList?RoomType=${roomType}`);
    }
 }
 

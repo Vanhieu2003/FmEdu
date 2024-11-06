@@ -19,6 +19,11 @@ export class ChartService {
     return axios.get(`${API_ENDPOINT}/api/Chart/GetCleaningReportsByQuarter`)
   }
   
+  GetCleaningReportsByMonth = async (month: string,year: string) => {
+    return axios.get(
+      `${API_ENDPOINT}/api/Chart/GetCleaningReportsByMonth?month=${month}&year=${year}`
+    );
+  }
 
 
   GetCleaningProgressByCampusId = async (campusId: string) => {

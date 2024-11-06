@@ -270,7 +270,7 @@ export default function ThreeView() {
           >
             <ReportCountChart data={data} />
             {dailyReportData && < DailyDetailReport data={dailyReportData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName} />}
-          </Box>
+          </Box>  
         </Grid>
       </Grid>
 

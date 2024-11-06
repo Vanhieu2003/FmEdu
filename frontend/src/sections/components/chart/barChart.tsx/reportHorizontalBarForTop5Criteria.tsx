@@ -1,4 +1,5 @@
-import { Card, CardContent } from '@mui/material';
+import { Card, CardContent, useTheme } from '@mui/material';
+import { scales } from 'chart.js';
 import React from 'react'
 import { HorizontalBarChartData } from 'src/_mock/chartData';
 import DataChart from 'src/components/DataChart/DataChart';
@@ -48,46 +49,42 @@ const processData = (data: { campusName: string; criteriaName: string; value: nu
     };
 };
 
-const data1 = {
-    labels: ["Lau các dấu tay, vết mờ trên kính", "Sàn lau khô, khử mùi hôi"],
-    datasets: [
-        {
-            label: "Cơ sở 351 Lạc Long Quân",
-            data: [77, 0],
-            backgroundColor: "rgba(75, 192, 192, 0.7)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1
-        },
-        {
-            label: "Cơ sở Thuận An - Bình Dương",
-            data: [77, 76],
-            backgroundColor: "rgba(192, 75, 192, 0.7)",
-            borderColor: "rgba(192, 75, 192, 1)",
-            borderWidth: 1
-        },
-        {
-            label: "Cơ sở 115 Hai Bà Trưng",
-            data: [76, 76],
-            backgroundColor: "rgba(192, 192, 75, 0.7)",
-            borderColor: "rgba(192, 192, 75, 1)",
-            borderWidth: 1
-        }
-    ]
-};
-
 
 const RenderHorizontalBarChart = ({ data,campusName }: props) => {
+    const theme = useTheme();
     const options = {
         indexAxis: 'y',  // Đặt trục x thành trục dọc, cho phép thanh nằm ngang
         responsive: true,
+        scales:{
+            y:{
+                ticks:{
+                    color:theme.palette.text.primary
+                }
+            },
+            x:{
+                ticks:{
+                    color:theme.palette.text.primary
+                }
+            },
+        },
         plugins: {
+            legend: {
+                labels: {
+                    color: theme.palette.text.primary, 
+                    font: {
+                        size: 14
+                    }
+                }
+            },
             title: {
                 display: true, // Hiển thị title
                 text: `Biểu đồ Top 5 tiêu chí đánh giá của ${campusName}`, // Tiêu đề
                 font: {
                     size: 20 // Kích thước font
-                }
+                },
+                color: theme.palette.text.primary, 
             },
+            
             tooltip: {
                 enabled: true, // Bật tooltip khi hover vào thanh
                 callbacks: {
