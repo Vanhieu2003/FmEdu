@@ -18,9 +18,6 @@ import {
 import CampusService from 'src/@core/service/campus';
 import { useEffect, useState } from 'react';
 import GroupRoomService from 'src/@core/service/grouproom';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import CollapsibleRoomGroup from '../components/table/RoomGroup/CollapsibleRoomGroup';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import React from 'react';
@@ -34,8 +31,10 @@ import SnackbarComponent from '../components/snackBar';
 export default function RoomGroupListView() {
   const settings = useSettingsContext();
   const [campus, setCampus] = useState<any[]>([]);
+  const [selectedCampus, setSelectedCampus] = useState<any>({});
   const [groupRooms, setGroupRooms] = useState<any[]>([]);
-
+  const [allGroupRooms, setAllGroupRooms] = useState<any[]>([]);
+  const [filterGroupRooms, setFilterGroupRooms] = useState<any[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [pageSize] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -44,6 +43,37 @@ export default function RoomGroupListView() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
+
+
+  const filterGroupRoom = () => {
+    let filteredReports = allGroupRooms;
+    if (selectedCampus !== null) {
+      filteredReports = filteredReports?.filter(groupRoom => groupRoom.campusName === selectedCampus.campusName);
+    }
+
+    if (filteredReports && filteredReports?.length > 0) {
+      var totalPagesAfterFilter = Math.ceil(filteredReports.length / 10);
+      const startIndex = (pageNumber - 1) * 10;
+      const endIndex = startIndex + 10;
+      setTotalPages(totalPagesAfterFilter);
+      if (totalPages !== totalPagesAfterFilter) {
+        setPageNumber(1)
+      }
+      else {
+        setPageNumber(pageNumber);
+      }
+      setFilterGroupRooms(filteredReports.slice(startIndex, endIndex));
+    } 
+    else {
+      setTotalPages(1);
+      setPageNumber(1);
+      setFilterGroupRooms([]);
+    }
+
+    setFilterGroupRooms(groupRoom => {
+      return groupRoom;
+    });
+  };
 
 
   const handleRowClick = (rowId: any) => {
@@ -63,8 +93,11 @@ export default function RoomGroupListView() {
 
   const fetchGroupRoom = async () => {
     try {
-      const response: any = await GroupRoomService.getAllGroupRooms(pageNumber, pageSize);
+      const response = await GroupRoomService.getAllGroupRooms(pageNumber, pageSize);
+      const allGroupRooms = await GroupRoomService.getAllGroupRooms(1, 9999999);
       setGroupRooms(response.data.roomGroups);
+      setFilterGroupRooms(response.data.roomGroups);
+      setAllGroupRooms(allGroupRooms.data.roomGroups);
       setTotalPages(Math.ceil(response.data.totalRecords / pageSize));
     } catch (error: any) {
       console.error('Error fetching Room Group data:', error);
@@ -74,15 +107,12 @@ export default function RoomGroupListView() {
   useEffect(() => {
     const fetchCampus = async () => {
       try {
-        const response: any = await CampusService.getAllCampus();
+        const response = await CampusService.getAllCampus();
         setCampus(response.data);
       } catch (error: any) {
         console.error('Error fetching campus data:', error);
       }
     };
-
-    
-
     // Gọi cả hai hàm song song
     fetchCampus();
     fetchGroupRoom();
@@ -96,6 +126,15 @@ export default function RoomGroupListView() {
   const handleAddClick = () => {
     setOpenPopUpAdd(true);
   }
+
+  const handleCampusChange = (event: any, value: any) => {
+    
+  }
+
+  useEffect(()=>{
+    console.log(selectedCampus);
+    filterGroupRoom();
+  },[selectedCampus])
 
 
 
@@ -113,7 +152,11 @@ export default function RoomGroupListView() {
           options={campus}
           getOptionLabel={(option: any) => option.campusName || ''}
           sx={{ width: 300, marginY: 1 }}
-          // onChange={null}
+          onChange={(event, value) => {
+            setSelectedCampus(value);
+            handleCampusChange(event, value);
+          }}
+          noOptionsText="Không có dữ liệu cơ sở"
           renderInput={(params: any) => <TextField {...params} label="Chọn cơ sở" />}
         />
         <Button variant='contained' onClick={handleAddClick} sx={{ height: 'fit-content', padding: '10px' }}>Tạo mới</Button>
@@ -137,7 +180,7 @@ export default function RoomGroupListView() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {groupRooms.map((groupRoom: any, index) => (
+              {filterGroupRooms.map((groupRoom: any, index) => (
                 <React.Fragment key={groupRoom.id}>
                   <TableRow key={groupRoom.id}>
                     <TableCell align="center">{index + 1}</TableCell>

@@ -139,8 +139,6 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
   const [selectedCriteriaList, setSelectedCriteriaList] = useState<Criteria[]>([]);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -154,7 +152,6 @@ const AddForm = ({ setOpenPopup,onSuccess }: AddFormProps) => {
       else{
         response = await RoomService.getAllRooms();
       }
-      // const response = await RoomService.searchRooms(input);
       // Kết hợp kết quả tìm kiếm với các phòng đã chọn
       const searchResults = response.data;
       const selectedRoomIds = new Set(selectedRooms.map(room => room.id));

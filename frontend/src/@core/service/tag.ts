@@ -16,8 +16,10 @@ export class TagService{
  postTagsPerCriteria = async(data: { criteriaId: string|undefined, Tag: object[] }) =>{
    return axios.post(`${API_ENDPOINT}/api/TagsPerCriterias/newCriteria`, data);
  }
- getTagGroups =async()=>{
-  return axios.get(`${API_ENDPOINT}/api/Tags/GetTagGroups`)
+ getTagGroups =async(pageNumber:number=1,pageSize:number=10)=>{
+  return axios.get(`${API_ENDPOINT}/api/Tags/GetTagGroups`,{
+    params: { pageNumber, pageSize }
+  })
  }
 }
 export default new TagService();

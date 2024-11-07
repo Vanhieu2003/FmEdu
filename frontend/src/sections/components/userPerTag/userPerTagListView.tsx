@@ -14,27 +14,19 @@ import React from "react";
 import CollapsibleUserPerTag from "./CollapsibleUserPerTag";
 import SnackbarComponent from "../snackBar";
 
-export default function UserPerTagListView() {
+interface props {
+    data:any
+}
+
+export default function UserPerTagListView({data}:props) {
     const [openRow, setOpenRow] = useState(null);
-    const [tagGroup, setTagGroup] = useState<any[]>([]);
 
 
     const handleRowClick = (rowId: any) => {
         setOpenRow(openRow === rowId ? null : rowId);
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await TagService.getTagGroups();
-                setTagGroup(response.data);
-            }
-            catch (e) {
-                console.log(e)
-            }
-        }
-        fetchData();
-    }, [])
+   
 
     return (
         <TableContainer component={Paper}>
@@ -48,7 +40,7 @@ export default function UserPerTagListView() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {tagGroup?.map((tag: any, index) => (
+                    {data?.map((tag: any, index:any) => (
                         <React.Fragment key={tag.id}>
                             <TableRow key={tag.id}>
                                 <TableCell align="center">{index + 1}</TableCell>

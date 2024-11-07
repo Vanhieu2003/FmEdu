@@ -167,7 +167,6 @@ export default function TwoView() {
   const [reports, setReports] = useState<any[]>();
   const [mockReports, setMockReports] = useState<any[]>();
   const filterReports = () => {
-    setPage(1);
     let filteredReports = mockReports;
     if (selectedCampus !== null) {
       filteredReports = filteredReports?.filter(report => report.campusName === campus.find(campus => campus.id === selectedCampus)?.campusName);
