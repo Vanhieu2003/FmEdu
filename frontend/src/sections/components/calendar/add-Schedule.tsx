@@ -1,13 +1,15 @@
-import { Table, TableBody, TableRow, TableCell, Box, IconButton, Button, Autocomplete, FormControl, InputLabel, MenuItem, Select, TextField, Checkbox } from '@mui/material'
+import { Table, TableBody, TableRow, TableCell, Box, IconButton, Button, Autocomplete, FormControl, InputLabel, MenuItem, Select, TextField, Checkbox, useTheme, styled } from '@mui/material'
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons'
 import { DateTimePickerComponent } from '@syncfusion/ej2-react-calendars'
 import { RecurrenceEditorComponent } from '@syncfusion/ej2-react-schedule'
 import React, { useEffect, useState } from 'react'
-import { userMapping } from 'src/utils/schedule/handle-schedule'
+import { syncfusionStyles, userMapping } from 'src/utils/schedule/handle-schedule'
 import LocationSelector from './location'
 import AddIcon from '@mui/icons-material/Add';
 import { CalendarItem, User } from 'src/utils/type/Type'
 import ScheduleService from 'src/@core/service/schedule'
+import './syncfusion-style.css'
+import { BorderColor } from '@mui/icons-material'
 
 
 interface ScheduleData {
@@ -46,7 +48,7 @@ interface AddScheduleComponentProps {
 }
 
 const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup, isNewSchedule, onSuccess }: AddScheduleComponentProps) => {
-    console.log(scheduleData);
+    const theme = useTheme();
 
     const [formData, setFormData] = useState<ScheduleData>(() => {
         if (isNewSchedule) {
@@ -59,8 +61,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
                 allDay: false,
                 users: [],
                 place: [],
-                startDate: scheduleData?scheduleData.StartTime:new Date(),
-                endDate: scheduleData?scheduleData.EndTime:new Date(),
+                startDate: scheduleData ? scheduleData.StartTime : new Date(),
+                endDate: scheduleData ? scheduleData.EndTime : new Date(),
                 index: undefined
             }
         }
@@ -94,12 +96,12 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
     });
     const [users, setUsers] = useState(() => {
         if (formData.users) {
-            return userMapping(formData.users);    
+            return userMapping(formData.users);
         }
     })
 
     const adjustTimeZone = (date: Date, dateType: string) => {
-        
+
         const adjustedDate = new Date(date);
         adjustedDate.setHours(adjustedDate.getHours() + 7);
         if (dateType === 'end' && adjustedDate.getHours() === 7 && adjustedDate.getMinutes() === 0) {
@@ -108,7 +110,7 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
             adjustedDate.setMinutes(59);
             console.log("enter end date");
         }
-    
+
         return adjustedDate;
     };
 
@@ -159,8 +161,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        formData.startDate = adjustTimeZone(formData.startDate,'start');
-        formData.endDate = adjustTimeZone(formData.endDate,'end');
+        formData.startDate = adjustTimeZone(formData.startDate, 'start');
+        formData.endDate = adjustTimeZone(formData.endDate, 'end');
         try {
             if (isNewSchedule) {
                 const res = await ScheduleService.createSchedule(formData);
@@ -176,7 +178,7 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
         } catch (error) {
             console.error('Lỗi khi gửi dữ liệu:', error);
         }
-      
+
     };
     return (
         <Table>
@@ -200,7 +202,7 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
                             multiple
                             options={userMapping(userList)}
                             getOptionLabel={(option) => option.text}
-                            defaultValue={!isNewSchedule?users:[]}
+                            defaultValue={!isNewSchedule ? users : []}
                             onChange={(event, newValue) => handleMultiSelectChange('users', newValue.map(v => v.id))}
                             renderInput={(params) => <TextField {...params} label="Chọn người dùng" />}
                             noOptionsText="Không có dữ liệu người dùng"
@@ -234,7 +236,8 @@ const AddScheduleComponent = ({ scheduleData, userList, calendars, setOpenPopup,
                 </TableRow>
                 <TableRow>
                     <TableCell>
-                        <DateTimePickerComponent id="startDate" value={new Date(formData.startDate)} change={(e) => handleDateChange('startDate', e.value)} className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu' locale='vi' ></DateTimePickerComponent >
+                        <DateTimePickerComponent id="startDate" value={new Date(formData.startDate)} change={(e) => handleDateChange('startDate', e.value)} className='e-field' floatLabelType="Always" placeholder='Ngày bắt đầu' locale='vi'></DateTimePickerComponent>
+                        
                     </TableCell>
                     <TableCell>
                         <DateTimePickerComponent id="endDate" value={new Date(formData.endDate)} change={(e) => handleDateChange('endDate', e.value)} className='e-field' floatLabelType="Always" placeholder='Ngày kết thúc' locale='vi'></DateTimePickerComponent>

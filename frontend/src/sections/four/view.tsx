@@ -18,6 +18,7 @@ import SnackbarComponent from '../components/snackBar';
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { KeyboardArrowUp } from '@mui/icons-material';
 import CollapsibleForm from '../components/table/form/CollapsibleForm';
+import { useSettingsContext } from 'src/components/settings';
 interface Campus {
   id: string;
   campusCode: string;
@@ -136,7 +137,6 @@ export default function FourView() {
   const [selectedBlocks, setSelectedBlocks] = useState<string | null>(null);
   const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [floors, setFloors] = useState<Floor[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -149,8 +149,8 @@ export default function FourView() {
   const [openRow, setOpenRow] = useState(null);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
-  const open = Boolean(anchorEl);
 
+  const settings = useSettingsContext();  
 
 
 
@@ -234,11 +234,6 @@ export default function FourView() {
     }
   }
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>, form: Form) => {
-    setCurrentFormID(form.id || '');
-    setAnchorEl(event.currentTarget);
-  };
-
   const handleAddClick = () => {
     setIsEditing(false);
     setOpenPopUp(true);
@@ -246,20 +241,6 @@ export default function FourView() {
   const handleRowClick = (rowId: any) => {
     setOpenRow(openRow === rowId ? null : rowId);
   };
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-    setOpenPopUp(true);
-  }
-
-
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  useEffect(() => {
-    filterForm();
-  }, [selectedCampus, selectedBlocks, selectedFloor, selectedRoom]);
 
 
   useEffect(() => {
@@ -328,9 +309,9 @@ export default function FourView() {
   }, [page]);
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant="h4">Page four</Typography>
+        <Typography variant="h4">Danh sách các Form đánh giá</Typography>
         <Button variant='contained' onClick={handleAddClick}>Tạo mới</Button>
         <Popup title={isEditing ? 'Chỉnh sửa Form' : 'Tạo mới Form'} openPopup={openPopUp} setOpenPopup={setOpenPopUp} >
           {isEditing ? (

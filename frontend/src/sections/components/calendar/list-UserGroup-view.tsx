@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import { IconButton } from '@mui/material';
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddCalendarItemDialog from './add-UserGroup';
 import EditIcon from '@mui/icons-material/Edit';
-import  ResponsibleGroupRoomService  from 'src/@core/service/responsiblegroup';
+import ResponsibleGroupRoomService from 'src/@core/service/responsiblegroup';
 
 interface CalendarItem {
     groupName: string;
@@ -22,6 +22,7 @@ interface CalendarListProps {
 
 
 export default function CalendarList({ calendars, onFilterChange, onCalendarsChange }: CalendarListProps) {
+    const theme = useTheme();
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogType, setDialogType] = useState<'add' | 'edit'>('add');
     const [editingItem, setEditingItem] = useState<CalendarItem | null>(null);
@@ -44,14 +45,14 @@ export default function CalendarList({ calendars, onFilterChange, onCalendarsCha
     };
 
     const handleAddItem = async (name: string, color: string) => {
-        const response = await ResponsibleGroupRoomService.createResponsibleGroups({GroupName: name, Color: color,Description:""});
+        const response = await ResponsibleGroupRoomService.createResponsibleGroups({ GroupName: name, Color: color, Description: "" });
         const newItem = {
             id: response.data.id,
             groupName: response.data.groupName,
             color: response.data.color,
             isChecked: true
         }
-        if(response.status === 200){
+        if (response.status === 200) {
             calendars = [...calendars, newItem];
             alert("Thêm thành công");
             console.log(response.data);
@@ -80,40 +81,91 @@ export default function CalendarList({ calendars, onFilterChange, onCalendarsCha
             handleEditClick(data);
         };
         return (
-            <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => handleCheckboxChange(data.id)} >
-                <span
-                    style={{
+            <Box
+                onClick={() => handleCheckboxChange(data.id)}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    p: 1,
+                    cursor: 'pointer',
+                    backgroundColor: theme.palette.background.paper,
+                    '&:hover': {
+                        backgroundColor: theme.palette.action.hover,
+                    },
+                }}
+            >
+                <Box
+                    sx={{
                         backgroundColor: data.color,
                         width: '12px',
                         height: '12px',
                         borderRadius: '50%',
-                        marginRight: '10px',
+                        mr: 1,
+                        border: `1px solid ${theme.palette.divider}`
                     }}
                 />
-                <span style={{ flex: 1 }}>{data.groupName}</span>
-                <IconButton onClick={handleEditButtonClick} style={{ padding: '2px' }}>
-                    <EditIcon sx={{ color: 'black', fontSize: '18px' }} />
+                <Typography
+                    sx={{
+                        flex: 1,
+                        color: theme.palette.text.primary
+                    }}
+                >
+                    {data.groupName}
+                </Typography>
+                <IconButton
+                    onClick={handleEditButtonClick}
+                    sx={{
+                        p: '2px',
+                        '&:hover': {
+                            backgroundColor: theme.palette.action.hover
+                        }
+                    }}
+                >
+                    <EditIcon sx={{
+                        color: theme.palette.text.primary,
+                        fontSize: '18px'
+                    }} />
                 </IconButton>
 
                 <CheckBoxComponent
                     checked={data.isChecked}
                 />
-            </div>
+            </Box>
         );
     };
 
     return (
-        <div style={{ width: '250px', margin: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h3>Nhóm người dùng</h3>
-                <IconButton onClick={handleAddClick}>
-                    <AddIcon sx={{ color: 'black' }} />
+        <Box sx={{
+            backgroundColor: theme.palette.background.paper,
+            borderRadius: 1,
+            p: 2,
+            boxShadow: theme.shadows[1]
+        }}>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 2
+            }}>
+                <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
+                    Nhóm người dùng
+                </Typography>
+                <IconButton
+                    onClick={handleAddClick}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: theme.palette.action.hover
+                        }
+                    }}
+                >
+                    <AddIcon sx={{ color: theme.palette.text.primary }} />
                 </IconButton>
-            </div>
+            </Box>
             <ListViewComponent
                 dataSource={calendars as unknown as { [key: string]: Object; }[]}
                 template={listTemplate}
                 fields={{ text: 'text', id: 'id' }}
+                cssClass={`e-list-template ${theme.palette.mode === 'dark' ? 'e-dark-theme' : ''}`}
             />
             <AddCalendarItemDialog
                 isOpen={isDialogOpen}
@@ -121,8 +173,12 @@ export default function CalendarList({ calendars, onFilterChange, onCalendarsCha
                 onAdd={handleAddItem}
                 onEdit={handleEditItem}
                 type={dialogType}
-                initialData={editingItem ? { id: editingItem.id, name: editingItem.groupName, color: editingItem.color } : undefined}
+                initialData={editingItem ? {
+                    id: editingItem.id,
+                    name: editingItem.groupName,
+                    color: editingItem.color
+                } : undefined}
             />
-        </div>
+        </Box>
     );
 }

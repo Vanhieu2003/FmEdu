@@ -1,101 +1,9 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Box, Card, TablePagination, useTheme } from '@mui/material'
 import React, { useState } from 'react'
+import { getBackgroundColor } from 'src/utils/chart/GetColor'
 
 interface props {
     data: any
-}
-
-const data1 = [
-    {
-        "tagName": "Lau ghế",
-        "lastName": "Add User",
-        "fristName": "Huan",
-        "totalReport": 2,
-        "progress": 50,
-        "status": "Cần cải thiện"
-    },
-    {
-        "tagName": "Vệ sinh",
-        "lastName": "Add User",
-        "fristName": "Huan",
-        "totalReport": 2,
-        "progress": 80,
-        "status": "Hoàn thành tốt"
-    },
-    {
-        "tagName": "Lau bàn",
-        "lastName": "Nguyễn",
-        "fristName": "Huấn",
-        "totalReport": 2,
-        "progress": 50,
-        "status": "Cần cải thiện"
-    },
-    {
-        "tagName": "Vệ sinh",
-        "lastName": "test",
-        "fristName": "Huan",
-        "totalReport": 2,
-        "progress": 80,
-        "status": "Hoàn thành tốt"
-    },
-    {
-        "tagName": "Lau ghế",
-        "lastName": "test",
-        "fristName": "Huan",
-        "totalReport": 2,
-        "progress": 50,
-        "status": "Cần cải thiện"
-    },
-    {
-        "tagName": "Lau bàn",
-        "lastName": "tét",
-        "fristName": "test1",
-        "totalReport": 2,
-        "progress": 50,
-        "status": "Cần cải thiện"
-    },
-    {
-        "tagName": "Lau ghế",
-        "lastName": "Nguyễn",
-        "fristName": "Huân ",
-        "totalReport": 1,
-        "progress": 100,
-        "status": "Hoàn thành tốt"
-    },
-    {
-        "tagName": "Vệ sinh",
-        "lastName": "Nguyễn",
-        "fristName": "Huân ",
-        "totalReport": 1,
-        "progress": 60,
-        "status": "Cần cải thiện"
-    },
-    {
-        "tagName": "Vệ sinh",
-        "lastName": "11g",
-        "fristName": "Huan",
-        "totalReport": 2,
-        "progress": 80,
-        "status": "Hoàn thành tốt"
-    },
-    {
-        "tagName": "Lau ghế",
-        "lastName": "11g",
-        "fristName": "Huan",
-        "totalReport": 2,
-        "progress": 50,
-        "status": "Cần cải thiện"
-    }
-]
-const getBackGroundColor = (status: string) => {
-    switch (status) {
-        case 'Hoàn thành tốt':
-            return '#dcfee9';
-        case 'Cần cải thiện':
-            return '#fff6c2';
-        default:
-            return '#FFFF00';
-    }
 }
 
 const ResponsibleUserForChart = ({ data }: props) => {
@@ -145,7 +53,7 @@ const ResponsibleUserForChart = ({ data }: props) => {
                                     {record.progress}
                                 </TableCell>
                                 <TableCell align='center' sx={{ width: '20%' }}>
-                                    <Box sx={{ backgroundColor: getBackGroundColor(record.status), borderRadius: '5%', padding: '5px' }}>
+                                    <Box sx={{ backgroundColor: getBackgroundColor(record.status), borderRadius: '5%', padding: '5px' }}>
                                         {record.status}
                                     </Box>
                                 </TableCell>

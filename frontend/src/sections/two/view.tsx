@@ -9,7 +9,8 @@ import {
   Button,
   Collapse,
   Pagination,
-  Stack
+  Stack,
+  useTheme
 } from '@mui/material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -146,8 +147,8 @@ export default function TwoView() {
   };
 
   const settings = useSettingsContext();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const theme = useTheme();
+
   const [campus, setCampus] = useState<Campus[]>([]);
   const [blocks, setBlocks] = useState<Blocks[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -223,8 +224,6 @@ export default function TwoView() {
 
 
   const fetchData = async (pageNumber: number) => {
-    setIsLoading(true);
-    setError(null);
     try {
       const response1 = await CampusService.getAllCampus();
       const response2 = await CleaningReportService.getAllCleaningReportInfo(pageNumber);
@@ -234,23 +233,16 @@ export default function TwoView() {
       setMockReports(response3.data.reports);
       var totalPages = Math.ceil(response2.data.totalValue / 10);
       setTotalPages(totalPages);
-
     } catch (error) {
-      setError(error.message);
       console.error('Chi tiết lỗi:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   }
 
   useEffect(() => {
     setfilterReportsList(reports);
-    console.log("filterReportsList", filterReportsList);
-    console.log("reports", reports);
   }, [reports]);
 
   useEffect(() => {
-    setPage(1);
     filterReports();
   }, [selectedCampus, selectedBlock, selectedFloor, selectedRoom, selectedDate]);
 
@@ -336,7 +328,7 @@ export default function TwoView() {
   }, [page]);
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Typography variant="h4">Danh sách báo cáo vệ sinh hằng ngày</Typography>
       <Box sx={{
         display: 'flex',
@@ -361,7 +353,28 @@ export default function TwoView() {
                 }
               }}
               format="DD/MM/YYYY"
-
+              sx={{
+                '& .MuiInputLabel-root': { // Màu của label
+                  color: theme.palette.text.primary,
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { // Màu của border
+                    borderColor: theme.palette.divider,
+                  },
+                  '&:hover fieldset': { // Màu của border khi hover
+                    borderColor: theme.palette.text.primary,
+                  },
+                  '&.Mui-focused fieldset': { // Màu của border khi focus
+                    borderColor: theme.palette.text.primary,
+                  },
+                },
+                '& .MuiInputBase-input': { // Màu của text
+                  color: theme.palette.text.primary,
+                },
+                '& .MuiIconButton-root': { // Màu của icon calendar
+                  color: theme.palette.text.primary,
+                },
+              }}
             />
           </LocalizationProvider>
 

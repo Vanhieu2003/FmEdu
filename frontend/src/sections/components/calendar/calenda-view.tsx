@@ -2,14 +2,14 @@
 registerLicense(CALENDAR_LICENSE_KEY as string);
 import {
   Week, Day, Month, Agenda, ScheduleComponent, ViewsDirective, ViewDirective, Inject, Resize, DragAndDrop, TimelineMonth, TimelineViews,
-  CellClickEventArgs, CurrentAction, 
+  CellClickEventArgs, CurrentAction,
   RecurrenceEditor,
   ResourcesDirective,
   ResourceDirective,
   EventClickArgs
 } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
-import { ButtonComponent} from '@syncfusion/ej2-react-buttons';
+import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 
 import numberingSystems from '@syncfusion/ej2-cldr-data/supplemental/numberingSystems.json';
 import gregorian from '@syncfusion/ej2-cldr-data/main/vi/ca-gregorian.json';
@@ -18,7 +18,7 @@ import timeZoneNames from '@syncfusion/ej2-cldr-data/main/vi/timeZoneNames.json'
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { L10n, loadCldr } from '@syncfusion/ej2-base';
-import {  Box, IconButton, Button, Typography } from '@mui/material';
+import { Box, IconButton, Button, Typography, Container } from '@mui/material';
 import { CALENDAR_LICENSE_KEY } from 'src/config-global';
 import CalendarList from './list-UserGroup-view';
 import ScheduleService from 'src/@core/service/schedule';
@@ -30,6 +30,7 @@ import SnackbarComponent from '../snackBar';
 import Popup from '../form/Popup'
 import AddScheduleComponent from './add-Schedule';
 import CloseIcon from '@mui/icons-material/Close';
+import { useSettingsContext } from 'src/components/settings';
 
 L10n.load({
   vi: {
@@ -163,9 +164,9 @@ L10n.load({
 
 
 
- const CalendarView = ()=> {
+const CalendarView = () => {
   loadCldr(numbers, timeZoneNames, gregorian, numberingSystems);
-
+  const settings = useSettingsContext();
   const scheduleObj = useRef<ScheduleComponent | null>(null);
   const [calendars, setCalendars] = useState<CalendarItem[]>([]);
   const timeScale = { enable: true, slotCount: 4 };
@@ -236,7 +237,7 @@ L10n.load({
       return addObj;
     };
     const eventData = getSlotData();
-    console.log("eventData",eventData);
+    console.log("eventData", eventData);
     setScheduleData(eventData);
     setIsNewSchedule(true);
     setOpenPopup(true);
@@ -278,9 +279,6 @@ L10n.load({
     }
     scheduleObj.current?.closeQuickInfoPopup();
   }, []);
- 
-
-
 
   const header = (props: any) => {
     return (
@@ -352,8 +350,8 @@ L10n.load({
     return (
       <Box>
         {props.elementType === "cell" ? (
-          <Box sx={{padding:'10px 0'}}>  
-              <Typography variant='h4' textAlign={"center"}>Chưa có sự kiện nào</Typography>
+          <Box sx={{ padding: '10px 0' }}>
+            <Typography variant='h4' textAlign={"center"}>Chưa có sự kiện nào</Typography>
           </Box>
         ) : (
           <Box className="e-event-content e-template">
@@ -383,12 +381,12 @@ L10n.load({
       <Box>
         {props.elementType === "cell" ? (
           <Box className="e-cell-footer" style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <Box className="right-button" sx={{marginRight:'10px'}}>
+            <Box className="right-button" sx={{ marginRight: '10px' }}>
               <ButtonComponent id="add" className="e-event-create" title="Add" onClick={handleAddSchedule}> Thêm </ButtonComponent>
             </Box>
           </Box>
         ) : (
-          <Box className="e-event-footer" sx={{display:'flex',justifyContent:'flex-end',gap:'5px',marginRight:'10px'}}>
+          <Box className="e-event-footer" sx={{ display: 'flex', justifyContent: 'flex-end', gap: '5px', marginRight: '10px' }}>
             <Box className="left-button">
               <ButtonComponent id="edit" className="e-event-edit" title="Edit" onClick={handleEditSchedule}> Chỉnh sửa </ButtonComponent>
             </Box>
@@ -401,7 +399,7 @@ L10n.load({
     );
   }
   const quickInfoTemplates = { header: header, content: content, footer: footer };
- 
+
   const formatLocation = (place: any) => {
     if (typeof place === 'string') {
       try {
@@ -433,17 +431,18 @@ L10n.load({
   const OnEventDoubleClick = (args: EventClickArgs) => {
     args.cancel = true;
     handleEditSchedule();
- }
- const OnCellDoubleClick = (args: CellClickEventArgs) => {
+  }
+  const OnCellDoubleClick = (args: CellClickEventArgs) => {
     args.cancel = true;
     handleAddSchedule();
- }
+  }
+
 
 
 
   useEffect(() => {
     const fetchData = async () => {
-      const [ResponsibleGroupRes,ScheduleData,UserData] = await Promise.all([ResponsibleGroupRoomService.getAllResponsibleGroups(),ScheduleService.getAllSchedule(),UserService.getAllUsers()]);
+      const [ResponsibleGroupRes, ScheduleData, UserData] = await Promise.all([ResponsibleGroupRoomService.getAllResponsibleGroups(), ScheduleService.getAllSchedule(), UserService.getAllUsers()]);
       const updatedCalendars = ResponsibleGroupRes.data.map((item: any) => ({
         ...item,
         isChecked: true
@@ -458,70 +457,79 @@ L10n.load({
 
 
   return (
-    <>
-      <div className='scheduler-container'>
-        <div className='scheduler-container-left'>
-          <Button variant='contained' onClick={handleAddSchedule}>Tạo mới</Button>
-          <Popup title='Form đánh giá' openPopup={openPopup} setOpenPopup={setOpenPopup}>
-            <AddScheduleComponent scheduleData={scheduleData} userList={userList} calendars={calendars} setOpenPopup={setOpenPopup} isNewSchedule={isNewSchedule} onSuccess={handleAddScheduleSuccess} />
-          </Popup>
-          <div className='scheduler-component'>
-            <ScheduleComponent width='100%' height='700px' dateFormat='dd-MM-yyyy' eventSettings={{
-              dataSource: filterData, fields: {
-                id: 'index',
-                subject: { name: 'title' },
-                isAllDay: { name: 'allDay' },
-                startTime: { name: 'startDate' },
-                endTime: { name: 'endDate' },
-                recurrenceRule: { name: 'recurrenceRule' },
-                description: { name: 'description' },
-                Users: { name: 'users' },
-                ResponsibleGroupId: { name: 'responsibleGroupId' },
-                Place: { name: 'place' },
-                resourceFields: { name: 'responsibleGroupId' },
-                customId: { name: 'id' }
-              }
-              , template: eventTemplate
-            }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} eventDoubleClick={OnEventDoubleClick} cellDoubleClick={OnCellDoubleClick}>
-              <ViewsDirective>
-                <ViewDirective option="Day" interval={5}></ViewDirective>
-                <ViewDirective option="Month" isSelected={true}></ViewDirective>
-                <ViewDirective option="Week" timeScale={timeScale}></ViewDirective>
-                <ViewDirective option="TimelineDay" ></ViewDirective>
-                <ViewDirective option="TimelineMonth"></ViewDirective>
-                <ViewDirective option="Agenda"></ViewDirective>
-              </ViewsDirective>
-              <ResourcesDirective>
-                <ResourceDirective
-                  field='responsibleGroupId'
-                  title='Nhóm người dùng'
-                  name='ResponsibleGroupIds'
-                  allowMultiple={true}
-                  dataSource={calendars}
-                  textField='text'
-                  idField='id'
-                  colorField='color'
-                />
-              </ResourcesDirective>
-              <Inject services={[Week, Day, Month, Agenda, Resize, DragAndDrop, TimelineMonth, TimelineViews, RecurrenceEditor]} />
-            </ScheduleComponent>
-          </div>
-        </div>
-        <div className='scheduler-container-right'>
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
+        <Box sx={{flex:4, display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="h4">Lịch công việc</Typography>
+          <Button variant='contained' onClick={handleAddSchedule} sx={{mr:3.5}}>Tạo mới lịch</Button>
+        </Box>
+        <Box sx={{flex:1}}>
+
+        </Box>
+      </Box>
+      <Popup title='Form đánh giá' openPopup={openPopup} setOpenPopup={setOpenPopup}>
+        <AddScheduleComponent scheduleData={scheduleData} userList={userList} calendars={calendars} setOpenPopup={setOpenPopup} isNewSchedule={isNewSchedule} onSuccess={handleAddScheduleSuccess} />
+      </Popup>
+
+      <Box sx={{ display: 'flex', gap: 4, mt: 2 }}>
+        <Box sx={{ flex: 4 }}>
+          <ScheduleComponent width='100%' height='700px' dateFormat='dd-MM-yyyy' eventSettings={{
+            dataSource: filterData, fields: {
+              id: 'index',
+              subject: { name: 'title' },
+              isAllDay: { name: 'allDay' },
+              startTime: { name: 'startDate' },
+              endTime: { name: 'endDate' },
+              recurrenceRule: { name: 'recurrenceRule' },
+              description: { name: 'description' },
+              Users: { name: 'users' },
+              ResponsibleGroupId: { name: 'responsibleGroupId' },
+              Place: { name: 'place' },
+              resourceFields: { name: 'responsibleGroupId' },
+              customId: { name: 'id' }
+            }
+            , template: eventTemplate
+          }} ref={scheduleObj} rowAutoHeight={true} locale='vi' cssClass="schedule-customization" quickInfoTemplates={quickInfoTemplates} eventDoubleClick={OnEventDoubleClick} cellDoubleClick={OnCellDoubleClick} enableAdaptiveUI={true}>
+            <ViewsDirective>
+              <ViewDirective option="Day" interval={5}></ViewDirective>
+              <ViewDirective option="Month" isSelected={true}></ViewDirective>
+              <ViewDirective option="Week" timeScale={timeScale}></ViewDirective>
+              <ViewDirective option="TimelineDay" ></ViewDirective>
+              <ViewDirective option="TimelineMonth"></ViewDirective>
+              <ViewDirective option="Agenda"></ViewDirective>
+            </ViewsDirective>
+            <ResourcesDirective>
+              <ResourceDirective
+                field='responsibleGroupId'
+                title='Nhóm người dùng'
+                name='ResponsibleGroupIds'
+                allowMultiple={true}
+                dataSource={calendars}
+                textField='text'
+                idField='id'
+                colorField='color'
+              />
+            </ResourcesDirective>
+            <Inject services={[Week, Day, Month, Agenda, Resize, DragAndDrop, TimelineMonth, TimelineViews, RecurrenceEditor]} />
+          </ScheduleComponent>
+        </Box>
+        <Box sx={{ flex: 1 }}>
           <CalendarList
             calendars={calendars}
             onFilterChange={handleFilterChange}
             onCalendarsChange={e => setCalendars(e)}
           />
-        </div>
-        <SnackbarComponent
-          status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
-          open={snackbarOpen}
-          message={snackbarMessage}
-          onClose={handleSnackbarClose}
-        />
-      </div>
-    </>
+        </Box>
+
+      </Box>
+      <SnackbarComponent
+        status={snackbarStatus as 'success' | 'error' | 'info' | 'warning'}
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+      />
+    </Container>
+
   )
 }
 

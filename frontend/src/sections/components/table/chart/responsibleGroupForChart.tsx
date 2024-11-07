@@ -1,20 +1,10 @@
 
 import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Box, Card, TablePagination, useTheme } from '@mui/material'
 import React, { useState } from 'react'
+import { getBackgroundColor } from 'src/utils/chart/GetColor';
 
 interface props {
     data: any
-}
-
-const getBackGroundColor = (status: string) => {
-    switch (status) {
-        case 'Hoàn thành tốt':
-            return '#dcfee9';
-        case 'Cần cải thiện':
-            return '#fff6c2';
-        default:
-            return '#FFFF00';
-    }
 }
 
 const ResponsibleGroupForChart = ({ data }: props) => {
@@ -64,7 +54,7 @@ const ResponsibleGroupForChart = ({ data }: props) => {
                                     {record.progress}
                                 </TableCell>
                                 <TableCell align='center' sx={{ width: '20%' }}>
-                                    <Box sx={{ backgroundColor: getBackGroundColor(record.status), borderRadius: '5%', padding: '5px' }}>
+                                    <Box sx={{ backgroundColor: getBackgroundColor(record.status), borderRadius: '5%', padding: '5px' }}>
                                         {record.status}
                                     </Box>
                                 </TableCell>

@@ -35,88 +35,7 @@ import DailyShiftByCampus from '../components/table/chart/dailyShiftByCampus';
 
 // ----------------------------------------------------------------------
 
-const data1 = [
-  {
-    "tagName": "Lau ghế",
-    "lastName": "Add User",
-    "fristName": "Huan",
-    "totalReport": 2,
-    "progress": 50,
-    "status": "Cần cải thiện"
-  },
-  {
-    "tagName": "Vệ sinh",
-    "lastName": "Add User",
-    "fristName": "Huan",
-    "totalReport": 2,
-    "progress": 80,
-    "status": "Hoàn thành tốt"
-  },
-  {
-    "tagName": "Lau bàn",
-    "lastName": "Nguyễn",
-    "fristName": "Huấn",
-    "totalReport": 2,
-    "progress": 50,
-    "status": "Cần cải thiện"
-  },
-  {
-    "tagName": "Vệ sinh",
-    "lastName": "test",
-    "fristName": "Huan",
-    "totalReport": 2,
-    "progress": 80,
-    "status": "Hoàn thành tốt"
-  },
-  {
-    "tagName": "Lau ghế",
-    "lastName": "test",
-    "fristName": "Huan",
-    "totalReport": 2,
-    "progress": 50,
-    "status": "Cần cải thiện"
-  },
-  {
-    "tagName": "Lau bàn",
-    "lastName": "tét",
-    "fristName": "test1",
-    "totalReport": 2,
-    "progress": 50,
-    "status": "Cần cải thiện"
-  },
-  {
-    "tagName": "Lau ghế",
-    "lastName": "Nguyễn",
-    "fristName": "Huân ",
-    "totalReport": 1,
-    "progress": 100,
-    "status": "Hoàn thành tốt"
-  },
-  {
-    "tagName": "Vệ sinh",
-    "lastName": "Nguyễn",
-    "fristName": "Huân ",
-    "totalReport": 1,
-    "progress": 60,
-    "status": "Cần cải thiện"
-  },
-  {
-    "tagName": "Vệ sinh",
-    "lastName": "11g",
-    "fristName": "Huan",
-    "totalReport": 2,
-    "progress": 80,
-    "status": "Hoàn thành tốt"
-  },
-  {
-    "tagName": "Lau ghế",
-    "lastName": "11g",
-    "fristName": "Huan",
-    "totalReport": 2,
-    "progress": 50,
-    "status": "Cần cải thiện"
-  }
-]
+
 export default function ThreeView() {
   const [data, setData] = useState<any>({});
   const [campus, setCampus] = useState<any[]>([]);
@@ -125,8 +44,9 @@ export default function ThreeView() {
   const [dailyRoomGroupData, setDailyRoomGroupData] = useState<any>();
   const [dailyReportData, setDailyReportData] = useState<any>();
   const [dailyTop5CriteriaValueData, setDailyTop5CriteriaValueData] = useState<any>();
-  const [dailyShiftValueData,setDailyShiftValueData] = useState<any>();
+  const [dailyShiftValueData, setDailyShiftValueData] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
+  const settings = useSettingsContext();
 
 
   useEffect(() => {
@@ -135,7 +55,7 @@ export default function ThreeView() {
         setIsLoading(true);
         const response = await CampusService.getAllCampus();
         setCampus(response.data);
-       
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -178,7 +98,7 @@ export default function ThreeView() {
     };
 
     fetchAllData();
-}, [selectedCampus]);
+  }, [selectedCampus]);
 
 
   if (isLoading) {
@@ -226,9 +146,9 @@ export default function ThreeView() {
   }
 
   return (
-    <>
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant='h3'>Báo cáo thống kê</Typography>
+        <Typography variant='h4'>Báo cáo thống kê</Typography>
         <Select
           labelId="base-select-label1"
           id="base-select1"
@@ -270,7 +190,7 @@ export default function ThreeView() {
           >
             <ReportCountChart data={data} />
             {dailyReportData && < DailyDetailReport data={dailyReportData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName} />}
-          </Box>  
+          </Box>
         </Grid>
       </Grid>
 
@@ -287,10 +207,10 @@ export default function ThreeView() {
           {dailyRoomGroupData && <ResponsibleGroupForChart data={dailyRoomGroupData} />}
         </Grid>
         <Grid item xs={6}>
-          {dailyShiftValueData && <DailyShiftByCampus data={dailyShiftValueData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName}/>}
+          {dailyShiftValueData && <DailyShiftByCampus data={dailyShiftValueData} campusName={selectedCampus === 'All' ? "tất cả cơ sở" : campus.find(c => c.id === selectedCampus).campusName} />}
         </Grid>
       </Grid>
 
-    </>
+    </Container>
   );
 }

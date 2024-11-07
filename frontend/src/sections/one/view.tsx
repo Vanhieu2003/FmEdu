@@ -35,6 +35,7 @@ import responsibleUserView from '../components/table/Report/responsibleUserView'
 import ResponsibleUserView from '../components/table/Report/responsibleUserView';
 import QRCodeScanner from '../components/QRScanner';
 import FileService from 'src/@core/service/files';
+import { useSettingsContext } from 'src/components/settings';
 
 type Floor = {
   id: string,
@@ -133,10 +134,8 @@ export default function OneView() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarStatus, setSnackbarStatus] = useState('success');
   const [criteriaImages, setCriteriaImages] = useState<{ [criteriaId: string]: string[] }>({});
-
-
   const [isSending, setIsSending] = useState(false);
-
+  const settings = useSettingsContext();
 
   const resetComponent = useCallback(() => {
     setSelectedCampus(null);
@@ -417,10 +416,12 @@ export default function OneView() {
       await handleShiftSelect(data.shiftId);
     }
   }, [])
-  useEffect(() => { handleShiftSelect(selectedShift) }, [selectedShift]);
+
+
   return (
-    <Container maxWidth={false ? false : 'xl'}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <Typography variant="h4">Đánh giá vệ sinh</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between',marginY:'15px' }}>
         <QRCodeScanner onchange={handleQRScan} />
         <Button variant="contained" href="/dashboard/group" sx={{ height: '40px' }}>
           Tạo form đánh giá
@@ -429,7 +430,7 @@ export default function OneView() {
 
       <Box
         sx={{
-          mt: 5,
+          mt: 2,
           width: 1,
           minHeight: 320,
           borderRadius: 2,

@@ -30,19 +30,7 @@
   .schedule-customization.e-schedule .e-header-popup .e-header-calendar.e-calendar .e-content.e-decade td>span.e-day {
     width: 100%;
   }
-  
-  .scheduler-container{
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .scheduler-container-left{
-    flex:4;
-  }
-  
-  .scheduler-container-right{
-    flex:1;
-  }
+
 
   .e-quick-popup-wrapper .e-cell-popup .e-popup-content {
     padding:10px 0;
@@ -51,3 +39,5 @@
   .e-quick-popup-wrapper .e-event-popup .e-popup-content {
     padding:10px;
   }
+
+

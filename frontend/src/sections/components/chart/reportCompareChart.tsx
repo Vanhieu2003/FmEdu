@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ChartService from 'src/@core/service/chart';
 import RenderBarChart from './barChart.tsx/reportBarChartCompare';
 import RenderLineChartData from './lineChart.tsx/reportLineChartCompare';
-import { MONTHS, YEARS } from 'src/utils/time-for-chart';
+import { MONTHS, YEARS } from 'src/utils/chart/time-for-chart';
 
 
 const ReportCompareChart = () => {

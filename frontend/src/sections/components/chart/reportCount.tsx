@@ -52,19 +52,19 @@ const ReportCount = ({ data }: props) => {
                     <Box sx={{ textAlign: 'center' }}>
                         <Typography sx={{
                             color: "#666666", fontWeight: '700', fontSize: {
-                                xs: '0.5rem',    // for extra-small screens
-                                sm: '0.75rem',  // for small screens
-                                md: '1rem',    // for medium screens
+                                xs: '0.5rem',   
+                                sm: '0.75rem',  
+                                md: '1rem',    
                                 lg: '1.25rem'
 
                             }
                         }}>{report.status}</Typography>
                         <Typography sx={{
                             color: getColorByStatus(report.status), fontWeight: '900', marginTop: '10px', fontSize: {
-                                xs: '2rem',    // for extra-small screens
-                                sm: '2.5rem',  // for small screens
-                                md: '3rem',    // for medium screens
-                                lg: '3.5rem'   // for large screens
+                                xs: '2rem',    
+                                sm: '2.5rem',  
+                                md: '3rem',   
+                                lg: '3.5rem'  
                             }
                         }}>{report.count}</Typography>
                     </Box>

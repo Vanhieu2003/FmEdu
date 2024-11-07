@@ -2,7 +2,7 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import "src/global.css";
-import { Autocomplete, Button, Chip, Stack, TextField, Pagination } from '@mui/material';
+import { Autocomplete, Button, Chip, Stack, TextField, Pagination, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
@@ -215,7 +215,8 @@ export default function FiveView() {
  
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+      <Typography variant="h4">Danh sách các tiêu chí đánh giá</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginY: '15px' }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
             label="Tìm kiếm tiêu chí"
