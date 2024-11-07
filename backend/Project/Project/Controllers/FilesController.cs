@@ -100,21 +100,14 @@ namespace Project.Controllers
                 return BadRequest("Filename not provided.");
             }
 
-            var rootPath = _hostingEnvironment.WebRootPath;
-            if (rootPath.EndsWith("uploads"))
-            {
-                rootPath = Path.GetDirectoryName(rootPath);
-            }
-
-            var filepath = Path.Combine(rootPath, "uploads", filename);
+            var filepath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", filename);
 
             if (System.IO.File.Exists(filepath))
             {
                 try
                 {
+                    // Xóa file từ hệ thống
                     System.IO.File.Delete(filepath);
-                    // Trả về phản hồi thành công ngay sau khi xóa file
-                    return Ok("File deleted successfully.");
                 }
                 catch (Exception ex)
                 {
@@ -125,9 +118,9 @@ namespace Project.Controllers
             {
                 return NotFound("File not found.");
             }
+
+            return NoContent();
         }
-
-
 
         // Hàm phụ trợ để ghi file vào hệ thống
         private async Task<string> WriteFile(IFormFile file)

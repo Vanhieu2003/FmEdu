@@ -20,8 +20,8 @@ namespace Project.Controllers
             _context = context;
             _repo = chartRepository;
         }
-
-
+        
+        
         [HttpGet("GetTopCriteriaValuesByCampus")]
         public async Task<IActionResult> GetTopCriteriaValuesByCampus([FromQuery] string? campusId)
         {
@@ -41,35 +41,12 @@ namespace Project.Controllers
         public async Task<IActionResult> GetCleaningReportsByMonth(int? month = null, int? year = null)
         {
 
-<<<<<<< HEAD
-            var result = await _repo.GetCleaningReportsByMonth(month, year);
-=======
             var result = await _repo.GetCleaningReportsByMonth(month,year);
->>>>>>> ca7b1996c9d43ffd48028a78858f3f86a8081b5c
             return Ok(result);
         }
 
 
-<<<<<<< HEAD
-        //[HttpGet("GetBlockReports")]
-        //public async Task<IActionResult> GetBlockReports([FromQuery] string campusId, [FromQuery] DateTime? targetDate = null)
-        //{
-        //    var result = await _repo.GetBlockReportsAsync(campusId, targetDate);
-        //    return Ok(result);
-        //}
 
-
-
-
-
-=======
-
-        [HttpGet("GetCleaningReportsByLast10Days")]
-        public async Task<IActionResult> GetCleaningReportsByLast10Days()
-        {
-            var result = await _repo.GetCleaningReportsByLast10Days();
-            return Ok(result);
-        }
 
 
         //[HttpGet("GetBlockReports")]
@@ -83,7 +60,6 @@ namespace Project.Controllers
 
        
 
->>>>>>> ca7b1996c9d43ffd48028a78858f3f86a8081b5c
         [HttpGet("comparison")]
         public async Task<IActionResult> GetCampusReportComparison(int? year = null)
         {

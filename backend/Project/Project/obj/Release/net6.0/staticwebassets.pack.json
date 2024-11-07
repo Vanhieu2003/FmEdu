@@ -1,31 +1,23 @@
 {
   "Files": [
     {
-<<<<<<< HEAD
       "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638621889874728231.png",
-=======
-      "Id": "D:\\Project\\FMedu-DGCL\\backend\\Project\\Project\\wwwroot\\uploads\\638621884162660887.png",
-      "PackagePath": "staticwebassets\\uploads\\638621884162660887.png"
-    },
-    {
-      "Id": "D:\\Project\\FMedu-DGCL\\backend\\Project\\Project\\wwwroot\\uploads\\638621889874728231.png",
->>>>>>> ca7b1996c9d43ffd48028a78858f3f86a8081b5c
       "PackagePath": "staticwebassets\\uploads\\638621889874728231.png"
     },
     {
-      "Id": "D:\\Project\\FMedu-DGCL\\backend\\Project\\Project\\wwwroot\\uploads\\638622536832977215.jpg",
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638622536832977215.jpg",
       "PackagePath": "staticwebassets\\uploads\\638622536832977215.jpg"
     },
     {
-      "Id": "D:\\Project\\FMedu-DGCL\\backend\\Project\\Project\\wwwroot\\uploads\\638661418676179446.jpg",
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638661418676179446.jpg",
       "PackagePath": "staticwebassets\\uploads\\638661418676179446.jpg"
     },
     {
-      "Id": "D:\\Project\\FMedu-DGCL\\backend\\Project\\Project\\wwwroot\\uploads\\638663982197440212.jpg",
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638663982197440212.jpg",
       "PackagePath": "staticwebassets\\uploads\\638663982197440212.jpg"
     },
     {
-      "Id": "D:\\Project\\FMedu-DGCL\\backend\\Project\\Project\\wwwroot\\uploads\\638663982759752106.jpg",
+      "Id": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\wwwroot\\uploads\\638663982759752106.jpg",
       "PackagePath": "staticwebassets\\uploads\\638663982759752106.jpg"
     },
     {

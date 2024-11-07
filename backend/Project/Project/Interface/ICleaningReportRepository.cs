@@ -10,6 +10,13 @@ namespace Project.Interface
 
         public Task<CleaningReportDetailsDto> GetInfoByReportId(string reportId);
 
-        public Task<List<CleaningReportDetailsDto>> GetReportInfo(int pageNumber = 1, int pageSize = 10);
+        public Task<(List<CleaningReportDetailsDto> Reports, int TotalCount)> GetReportInfo(int pageNumber = 1, int pageSize = 10);
+        public Task<CleaningReport> CreateCleaningReportAsync(CleaningReportRequest request);
+        public Task<object> GetReportDetails(string reportId);
+
+        public  Task<List<UserScore>> EvaluateUserScores(EvaluationRequest request);
+
+        public Task<CleaningReport> UpdateCriteriaAndCleaningReport(UpdateCleaningReportRequest request);
+
     }
 }

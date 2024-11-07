@@ -321,11 +321,7 @@ namespace Project.Repository
 
             return result;
         }
-<<<<<<< HEAD
-
-=======
        
->>>>>>> ca7b1996c9d43ffd48028a78858f3f86a8081b5c
 
 
         public async Task<List<CleaningReportDto>> GetCleaningReportsByQuarter()
@@ -342,10 +338,9 @@ namespace Project.Repository
 
             return await GetCampusDataByQuarter(quarters);
         }
-<<<<<<< HEAD
 
 
-      
+
 
         public async Task<List<CleaningReportDto>> GetCleaningReportsByMonth(int? month = null, int? year = null)
         {
@@ -361,13 +356,13 @@ namespace Project.Repository
                 .Select(day => new DateTime(currentYear, currentMonth, day))
                 .ToList();
 
-
+            
             var hasData = await _context.CleaningReports
                 .AnyAsync(cr => cr.UpdateAt.HasValue && cr.UpdateAt.Value.Year == currentYear && cr.UpdateAt.Value.Month == currentMonth);
 
             if (!hasData)
             {
-                return new List<CleaningReportDto>();
+                return new List<CleaningReportDto>();  
             }
 
             return await GetCampusDataByDates(daysInMonth, currentMonth, currentYear);
@@ -376,46 +371,16 @@ namespace Project.Repository
 
         private async Task<List<CleaningReportDto>> GetCampusDataByDates(List<DateTime> dates, int? month = null, int? year = null)
         {
-
+            
             if (year > DateTime.Now.Year)
             {
-                return new List<CleaningReportDto>();
+                return new List<CleaningReportDto>(); 
             }
 
-
+            
             month ??= DateTime.Now.Month;
             year ??= DateTime.Now.Year;
-=======
->>>>>>> ca7b1996c9d43ffd48028a78858f3f86a8081b5c
 
-
-        public async Task<List<CleaningReportDto>> GetCleaningReportsByLast10Days()
-        {
-            var last10Days = Enumerable.Range(0, 10)
-                .Select(i => DateTime.Now.Date.AddDays(-i))
-                .OrderBy(d => d)
-                .ToList();
-
-            return await GetCampusDataByDates(last10Days);
-        }
-
-
-
-        public async Task<List<CleaningReportDto>> GetCleaningReportsByMonth(int? month = null, int? year = null)
-        {
-            int currentMonth = month ?? DateTime.Now.Month;
-            int currentYear = year ?? DateTime.Now.Year;
-
-            var daysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(currentYear, currentMonth))
-                .Select(day => new DateTime(currentYear, currentMonth, day))
-                .ToList();
-
-            return await GetCampusDataByDates(daysInMonth);
-        }
-
-
-        private async Task<List<CleaningReportDto>> GetCampusDataByDates(List<DateTime> dates)
-        {
             var campuses = await _context.Campuses.ToListAsync();
             var blocks = await _context.Blocks.ToListAsync();
             var rooms = await _context.Rooms.ToListAsync();
@@ -453,45 +418,6 @@ namespace Project.Repository
             return result;
         }
 
-        private async Task<List<CleaningReportDto>> GetCampusDataByQuarter(List<(int QuarterNum, int YearNum)> quarters)
-        {
-            var campuses = await _context.Campuses.ToListAsync();
-            var blocks = await _context.Blocks.ToListAsync();
-            var rooms = await _context.Rooms.ToListAsync();
-            var cleaningForms = await _context.CleaningForms.ToListAsync();
-            var cleaningReports = await _context.CleaningReports.ToListAsync();
-
-<<<<<<< HEAD
-            var result = dates
-                .Select(day => new
-                {
-                    ReportDate = day,
-                    CampusData = campuses.Select(c => new
-                    {
-                        CampusName = c.CampusName,
-                        AverageValue = (
-                            from cr in cleaningReports
-                            join cf in cleaningForms on cr.FormId equals cf.Id
-                            join r in rooms on cf.RoomId equals r.Id
-                            join b in blocks on r.BlockId equals b.Id
-                            where b.CampusId == c.Id &&
-                                  cr.UpdateAt.HasValue &&
-                                  cr.UpdateAt.Value.Date == day
-                            select cr.Value
-                        ).Average(crValue => (double?)crValue) ?? 0
-                    })
-                })
-                .SelectMany(x => x.CampusData.Select(cd => new CleaningReportDto
-                {
-                    CampusName = cd.CampusName,
-                    ReportTime = x.ReportDate.ToString("dd-MM-yyyy"),
-                    AverageValue = (int)cd.AverageValue
-                }))
-                .OrderBy(x => x.ReportTime)
-                .ToList();
-
-            return result;
-        }
 
         private async Task<List<CleaningReportDto>> GetCampusDataByQuarter(List<(int QuarterNum, int YearNum)> quarters)
         {
@@ -501,8 +427,6 @@ namespace Project.Repository
             var cleaningForms = await _context.CleaningForms.ToListAsync();
             var cleaningReports = await _context.CleaningReports.ToListAsync();
 
-=======
->>>>>>> ca7b1996c9d43ffd48028a78858f3f86a8081b5c
             var result = quarters
                 .Select(q => new
                 {
