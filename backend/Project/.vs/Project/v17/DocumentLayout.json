@@ -3,12 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\roomrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\roomrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\interface\\itagrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\interface\\itagrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\entities\\hcmueqttb_devcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\entities\\hcmueqttb_devcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\repository\\tagrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\repository\\tagrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\controllers\\tagscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\controllers\\tagscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|c:\\users\\administrator\\qttb_dev\\backend\\project\\project\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D8A39880-28D6-4964-ACFC-A5ABCA916EAA}|Project\\Project.csproj|solutionrelative:project\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,24 +38,89 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RoomsController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\RoomsController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\RoomsController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\RoomsController.cs",
+              "RelativeToolTip": "Project\\Controllers\\RoomsController.cs",
+              "ViewState": "AQIAABQAAAAAAAAAAAAQwDAAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-07T08:40:03.533Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "RoomRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\RoomRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Repository\\RoomRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\RoomRepository.cs",
+              "RelativeToolTip": "Project\\Repository\\RoomRepository.cs",
+              "ViewState": "AQIAAEoAAAAAAAAAAAAIwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-07T08:39:54.053Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ITagRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\ITagRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Interface\\ITagRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Interface\\ITagRepository.cs",
+              "RelativeToolTip": "Project\\Interface\\ITagRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAkAAABzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-07T08:34:39.131Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TagRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\TagRepository.cs",
+              "RelativeDocumentMoniker": "Project\\Repository\\TagRepository.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Repository\\TagRepository.cs",
+              "RelativeToolTip": "Project\\Repository\\TagRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-07T08:34:16.678Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TagsController.cs",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsController.cs",
+              "RelativeDocumentMoniker": "Project\\Controllers\\TagsController.cs",
+              "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Controllers\\TagsController.cs",
+              "RelativeToolTip": "Project\\Controllers\\TagsController.cs",
+              "ViewState": "AQIAABoAAAAAAAAAAAAQwDIAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-07T08:33:24.678Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "HcmUeQTTB_DevContext.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\HcmUeQTTB_DevContext.cs",
               "RelativeDocumentMoniker": "Project\\Entities\\HcmUeQTTB_DevContext.cs",
               "ToolTip": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\Entities\\HcmUeQTTB_DevContext.cs",
               "RelativeToolTip": "Project\\Entities\\HcmUeQTTB_DevContext.cs",
-              "ViewState": "AQIAAEkAAAAAAAAAAAAkwGQAAACiAAAA",
+              "ViewState": "AQIAAEoAAAAAAAAAAIA5wGMAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-06T17:27:13.243Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\Administrator\\Qttb_dev\\backend\\Project\\Project\\appsettings.json",
               "RelativeDocumentMoniker": "Project\\appsettings.json",

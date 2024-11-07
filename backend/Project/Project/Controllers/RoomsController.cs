@@ -42,11 +42,12 @@ namespace Project.Controllers
             return Ok(room);
         }
 
-
         [HttpGet("All")]
-        public async Task<IActionResult> GetAllRooms([FromQuery] int pageSize = 50)
+        public async Task<IActionResult> GetAllRooms()
         {
-            var rooms = await _context.Rooms.Take(pageSize).ToListAsync();
+            var rooms = await _context.Rooms
+                                      .Take(50)
+                                      .ToListAsync();
 
             if (rooms == null || !rooms.Any())
             {
@@ -55,7 +56,6 @@ namespace Project.Controllers
 
             return Ok(rooms);
         }
-
 
 
         [HttpGet("By-Floor&Block")]

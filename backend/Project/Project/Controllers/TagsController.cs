@@ -36,10 +36,18 @@ namespace Project.Controllers
         }
 
         [HttpGet("GetTagGroups")]
-        public async Task<IActionResult> GetTagGroupsWithUserCount()
+        public async Task<IActionResult> GetTagGroupsWithUserCount([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var tagGroups = await _repo.GetTagGroupsWithUserCountAsync();
-            return Ok(tagGroups);
+            var tagGroups = await _repo.GetTagGroupsWithUserCountAsync(pageNumber, pageSize);
+            var totalRecords = tagGroups.Count();
+
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Tags = tagGroups
+            });
         }
 
         [HttpGet("GetGroupInfoByTagId")]

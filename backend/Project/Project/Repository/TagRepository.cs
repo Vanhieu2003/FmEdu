@@ -19,7 +19,7 @@ namespace Project.Repository
         }
 
         //mới sửa
-        public async Task<IEnumerable<TagGroupDto>> GetTagGroupsWithUserCountAsync()
+        public async Task<IEnumerable<TagGroupDto>> GetTagGroupsWithUserCountAsync(int pageNumber = 1, int pageSize = 10)
         {
             var query = from tag in _context.Tags
                         join userTag in _context.UserPerTags on tag.Id equals userTag.TagId into tagUsers
@@ -32,7 +32,13 @@ namespace Project.Repository
                             NumberOfUsers = grouped.Count(ut => ut != null)
                         };
 
-            return await query.ToListAsync();
+            var tagDetails = await query
+                .OrderByDescending(t => t.TagName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return tagDetails;
         }
         //mới sửa
 
